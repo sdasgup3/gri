@@ -1,7 +1,7 @@
 %{
 #include "parser.tab.h"
 
-extern int yyerror( char *);  /* prints grammar violation message */
+extern int yyerror( char *);  /*  prints grammar violation message */
 
 extern int sym_type(const char *);  /* returns type from symbol table */
 
