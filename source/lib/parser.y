@@ -527,7 +527,7 @@ declaration_list
 %%
 #include <stdio.h>
 
-void yyerror(const char *s)
+int yyerror(char *s)
 {
 	fflush(stdout);
 	fprintf(stderr, "*** %s\n", s);
