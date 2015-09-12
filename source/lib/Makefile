@@ -1,6 +1,7 @@
 LEX=flex
 YACC=bison
 CC=gcc
+CXX=g++
 TARGET=gri
 #PARSER_LDFLAG= -lfl -L $(FLEX_HOME)/lib -ly -L $(BISON_HOME)/lib
 PARSER_LDFLAG= 

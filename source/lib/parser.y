@@ -1,3 +1,9 @@
+%{
+#include <stdio.h>  
+#include <stdlib.h>  
+extern FILE* yyin;
+%}
+
 %token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
 %token	PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token	AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -533,7 +539,20 @@ int yyerror(char *s)
 	fprintf(stderr, "*** %s\n", s);
 }
 
-main()
+int main(int argc, char** argv)
 {
-  yyparse();
+  if(argc == 2) {
+    FILE *myfile = fopen(argv[1], "r");
+    if (!myfile) {
+      printf("Cannot open file %s\n", argv[1]);
+      return -1;
+    }
+    yyin = myfile;
+  }
+
+  do {	
+    yyparse();
+  } while (!feof(yyin));
+
+  return 0;
 }
