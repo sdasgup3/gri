@@ -1,0 +1,86 @@
+\documentclass[10pt,twoside]{report}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{framed}
+\lstset{language=Python, keywordstyle=\color{blue}\bfseries, }
+\usepackage{amsmath}
+
+%\newcommand{\cmnt}[1]{}
+%\newcommand{\Transp}[2]{\ensuremath{Tranp(#1,#2)}}
+%\newcommand{\Antloc}[2]{\ensuremath{Antloc(#1,#2)}
+%\newcommand{\Xcomp}[2]{\ensuremath{Xcomp(#1,#2)}}
+%\newcommand{\Eval}[2]{\ensuremath{eval(#1,#2)}}
+%\newcommand{\Mod}[2]{\ensuremath{mod(#1,#2)}}
+
+\pagestyle{myheadings}
+
+\bibliographystyle{siam}
+
+\addtolength{\textwidth}{1.00in}
+\addtolength{\textheight}{1.00in}
+\addtolength{\evensidemargin}{-1.00in}
+\addtolength{\oddsidemargin}{-0.00in}
+\addtolength{\topmargin}{-.50in}
+
+\hyphenation{in-de-pen-dent}
+
+
+\title{\textbf{Partial Redundancy Elimination using Lazy Code Motion}}
+
+\author{Sandeep Dasgupta\thanks{Electronic address:
+\texttt{sdasgup3@illinois.edu}} \qquad Tanmay Gangwani\thanks{Electronic
+address: \texttt{gangwan2@illinois.edu}}}
+
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\maketitle
+\pagebreak
+\end{titlepage}
+
+\begin{flushleft}
+\textbf{\Large{Value-Number driven code motion}}
+\end{flushleft}
+We implement an iterative bit vector data flow algorithm for PRE. We initially
+implemented the flow equations from the Lazy Code Motion paper. This set
+included a total of 13 bit vectors for each basic block - 2 for block local
+properties ANTLOC and TRANSP, and 11 for global properties. These equations,
+           however, could only be applied to single instruction basic blocks.
+           We therefore, derived a new set of equations which are motived by
+           later work\cite{Knoop:1994:OCM:183432.183443} of the same authors.
+           This set of equations apply to maximal basic blocks and
+           entails a total of 19 bit vectors for each basic block in our
+           current implementation - 3 for block local properties ANTLOC,
+           TRANSP, XCOMP and 16 for global properties.  We include the
+           equations in appendix A and B. In appendix C, we provide our generalized
+           data flow framework, and show how each PRE equation maps to the
+           framework. We call the algorithm value-number driven because each
+           slot in each of the bit vectors is reserved for a particular value
+           number rather than a particular expression. Also, we make the
+           observation that a large number of expressions in the program only
+           occur once, and are not useful for PRE. Hence to further optimize
+           for space and time, we only give bit vector slots to value numbers
+           which have more than one expression linked to them.
+
+\begin{flushleft}
+\textbf{\large{Local CSE}}
+\end{flushleft}
+For our data flow equations to work correctly, a local CSE pass has to be run
+on each basic block. Basically, this path removes the redundancies inside
+straight line basic block code and sanitizes it for the iterative bit vector
+algorithm. This idea is borrowed from \cite{Knoop:1994:OCM:183432.183443}. We perform this step before calling
+our data flow framework. 
+
+\vspace{1 mm}
+           
+
+
+\bibliography{LetterOfIntent.bib}
+
+\nocite{*}
+
+
+\end{document}
