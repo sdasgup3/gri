@@ -47,45 +47,52 @@
 \section{Motivation}
 
 As graphical models are increasingly being used in various
-  fields like biological and physical sciences , organizational structures,
-  social networking, there is a need to represent the various graphical models
-    in an efficient way. This involves (but not limited to) the following
+  fields like biochemistry (genomics), electrical engineering (communication
+      networks and coding theory), computer science (algorithms and
+        computation) and operations research (scheduling), organizational
+      structures, social networking, there is a need to represent and allow
+      computation on them in a convenient and efficient way. This involves (but not limited
+          to)
+
     \begin{itemize}
-      \item Designing a language which provide an easy interface to the programmer to program those models.
-        An easy interface involves:
+      \item Designing a language which provide an convenient interface to the programmer to program those models.
+        This is essential so that even for domain experts who are not coding experts can code and reason about
+        their implementation.
+        Ease of interface could be due to:
         \begin{itemize}
           \item Expressive power of the language representing those models.
           \item Intuitive extensibility of the language.
           \item Ability of the language to provide exploratory programming, where the user
-          may experiment with different ideas before coming to a conclusive one.
+          may experiment with different ideas (without dwelling much into the language syntax) before coming to a conclusive one.
         \end{itemize}
-     \item The language implementation should be efficient in the following sense.     
+     \item Designed language need to be efficient in the following sense.     
         \begin{itemize}
-          \item the underlying data structure need to be carefully chosen 
-            so that the test program runs reasonably as compared to existing 
-            static compilers.
-          \item the implementation need to be scalable w.r.t the memory requirement.
+          \item Underlying design decisions including data structures need to be carefully crafted 
+            to achieve expected run-time w.r.t the input size.
+          \item Implementation need to be scalable w.r.t the space/time requirements. This is 
+          important because most of the graph algorithm typically work
+          on huge input sizes.
         \end{itemize}
    \end{itemize}       
 
-   To meet one of the above goals like exploratory programming we decided 
-     to work an a dynamically typed language so that the user do not 
-     have to worry much about declaring types and focus on his/her 
-     experiments.
+   To meet all above goals and most importantly exploratory programming, we decided 
+     to work on a dynamically typed language to represent graphs
+     and apply various computations on them.
+     With this the user do not have to worry much about declaring types and can
+     focus mostly on his/her experiments.
 
- To meet this we introduces GRI (Graph Interpreter), which is
- an Interpreter to for a dynamic  language well suited to 
- represent graphs and apply various algorithms on it. The dynamic
- language has the following features:
+ Following is the outline of the proposed features
+ of the language. These are written keeping the
+ ``convenience'' aspect of the language in mind.
 
  \begin{itemize}
-   \item As ``nodes'' and ``edges'' are the backbone of any graph structure, we have them as 
+   \item As ``nodes'' and ``edges'' are the backbone of any graph structure, we proposed to have them as 
   first-class objects. Even though the user will not necessarily
-  be accessing individual nodes, but the option is available to them.
-  \item Users have the option to specify attributes on nodes and edges and later use
+  be accessing individual nodes/edges, but the option is available to them.
+  \item Providing users with the option to specify attributes on nodes and edges and later use
   those attributes for computing results. For example: to find all the red colored nodes (where color is marked as an attribute of
       node) connected to a specific node.
-  \item The language supports  operators to specify relationships between the nodes/edges or groups of them.
+  \item Supporting  operators to specify relationships between the nodes/edges or their groups.
   For example, the user can create sub graphs like
   \begin{align}
           department\_1 &= (N1,N2,N3) \\
@@ -96,47 +103,54 @@ As graphical models are increasingly being used in various
   Also the language supports operators to find edges between groups of nodes. 
   This will answer interesting queries like:
   $$managers \rightarrow  (department 1 - managers) $$ could mean
-  ``the number of email conversation between managers to department\_1 non managers''
+  ``the number of email conversation between managers to department\_1's non managers''
 
   Most of these ideas
-  behind choosing the operators are borrowed from ~\cite{Adar}. 
+  behind choosing the operators are borrowed from ~\cite{Adar}.  
   The intuition behind these operators is that the users do not have to remember longer 
   commands. Also its very intuitive to build up complex operations using the simpler ones.
 
    \item Also borrowed from ~\cite{Adar}, is the option of saving state of the graph.
      This seems a useful service provided to do exploratory programming, as the user might be interested to 
      checkout the last saved state  (or a state with a any tag) or to undo all the experiments
-     upto a particular state.
+     down to a particular state.
 
   \end{itemize}
+     
+
+ In this project we will also be implementing an Interpreter of the above
+ mentioned language. We call it GRI (Graph Interpreter).
+
 
 \vspace{1 mm}
 
 \section{GRI Interpreter}
  
-Proposed language does not allow the user to specify the types and a variable
-  may point to objects of different types during run time(and hence a
+Proposed language will not allow the user to specify the types and a variable
+  may point to objects of different types during run time (and hence a
       dynamically types language). In this scenario we could do a static
   compilation after a static type inference to generate sub optimal machine
   code, whose efficiency depends on how well the types are inferred.
 
   As opposed to that,  we are trying to build an interpreter which will
   interpret the AST spit out by the parser.  If time permits, we are planning
-  to convert the the AST into LLVM byte code to be either interpreted or Jitted
-  by the LLVM tool-chain.
+  to convert the the AST into LLVM byte code (after static type inferencing) to be Jitted
+  by the LLVM tool-chain. 
 
 \section{Language}
 
-The syntax of the language is an oversimplified version  of C.  Also planning
-  to provide a rich set of built in functions like \emph{deleteVertex(graph, vertex),
-  dfs\_iterators(vertex), bfs\_iterators(vertex)} which will facilitate writing complex
-      algorithms. Some of the ideas of the language design will be borrowed
-      from ~\cite{Graphal}.
+The syntax of the language is going to be an oversimplified version  of C.
+  Also planning to provide a pre-compiled library of rich set of built-in functions like
+  \emph{deleteVertex(graph, vertex), dfs\_iterators(vertex),
+    bfs\_iterators(vertex)} which will facilitate writing complex algorithms
+      conveniently and enhance the execution time of interpreting.
+      Some of the ideas of the language design will be borrowed from
+      ~\cite{Graphal}.
 
-  The language will distinguish between user variables and variables
-  representing say graph objects. The later will be treated immutable and an
-  error will be issued if the user tried to modify this. For example, a graph
-  object g, representing a graph, cannot to modified (for example, by assigning
+  The language will distinguish between user variables/functions and system variables/functions.
+  The later will be treated immutable and an
+  error will be issued if the user tried to modify this. For example, a system variable g,
+  representing a graph, cannot to modified (for example, by assigning
       g = 5;).  In that sense the ``dynamically typed'' nature of the language
   will be restricted to the user variables.
 
