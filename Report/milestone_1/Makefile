@@ -17,7 +17,7 @@ $(TGT).ps: $(TGT).dvi
 	dvips -o $(TGT).ps $(TGT)
 
 $(TGT).dvi: $(TGT).tex $(DEPS)
-	$(LATEX) $(TGT) && $(BIBTEX) $(TGT) && $(BIBTEX) $(TGT) && $(LATEX) $(TGT)
+	$(LATEX) $(TGT) && $(BIBTEX) $(TGT) && $(LATEX) $(TGT) && $(LATEX) $(TGT)
 
 .PHONY: clean clobber fresh
 clean: 
