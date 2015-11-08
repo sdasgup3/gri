@@ -1,5 +1,5 @@
 %{
-#include "syntax.tab.h"
+#include "parser.tab.h"
 #include <assert.h>
 
 extern int yyerror( char *);  /* prints grammar violation message */
@@ -23,6 +23,7 @@ HP  (0[xX])
 E   ([Ee][+-]?{D}+)
 ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
 WS  [ \t\v\n\f]
+S   [ \t]*
 ID  [_]?{L}{A}*
 
 %x  INCLUDE
@@ -130,10 +131,10 @@ ID  [_]?{L}{A}*
                                           token_dump(yytext);
                                           BEGIN(INCLUDE);
                                         }
-<INCLUDE>[ \t]*                         {
+<INCLUDE>{S}\({S}                         {
                                           token_dump(yytext) ; 
                                         }        
-<INCLUDE>\"(\\.|[^\\"])*\"([ \t]*)\;    { 
+<INCLUDE>\"(\\.|[^\\"])*\"{S}\){S}\;    { 
                                           token_dump(yytext);
                                           char* file = strip_quotes(yytext, yyleng);
                                           yyin = fopen(file, "r");
