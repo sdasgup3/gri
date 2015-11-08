@@ -311,16 +311,15 @@ void yyerror(char const *msg)
 }
 */
 
-int main(int argc, char** argv)
+int 
+parseCode(char* filename)
 {
-  if(argc == 2) {
-    FILE *myfile = fopen(argv[1], "r");
-    if (!myfile) {
-      printf("Cannot open file %s\n", argv[1]);
-      return -1;
-    }
-    yyin = myfile;
+  FILE *myfile = fopen(filename, "r");
+  if (!myfile) {
+    printf("Cannot open file %s\n", filename);
+    return -1;
   }
+  yyin = myfile;
 
   yyparse();
 

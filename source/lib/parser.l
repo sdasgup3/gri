@@ -1,5 +1,5 @@
 %{
-#include"parser.tab.h"
+#include"parser.hpp"
 #include "general.h"
 #include  "stringtable.h"
 #define STR2ID(str) STRTABLE.getID(str)
@@ -372,7 +372,7 @@ static void token_dump(std::string &tok) {
 
 static void 
 strip_quotes(const char* const quoted_str, int len, std::string &name1, std::string &name2) {
-  int i = 1, k=0;
+  int i = 1;
   for(i = 1;i  < len-1 && quoted_str[i] != '"'; i++) {
     name1.push_back(quoted_str[i]);
   }
