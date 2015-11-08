@@ -1,29 +1,36 @@
+TARGET=gri
+
 LEX=flex
 YACC=bison
 CC=gcc
 CXX=g++
-TARGET=gri
-#PARSER_LDFLAG= -lfl -L $(FLEX_HOME)/lib -ly -L $(BISON_HOME)/lib
-PARSER_LDFLAG= 
 LDFLAGS= -
 INC=
+SOURCE=
+TESTFILES=$(wildcard tests/*.txt)
 
 all: $(TARGET)
  
-$(TARGET): lex.yy.c parser.tab.c parser.tab.h
-	   	$(CC) -o gri lex.yy.c  parser.tab.c $(PARSER_LDFLAG)
+$(TARGET): lex.yy.c $(SOURCE).tab.c $(SOURCE).tab.h
+	   	$(CC) -o gri lex.yy.c  $(SOURCE).tab.c 
 
 
-lex.yy.c: parser.l
+lex.yy.c: $(SOURCE).l
 		$(LEX) $<
 
-parser.tab.c: parser.y
+$(SOURCE).tab.c: $(SOURCE).y
 		$(YACC) -d $<
+
+test:	$(TARGET)
+	for test in $(TESTFILES); do \
+		echo Parsing $$test; \
+                ./$(TARGET) $$test; \
+        done
 
 
 clean:
 	rm -rf \
-	  lex.yy.c parser.tab.c parser.tab.h \
+	  lex.yy.c *.tab.c *.tab.h \
 	  ./gri
 
 		

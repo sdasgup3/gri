@@ -1,543 +1,318 @@
 %{
 #include <stdio.h>  
-#include <stdlib.h>  
+//#include <string>  
+//using namespace std;
+//#include <stdlib.h>  
 extern FILE* yyin;
 %}
 
-%token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
-%token	PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
-%token	AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
-%token	SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
-%token	XOR_ASSIGN OR_ASSIGN
-%token	TYPEDEF_NAME ENUMERATION_CONSTANT
+%union
+{
+	int     int_val;
+	float   float_val;
+        const char* string_val;
+//	Node*   node;
+//	NodeBlock* nodeblock;
+//	list<identifier>* list_ids;
+}
 
-%token	TYPEDEF EXTERN STATIC AUTO REGISTER INLINE
-%token	CONST RESTRICT VOLATILE
-%token	BOOL CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID
-%token	COMPLEX IMAGINARY 
-%token	STRUCT UNION ENUM ELLIPSIS
+%token LEX_FUNCTION
+%token LEX_RETURN
+%token LEX_IF
+%token LEX_ELSE
+%token LEX_WHILE
+%token LEX_FOR
+%token LEX_FOREACH
+%token LEX_BREAK
+%token LEX_CONTINUE
+%token LEX_GLOBAL
 
-%token	CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
+%right LEX_SUB_ASSIGN LEX_ADD_ASSIGN LEX_MUL_ASSIGN LEX_DIV_ASSIGN LEX_MOD_ASSIGN
+%token LEX_INC_OP LEX_DEC_OP
+%token LEX_EQ_OP LEX_NE_OP LEX_LE_OP LEX_GE_OP
+%token LEX_OR_OP LEX_AND_OP
+%token LEX_REF_ASSIGN
 
-%token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
+%token LEX_NULL
+%token LEX_TRUE
+%token LEX_FALSE
+%token <int_val>    LEX_INT
+%token <int_val>    LEX_IDENTIFIER
+%token <float_val>  LEX_FLOAT
+%token <string_val> LEX_STRING
 
-%start translation_unit
+
+// if-else conflicts: 1 shift/reduce
+%expect 1
+
+%error-verbose
+
+%start start
+
 %%
 
 primary_expression
-	: IDENTIFIER
-	| constant
-	| string
-	| '(' expression ')'
-	| generic_selection
-	;
-
-constant
-	: I_CONSTANT		/* includes character_constant */
-	| F_CONSTANT
-	| ENUMERATION_CONSTANT	/* after it has been defined as such */
-	;
-
-enumeration_constant		/* before it has been defined as such */
-	: IDENTIFIER
-	;
-
-string
-	: STRING_LITERAL
-	| FUNC_NAME
-	;
-
-generic_selection
-	: GENERIC '(' assignment_expression ',' generic_assoc_list ')'
-	;
-
-generic_assoc_list
-	: generic_association
-	| generic_assoc_list ',' generic_association
-	;
-
-generic_association
-	: type_name ':' assignment_expression
-	| DEFAULT ':' assignment_expression
+	: LEX_NULL { //$$ = new NodeValue(VALUENULL); 
+}
+	| LEX_TRUE { //$$ = new NodeValue(VALUEBOOL_TRUE); 
+}
+	| LEX_FALSE { //$$ = new NodeValue(VALUEBOOL_FALSE); 
+}
+	| LEX_INT { //$$ = new NodeValue(new ValueInt($1)); 
+}
+	| LEX_IDENTIFIER { //$$ = new NodeValue(new ValueIdentifier($1)); 
+}
+	| LEX_FLOAT { //$$ = new NodeValue(new ValueFloat($1)); 
+}
+	| LEX_STRING { //$$ = new NodeValue(new ValueString(*$1)); 
+}
+	| '(' expression ')' { //$$ = $2; 
+}
 	;
 
 postfix_expression
-	: primary_expression
-	| postfix_expression '[' expression ']'
-	| postfix_expression '(' ')'
-	| postfix_expression '(' argument_expression_list ')'
-	| postfix_expression '.' IDENTIFIER
-	| postfix_expression PTR_OP IDENTIFIER
-	| postfix_expression INC_OP
-	| postfix_expression DEC_OP
-	| '(' type_name ')' '{' initializer_list '}'
-	| '(' type_name ')' '{' initializer_list ',' '}'
+	: primary_expression { //$$ = $1; 
+}
+	| postfix_expression '[' expression ']' { //$$ = new NodeBinaryIndex($1, $3); 
+}
+	| LEX_IDENTIFIER '(' ')' { //$$ = new NodeFunctionCall($1, new NodeBlock, new CodePosition(@1.FILE, @1.LINE)); 
+}
+	| LEX_IDENTIFIER '(' argument_expression_list ')' { //$$ = new NodeFunctionCall($1, $3, new CodePosition(@1.FILE, @1.LINE)); 
+}
+	| postfix_expression '.' LEX_IDENTIFIER { //$$ = new NodeBinaryMember($1, new NodeValue(new ValueIdentifier($3))); 
+}
+	| postfix_expression '.' LEX_IDENTIFIER '(' ')' { //$$ = new NodeFunctionCall($3, new NodeBlock($1), new CodePosition(@3.FILE, @3.LINE)); 
+}
+	| postfix_expression '.' LEX_IDENTIFIER '(' argument_expression_list ')' { //$5->pushCommandToFront($1); $$ = new NodeFunctionCall($3, $5, new CodePosition(@3.FILE, @3.LINE)); 
+}
+	| postfix_expression LEX_INC_OP { //$$ = new NodeUnaryIncPost($1); 
+}
+	| postfix_expression LEX_DEC_OP { //$$ = new NodeUnaryDecPost($1); 
+}
 	;
 
 argument_expression_list
-	: assignment_expression
-	| argument_expression_list ',' assignment_expression
+	: assignment_expression { //$$ = new NodeBlock($1); 
+        }
+	| argument_expression_list ',' assignment_expression { //$1->pushCommandToBack($3); $$ = $1; 
+        }
 	;
 
 unary_expression
-	: postfix_expression
-	| INC_OP unary_expression
-	| DEC_OP unary_expression
-	| unary_operator cast_expression
-	| SIZEOF unary_expression
-	| SIZEOF '(' type_name ')'
-	| ALIGNOF '(' type_name ')'
-	;
-
-unary_operator
-	: '&'
-	| '*'
-	| '+'
-	| '-'
-	| '~'
-	| '!'
-	;
-
-cast_expression
-	: unary_expression
-	| '(' type_name ')' cast_expression
+	: postfix_expression { //$$ = $1; 
+        }
+	| LEX_INC_OP unary_expression { //$$ = new NodeUnaryIncPre($2); 
+        }
+	| LEX_DEC_OP unary_expression { //$$ = new NodeUnaryDecPre($2); 
+        }
+	| '+' unary_expression { //$$ = $2; 
+        }
+	| '-' unary_expression { //$$ = new NodeUnarySub($2); 
+        }
+	| '!' unary_expression { //$$ = new NodeUnaryNot($2); 
+        }
 	;
 
 multiplicative_expression
-	: cast_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
+	: unary_expression { //$$ = $1; 
+        }
+	| multiplicative_expression '*' unary_expression { //$$ = new NodeBinaryMult($1, $3); 
+        }
+	| multiplicative_expression '/' unary_expression { //$$ = new NodeBinaryDiv($1, $3); 
+        }
+	| multiplicative_expression '%' unary_expression { //$$ = new NodeBinaryMod($1, $3); 
+        }
 	;
 
 additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
-	;
-
-shift_expression
-	: additive_expression
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
+	: multiplicative_expression { //$$ = $1; 
+        }
+	| additive_expression '+' multiplicative_expression { //$$ = new NodeBinaryAdd($1, $3); 
+        }
+	| additive_expression '-' multiplicative_expression { //$$ = new NodeBinarySub($1, $3); 
+        }
 	;
 
 relational_expression
-	: shift_expression
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	: additive_expression { //$$ = $1; 
+        }
+	| relational_expression '<' additive_expression { //$$ = new NodeBinaryLt($1, $3); 
+        }
+	| relational_expression '>' additive_expression { //$$ = new NodeBinaryGt($1, $3); 
+        }
+	| relational_expression LEX_LE_OP additive_expression { //$$ = new NodeBinaryLe($1, $3); 
+        }
+	| relational_expression LEX_GE_OP additive_expression { //$$ = new NodeBinaryGe($1, $3); 
+        }
 	;
 
 equality_expression
-	: relational_expression
-	| equality_expression EQ_OP relational_expression
-	| equality_expression NE_OP relational_expression
-	;
-
-and_expression
-	: equality_expression
-	| and_expression '&' equality_expression
-	;
-
-exclusive_or_expression
-	: and_expression
-	| exclusive_or_expression '^' and_expression
-	;
-
-inclusive_or_expression
-	: exclusive_or_expression
-	| inclusive_or_expression '|' exclusive_or_expression
+	: relational_expression { //$$ = $1; 
+        }
+	| equality_expression LEX_EQ_OP relational_expression { //$$ = new NodeBinaryEq($1, $3); 
+        }
+	| equality_expression LEX_NE_OP relational_expression { //$$ = new NodeBinaryNe($1, $3); 
+        }
 	;
 
 logical_and_expression
-	: inclusive_or_expression
-	| logical_and_expression AND_OP inclusive_or_expression
+	: equality_expression { //$$ = $1; 
+        }
+	| logical_and_expression LEX_AND_OP equality_expression { //$$ = new NodeBinaryAnd($1, $3); 
+        }
 	;
 
 logical_or_expression
-	: logical_and_expression
-	| logical_or_expression OR_OP logical_and_expression
+	: logical_and_expression { //$$ = $1; 
+        }
+	| logical_or_expression LEX_OR_OP logical_and_expression { //$$ = new NodeBinaryOr($1, $3); 
+        }
 	;
 
 conditional_expression
-	: logical_or_expression
-	| logical_or_expression '?' expression ':' conditional_expression
+	: logical_or_expression { //$$ = $1; 
+        }
+	| logical_or_expression '?' expression ':' conditional_expression { //$$ = new NodeCondition($1, $3, $5); 
+        }
 	;
 
 assignment_expression
-	: conditional_expression
-	| unary_expression assignment_operator assignment_expression
-	;
-
-assignment_operator
-	: '='
-	| MUL_ASSIGN
-	| DIV_ASSIGN
-	| MOD_ASSIGN
-	| ADD_ASSIGN
-	| SUB_ASSIGN
-	| LEFT_ASSIGN
-	| RIGHT_ASSIGN
-	| AND_ASSIGN
-	| XOR_ASSIGN
-	| OR_ASSIGN
+	: conditional_expression { //$$ = $1; 
+        }
+	| unary_expression '=' assignment_expression { //$$ = new NodeBinaryAss($1, $3); 
+        }
+	| unary_expression LEX_MUL_ASSIGN assignment_expression { //$$ = new NodeBinaryAssMult($1, $3); 
+        }
+	| unary_expression LEX_DIV_ASSIGN assignment_expression { //$$ = new NodeBinaryAssDiv($1, $3); 
+        }
+	| unary_expression LEX_MOD_ASSIGN assignment_expression { //$$ = new NodeBinaryAssMod($1, $3); 
+        }
+	| unary_expression LEX_ADD_ASSIGN assignment_expression { //$$ = new NodeBinaryAssAdd($1, $3); 
+        }
+	| unary_expression LEX_SUB_ASSIGN assignment_expression { //$$ = new NodeBinaryAssSub($1, $3); 
+        }
+	| unary_expression LEX_REF_ASSIGN assignment_expression { //$$ = new NodeBinaryAssRef($1, $3); 
+        }
 	;
 
 expression
-	: assignment_expression
-	| expression ',' assignment_expression
-	;
-
-constant_expression
-	: conditional_expression	/* with constraints */
-	;
-
-declaration
-	: declaration_specifiers ';'
-	| declaration_specifiers init_declarator_list ';'
-	| static_assert_declaration
-	;
-
-declaration_specifiers
-	: storage_class_specifier declaration_specifiers
-	| storage_class_specifier
-	| type_specifier declaration_specifiers
-	| type_specifier
-	| type_qualifier declaration_specifiers
-	| type_qualifier
-	| function_specifier declaration_specifiers
-	| function_specifier
-	| alignment_specifier declaration_specifiers
-	| alignment_specifier
-	;
-
-init_declarator_list
-	: init_declarator
-	| init_declarator_list ',' init_declarator
-	;
-
-init_declarator
-	: declarator '=' initializer
-	| declarator
-	;
-
-storage_class_specifier
-	: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME */
-	| EXTERN
-	| STATIC
-	| THREAD_LOCAL
-	| AUTO
-	| REGISTER
-	;
-
-type_specifier
-	: VOID
-	| CHAR
-	| SHORT
-	| INT
-	| LONG
-	| FLOAT
-	| DOUBLE
-	| SIGNED
-	| UNSIGNED
-	| BOOL
-	| COMPLEX
-	| IMAGINARY	  	/* non-mandated extension */
-	| atomic_type_specifier
-	| struct_or_union_specifier
-	| enum_specifier
-	| TYPEDEF_NAME		/* after it has been defined as such */
-	;
-
-struct_or_union_specifier
-	: struct_or_union '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER
-	;
-
-struct_or_union
-	: STRUCT
-	| UNION
-	;
-
-struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
-	;
-
-struct_declaration
-	: specifier_qualifier_list ';'	/* for anonymous struct/union */
-	| specifier_qualifier_list struct_declarator_list ';'
-	| static_assert_declaration
-	;
-
-specifier_qualifier_list
-	: type_specifier specifier_qualifier_list
-	| type_specifier
-	| type_qualifier specifier_qualifier_list
-	| type_qualifier
-	;
-
-struct_declarator_list
-	: struct_declarator
-	| struct_declarator_list ',' struct_declarator
-	;
-
-struct_declarator
-	: ':' constant_expression
-	| declarator ':' constant_expression
-	| declarator
-	;
-
-enum_specifier
-	: ENUM '{' enumerator_list '}'
-	| ENUM '{' enumerator_list ',' '}'
-	| ENUM IDENTIFIER '{' enumerator_list '}'
-	| ENUM IDENTIFIER '{' enumerator_list ',' '}'
-	| ENUM IDENTIFIER
-	;
-
-enumerator_list
-	: enumerator
-	| enumerator_list ',' enumerator
-	;
-
-enumerator	/* identifiers must be flagged as ENUMERATION_CONSTANT */
-	: enumeration_constant '=' constant_expression
-	| enumeration_constant
-	;
-
-atomic_type_specifier
-	: ATOMIC '(' type_name ')'
-	;
-
-type_qualifier
-	: CONST
-	| RESTRICT
-	| VOLATILE
-	| ATOMIC
-	;
-
-function_specifier
-	: INLINE
-	| NORETURN
-	;
-
-alignment_specifier
-	: ALIGNAS '(' type_name ')'
-	| ALIGNAS '(' constant_expression ')'
-	;
-
-declarator
-	: pointer direct_declarator
-	| direct_declarator
-	;
-
-direct_declarator
-	: IDENTIFIER
-	| '(' declarator ')'
-	| direct_declarator '[' ']'
-	| direct_declarator '[' '*' ']'
-	| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
-	| direct_declarator '[' STATIC assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list '*' ']'
-	| direct_declarator '[' type_qualifier_list STATIC assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list ']'
-	| direct_declarator '[' assignment_expression ']'
-	| direct_declarator '(' parameter_type_list ')'
-	| direct_declarator '(' ')'
-	| direct_declarator '(' identifier_list ')'
-	;
-
-pointer
-	: '*' type_qualifier_list pointer
-	| '*' type_qualifier_list
-	| '*' pointer
-	| '*'
-	;
-
-type_qualifier_list
-	: type_qualifier
-	| type_qualifier_list type_qualifier
-	;
-
-
-parameter_type_list
-	: parameter_list ',' ELLIPSIS
-	| parameter_list
-	;
-
-parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
-	;
-
-parameter_declaration
-	: declaration_specifiers declarator
-	| declaration_specifiers abstract_declarator
-	| declaration_specifiers
-	;
-
-identifier_list
-	: IDENTIFIER
-	| identifier_list ',' IDENTIFIER
-	;
-
-type_name
-	: specifier_qualifier_list abstract_declarator
-	| specifier_qualifier_list
-	;
-
-abstract_declarator
-	: pointer direct_abstract_declarator
-	| pointer
-	| direct_abstract_declarator
-	;
-
-direct_abstract_declarator
-	: '(' abstract_declarator ')'
-	| '[' ']'
-	| '[' '*' ']'
-	| '[' STATIC type_qualifier_list assignment_expression ']'
-	| '[' STATIC assignment_expression ']'
-	| '[' type_qualifier_list STATIC assignment_expression ']'
-	| '[' type_qualifier_list assignment_expression ']'
-	| '[' type_qualifier_list ']'
-	| '[' assignment_expression ']'
-	| direct_abstract_declarator '[' ']'
-	| direct_abstract_declarator '[' '*' ']'
-	| direct_abstract_declarator '[' STATIC type_qualifier_list assignment_expression ']'
-	| direct_abstract_declarator '[' STATIC assignment_expression ']'
-	| direct_abstract_declarator '[' type_qualifier_list assignment_expression ']'
-	| direct_abstract_declarator '[' type_qualifier_list STATIC assignment_expression ']'
-	| direct_abstract_declarator '[' type_qualifier_list ']'
-	| direct_abstract_declarator '[' assignment_expression ']'
-	| '(' ')'
-	| '(' parameter_type_list ')'
-	| direct_abstract_declarator '(' ')'
-	| direct_abstract_declarator '(' parameter_type_list ')'
-	;
-
-initializer
-	: '{' initializer_list '}'
-	| '{' initializer_list ',' '}'
-	| assignment_expression
-	;
-
-initializer_list
-	: designation initializer
-	| initializer
-	| initializer_list ',' designation initializer
-	| initializer_list ',' initializer
-	;
-
-designation
-	: designator_list '='
-	;
-
-designator_list
-	: designator
-	| designator_list designator
-	;
-
-designator
-	: '[' constant_expression ']'
-	| '.' IDENTIFIER
-	;
-
-static_assert_declaration
-	: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' ';'
+	: assignment_expression { //$$ = $1; 
+        }
 	;
 
 statement
-	: labeled_statement
-	| compound_statement
-	| expression_statement
-	| selection_statement
-	| iteration_statement
-	| jump_statement
-	;
-
-labeled_statement
-	: IDENTIFIER ':' statement
-	| CASE constant_expression ':' statement
-	| DEFAULT ':' statement
-	;
-
-compound_statement
-	: '{' '}'
-	| '{'  block_item_list '}'
-	;
-
-block_item_list
-	: block_item
-	| block_item_list block_item
-	;
-
-block_item
-	: declaration
-	| statement
+	: compound_statement { //$$ = $1; 
+        }
+	| expression_statement { //$$ = new NodePosition($1, new CodePosition(@1.FILE, @1.LINE)); 
+        }
+	/* "parser.y: conflicts: 1 shift/reduce" is ok */
+	| LEX_IF '(' expression ')' statement { 
+          //$$ = new NodeCondition(new NodePosition($3, new CodePosition(@3.FILE, @3.LINE)), $5, new NodeEmptyCommand); 
+        }
+	| LEX_IF '(' expression ')' statement LEX_ELSE statement { 
+          //$$ = new NodeCondition(new NodePosition($3, new CodePosition(@3.FILE, @3.LINE)), $5, $7); 
+        }
+	| LEX_WHILE '(' expression ')' statement { 
+          //$$ = new NodeLoop(new NodeEmptyCommand, new NodePosition($3, new CodePosition(@3.FILE, @3.LINE)), new NodeEmptyCommand, $5); 
+        }
+	| LEX_FOR '(' expression_statement expression_statement ')' statement { 
+          //$$ = new NodeLoop($3, new NodePosition($4, new CodePosition(@4.FILE, @4.LINE)), new NodeEmptyCommand, $6); 
+        }
+	| LEX_FOR '(' expression_statement expression_statement expression ')' statement { 
+          //$$ = new NodeLoop($3, new NodePosition($4, new CodePosition(@4.FILE, @4.LINE)), $5, $7); 
+        }
+	| LEX_FOREACH '(' LEX_IDENTIFIER ';' expression ')' statement { 
+          //$$ = new NodeForeach($3, new NodePosition($5, new CodePosition(@5.FILE, @5.LINE)), $7); 
+        }
+	| LEX_BREAK ';' { //$$ = new NodePosition(new NodeJumpBreak, new CodePosition(@2.FILE, @2.LINE)); 
+        }
+	| LEX_CONTINUE ';' { 
+          //$$ = new NodePosition(new NodeJumpContinue, new CodePosition(@2.FILE, @2.LINE)); 
+        }
+	| LEX_RETURN ';' { 
+          //$$ = new NodePosition(new NodeUnaryReturn(new NodeEmptyCommand), new CodePosition(@2.FILE, @2.LINE)); 
+        }
+	| LEX_RETURN expression ';' { 
+          //$$ = new NodePosition(new NodeUnaryReturn($2), new CodePosition(@3.FILE, @3.LINE)); 
+        }
+	| LEX_GLOBAL LEX_IDENTIFIER ';' { 
+          //$$ = new NodePosition(new NodeGlobal($2), new CodePosition(@3.FILE, @3.LINE)); 
+        }
 	;
 
 expression_statement
-	: ';'
-	| expression ';'
+	: ';' { 
+          //$$ = new NodeEmptyCommand; 
+        }
+	| expression ';' { 
+          //$$ = $1; 
+        }
 	;
 
-selection_statement
-	: IF '(' expression ')' statement ELSE statement
-	| IF '(' expression ')' statement
-	| SWITCH '(' expression ')' statement
+compound_statement
+	: '{' '}' { 
+          //$$ = new NodeEmptyCommand; 
+        }
+	| '{' block_item_list '}' { 
+          //$$ = $2; 
+        }
 	;
 
-iteration_statement
-	: WHILE '(' expression ')' statement
-	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
-	| FOR '(' declaration expression_statement ')' statement
-	| FOR '(' declaration expression_statement expression ')' statement
-	;
-
-jump_statement
-	: GOTO IDENTIFIER ';'
-	| CONTINUE ';'
-	| BREAK ';'
-	| RETURN ';'
-	| RETURN expression ';'
-	;
-
-translation_unit
-	: external_declaration
-	| translation_unit external_declaration
-	;
-
-external_declaration
-	: function_definition
-	| declaration
+block_item_list
+	: statement { 
+          //$$ = new NodeBlock($1); 
+        }
+	| block_item_list statement { 
+          //$1->pushCommandToBack($2); $$ = $1; 
+        }
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
-	| declaration_specifiers declarator compound_statement
+	: function_and_name '(' parameter_list ')' compound_statement { 
+             //       CONTEXT.addFunction(new NodeFunctionScript($1, $3, $5, new CodePosition(@1.FILE, @1.LINE))); 
+            }
+	| function_and_name '(' ')' compound_statement { 
+            // CONTEXT.addFunction(new NodeFunctionScript($1, new list<identifier>, $4, new CodePosition(@1.FILE, @1.LINE)));   
+            }
 	;
 
-declaration_list
-	: declaration
-	| declaration_list declaration
+function_and_name
+	: LEX_FUNCTION LEX_IDENTIFIER { 
+            //g_lexan->setCurrentlyProcessedFunction($2); $$ = $2; 
+            }
 	;
 
+parameter_list
+	: LEX_IDENTIFIER { 
+          //$$ = new list<identifier>; $$->push_back($1); 
+          }
+	| parameter_list ',' LEX_IDENTIFIER { 
+            //$1->push_back($3); $$ = $1; 
+          }
+	;
+
+start
+	: /* empty */
+	| start function_definition
+	;
 %%
+
 #include <stdio.h>
 
 int yyerror(char *s)
 {
 	fflush(stdout);
-	fprintf(stderr, "*** %s\n", s);
+	fprintf(stderr, "from yacc %s\n", s);
+        return -1;
 }
+/*
+void yyerror(char const *msg)
+{
+	stringstream ss;
+	ss << ID2STR(g_lexan->getFile()) << ":" << g_lexan->getLine();
+	ERR_PP(ss.str(), msg);
+}
+*/
 
 int main(int argc, char** argv)
 {
@@ -550,9 +325,9 @@ int main(int argc, char** argv)
     yyin = myfile;
   }
 
-  do {	
+ // do {	
     yyparse();
-  } while (!feof(yyin));
+ // } while (!feof(yyin));
 
   return 0;
 }

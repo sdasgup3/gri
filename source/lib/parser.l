@@ -1,5 +1,6 @@
 %{
-#include "parser.tab.h"
+#include "syntax.tab.h"
+#include <assert.h>
 
 extern int yyerror( char *);  /* prints grammar violation message */
 
@@ -8,8 +9,10 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 #define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
 
 static void comment(void);
-static int check_type(void);
+static void token_dump(const char const *);
+static char* strip_quotes(const char const *, int);
 %}
+
 O   [0-7]
 D   [0-9]
 NZ  [1-9]
@@ -18,128 +21,277 @@ A   [a-zA-Z_0-9]
 H   [a-fA-F0-9]
 HP  (0[xX])
 E   ([Ee][+-]?{D}+)
-P   ([Pp][+-]?{D}+)
-FS  (f|F|l|L)
-IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
-CP  (u|U|L)
-SP  (u8|u|U|L)
 ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
 WS  [ \t\v\n\f]
+ID  [_]?{L}{A}*
 
+%x  INCLUDE
 
 %%
-"/*"                                    { comment(); }
-"//".*                                    { /* consume //-comment */ }
+"/*"                                    { 
+                                          comment(); 
+                                        }
+"//".*                                  {
+                                        }  
+"function"                              { 
+                                          token_dump(yytext);
+                                          return LEX_FUNCTION;  
+                                        }
+"return"				{ 
+                                          token_dump(yytext);
+                                          return LEX_RETURN;  
+                                        }
+"if"					{ 
+                                          token_dump(yytext);
+                                          return LEX_IF;     
+                                        }
+"else"					{ 
+                                          token_dump(yytext);
+                                          return LEX_ELSE;   
+                                        }
+"while"					{ 
+                                          token_dump(yytext);
+                                          return LEX_WHILE; 
+                                        }
+"for"					{ 
+                                          token_dump(yytext);
+                                          return LEX_FOR;   
+                                        }
+"foreach"				{ 
+                                          token_dump(yytext);
+                                          return LEX_FOREACH;  
+                                        }
+"break"					{ 
+                                          token_dump(yytext);
+                                          return LEX_BREAK;    
+                                        }
+"continue"				{ 
+                                          token_dump(yytext);
+                                          return LEX_CONTINUE; 
+                                        }
+"true"				        { 
+                                          token_dump(yytext);
+                                          return LEX_TRUE;     
+                                        }
+"false"				        { 
+                                          token_dump(yytext);
+                                          return LEX_FALSE;    
+                                        }
+"null"				        { 
+                                          token_dump(yytext);
+                                          return LEX_NULL;    
+                                        }
+"global"				{ 
+                                          token_dump(yytext);
+                                          return LEX_GLOBAL;   
+                                        }
+"__FILE__"				{ 
+                                          yylval.string_val = "dummy";  
+                                          token_dump(yytext);
+                                          return LEX_STRING; 
+                                        }
+"__LINE__"				{   
+                                          yylval.int_val = 0 ;          
+                                          token_dump(yytext);
+                                          return LEX_INT;    
+                                        }
+"__FUNCTION__"				{ 
+                                          yylval.string_val = "dummy";  
+                                          token_dump(yytext);
+                                          return LEX_STRING; 
+                                        }
 
-"auto"					{ return(AUTO); }
-"break"					{ return(BREAK); }
-"case"					{ return(CASE); }
-"char"					{ return(CHAR); }
-"const"					{ return(CONST); }
-"continue"				{ return(CONTINUE); }
-"default"				{ return(DEFAULT); }
-"do"					{ return(DO); }
-"double"				{ return(DOUBLE); }
-"else"					{ return(ELSE); }
-"enum"					{ return(ENUM); }
-"extern"				{ return(EXTERN); }
-"float"					{ return(FLOAT); }
-"for"					{ return(FOR); }
-"goto"					{ return(GOTO); }
-"if"					{ return(IF); }
-"inline"				{ return(INLINE); }
-"int"					{ return(INT); }
-"long"					{ return(LONG); }
-"register"				{ return(REGISTER); }
-"restrict"				{ return(RESTRICT); }
-"return"				{ return(RETURN); }
-"short"					{ return(SHORT); }
-"signed"				{ return(SIGNED); }
-"sizeof"				{ return(SIZEOF); }
-"static"				{ return(STATIC); }
-"struct"				{ return(STRUCT); }
-"switch"				{ return(SWITCH); }
-"typedef"				{ return(TYPEDEF); }
-"union"					{ return(UNION); }
-"unsigned"				{ return(UNSIGNED); }
-"void"					{ return(VOID); }
-"volatile"				{ return(VOLATILE); }
-"while"					{ return(WHILE); }
-"_Alignas"                              { return ALIGNAS; }
-"_Alignof"                              { return ALIGNOF; }
-"_Atomic"                               { return ATOMIC; }
-"_Bool"                                 { return BOOL; }
-"_Complex"                              { return COMPLEX; }
-"_Generic"                              { return GENERIC; }
-"_Imaginary"                            { return IMAGINARY; }
-"_Noreturn"                             { return NORETURN; }
-"_Static_assert"                        { return STATIC_ASSERT; }
-"_Thread_local"                         { return THREAD_LOCAL; }
-"__func__"                              { return FUNC_NAME; }
+{NZ}{D}*				{
+                                          yylval.int_val = atoi(yytext);                                
+                                          token_dump(yytext);
+                                          return LEX_INT; 
+                                        }
+"0"{O}*				        {
+                                          yylval.int_val = strtol(yytext, NULL, 8);                                
+                                          token_dump(yytext);
+                                          return LEX_INT; 
+                                        }
+{HP}{H}+				{ 
+                                          yylval.int_val = strtol(yytext, NULL, 16);                                
+                                          token_dump(yytext);
+                                          return LEX_INT; 
+                                        }
+{D}+{E}				        { 
+                                          yylval.float_val = strtod(yytext, NULL);                                
+                                          token_dump(yytext);
+                                          return LEX_FLOAT; 
+                                        }
+{D}*"."{D}*{E}?			        { 
+                                          yylval.float_val = strtod(yytext, NULL);                                
+                                          token_dump(yytext);
+                                          return LEX_FLOAT; 
+                                        }
+"include"                               { 
+                                          token_dump(yytext);
+                                          BEGIN(INCLUDE);
+                                        }
+<INCLUDE>[ \t]*                         {
+                                          token_dump(yytext) ; 
+                                        }        
+<INCLUDE>\"(\\.|[^\\"])*\"([ \t]*)\;    { 
+                                          token_dump(yytext);
+                                          char* file = strip_quotes(yytext, yyleng);
+                                          yyin = fopen(file, "r");
+                                          assert(yyin );
+                                          if ( ! yyin )
+                                            yyerror("Cannot open include file");
+     			                  yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+                                          BEGIN(INITIAL);
+                                        }
+<<EOF>>                                 {
+     			                  yypop_buffer_state();
+     
+                                          if ( !YY_CURRENT_BUFFER ) {
+                                            yyterminate();
+                                          }
+                                        }
+{ID}                                    {
+                                          yylval.string_val = yytext;
+                                          token_dump(yytext);
+                                          return LEX_IDENTIFIER; 
+                                        }
+\"(\\.|[^\\"])*\"	                { 
+                                          yylval.string_val = yytext;
+                                          token_dump(yytext);
+                                          return LEX_STRING; 
+                                        }
 
-{L}{A}*					{ return check_type(); }
-
-{HP}{H}+{IS}?				{ return I_CONSTANT; }
-{NZ}{D}*{IS}?				{ return I_CONSTANT; }
-"0"{O}*{IS}?				{ return I_CONSTANT; }
-{CP}?"'"([^'\\\n]|{ES})+"'"		{ return I_CONSTANT; }
-
-{D}+{E}{FS}?				{ return F_CONSTANT; }
-{D}*"."{D}+{E}?{FS}?			{ return F_CONSTANT; }
-{D}+"."{E}?{FS}?			{ return F_CONSTANT; }
-{HP}{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}*"."{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}+"."{P}{FS}?			{ return F_CONSTANT; }
-
-({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+	{ return STRING_LITERAL; }
-
-"..."					{ return ELLIPSIS; }
-">>="					{ return RIGHT_ASSIGN; }
-"<<="					{ return LEFT_ASSIGN; }
-"+="					{ return ADD_ASSIGN; }
-"-="					{ return SUB_ASSIGN; }
-"*="					{ return MUL_ASSIGN; }
-"/="					{ return DIV_ASSIGN; }
-"%="					{ return MOD_ASSIGN; }
-"&="					{ return AND_ASSIGN; }
-"^="					{ return XOR_ASSIGN; }
-"|="					{ return OR_ASSIGN; }
-">>"					{ return RIGHT_OP; }
-"<<"					{ return LEFT_OP; }
-"++"					{ return INC_OP; }
-"--"					{ return DEC_OP; }
-"->"					{ return PTR_OP; }
-"&&"					{ return AND_OP; }
-"||"					{ return OR_OP; }
-"<="					{ return LE_OP; }
-">="					{ return GE_OP; }
-"=="					{ return EQ_OP; }
-"!="					{ return NE_OP; }
-";"					{ return ';'; }
-("{"|"<%")				{ return '{'; }
-("}"|"%>")				{ return '}'; }
-","					{ return ','; }
-":"					{ return ':'; }
-"="					{ return '='; }
-"("					{ return '('; }
-")"					{ return ')'; }
-("["|"<:")				{ return '['; }
-("]"|":>")				{ return ']'; }
-"."					{ return '.'; }
-"&"					{ return '&'; }
-"!"					{ return '!'; }
-"~"					{ return '~'; }
-"-"					{ return '-'; }
-"+"					{ return '+'; }
-"*"					{ return '*'; }
-"/"					{ return '/'; }
-"%"					{ return '%'; }
-"<"					{ return '<'; }
-">"					{ return '>'; }
-"^"					{ return '^'; }
-"|"					{ return '|'; }
-"?"					{ return '?'; }
-
+"="					{ 
+                                          token_dump(yytext);
+                                          return '='; 
+                                        }   
+"=="					{ 
+                                          token_dump(yytext);
+                                          return LEX_EQ_OP; 
+                                        }
+"<"					{ 
+                                          token_dump(yytext);
+                                          return '<'; 
+                                        }
+"<="					{ 
+                                          token_dump(yytext);
+                                          return LEX_LE_OP; 
+                                        }
+"!"					{ 
+                                          token_dump(yytext);
+                                          return '!'; 
+                                        }
+"!="					{ 
+                                          token_dump(yytext);
+                                          return LEX_NE_OP; 
+                                        }
+">"					{ 
+                                          token_dump(yytext);
+                                          return '>'; 
+                                        }
+">="					{ 
+                                          token_dump(yytext);
+                                          return LEX_GE_OP; 
+                                        }
+"+"					{ 
+                                          token_dump(yytext);
+                                          return '+'; 
+                                        }
+"+="					{ 
+                                          token_dump(yytext);
+                                          return LEX_ADD_ASSIGN; 
+                                        }
+"++"					{ 
+                                          token_dump(yytext);
+                                          return LEX_INC_OP; 
+                                        }
+"-"					{ 
+                                          token_dump(yytext);
+                                          return '-'; 
+                                        }
+"-="					{ 
+                                          token_dump(yytext);
+                                          return LEX_SUB_ASSIGN; 
+                                        }
+"--"					{ 
+                                          token_dump(yytext);
+                                          return LEX_DEC_OP; 
+                                        }
+"*"					{ 
+                                          token_dump(yytext);
+                                          return '*'; }
+"*="					{ 
+                                          token_dump(yytext);
+                                          return LEX_MUL_ASSIGN; 
+                                        }
+"/"					{ 
+                                          token_dump(yytext);
+                                          return '/'; 
+                                        }
+"/="					{ 
+                                          token_dump(yytext);
+                                          return LEX_DIV_ASSIGN; 
+                                        }
+"%"					{ 
+                                          token_dump(yytext);
+                                          return '%'; 
+                                        }
+"%="					{ 
+                                          token_dump(yytext);
+                                          return LEX_MOD_ASSIGN; 
+                                        }
+"&&"					{ 
+                                          token_dump(yytext);
+                                          return LEX_AND_OP; 
+                                        }
+"&="					{
+                                          token_dump(yytext);
+                                          return LEX_REF_ASSIGN; 
+                                        }
+"||"					{ 
+                                          token_dump(yytext);
+                                          return LEX_OR_OP; 
+                                        }
+","					{ 
+                                          token_dump(yytext);
+                                          return ','; 
+                                        }
+";"					{ 
+                                          token_dump(yytext);
+                                          return ';'; 
+                                        }
+"?"					{ 
+                                          token_dump(yytext);
+                                          return '?'; 
+                                        }
+"("					{ 
+                                          token_dump(yytext);
+                                          return '('; 
+                                        }
+")"					{ 
+                                          token_dump(yytext);
+                                          return ')'; 
+                                        }
+"["					{ 
+                                          token_dump(yytext);
+                                          return '['; 
+                                        }
+"]"					{ 
+                                          token_dump(yytext);
+                                          return ']'; 
+                                        }
+"{"					{ 
+                                          token_dump(yytext);
+                                          return '{'; 
+                                        }
+"}"					{ 
+                                          token_dump(yytext);
+                                          return '}'; 
+                                        }
+":"					{ 
+                                          token_dump(yytext);
+                                          return ':'; 
+                                        }
 {WS}					{ /* whitespace separates tokens */ }
 .					{ /* discard bad characters */ }
 
@@ -169,16 +321,26 @@ static void comment(void)
     yyerror("unterminated comment");
 }
 
-static int check_type(void)
-{
-    switch (sym_type(yytext))
-    {
-    case TYPEDEF_NAME:                /* previously defined */
-        return TYPEDEF_NAME;
-    case ENUMERATION_CONSTANT:        /* previously defined */
-        return ENUMERATION_CONSTANT;
-    default:                          /* includes undefined */
-        return IDENTIFIER;
-    }
+static void token_dump(const char const * tok) {
+  printf("<%s>\n", tok);
 }
+
+static char* strip_quotes(const char const * quoted_str, int len) {
+  char* ret = (char*) malloc(len-1);
+  int i = 1, k=0;
+  for(i = 1;i  < len-1 && quoted_str[i] != '"'; i++) {
+    ret[k++] = quoted_str[i];
+  }
+  ret[k] = '\0';
+
+  token_dump(ret);
+
+  return ret;
+}
+
+
+
+
+
+
 
