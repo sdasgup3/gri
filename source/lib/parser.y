@@ -1,9 +1,8 @@
 %{
-#include <stdio.h>  
-//#include <string>  
-//using namespace std;
-//#include <stdlib.h>  
+#include "general.h"
 extern FILE* yyin;
+int yylex(void);
+void yyerror( const char *);
 %}
 
 %union
@@ -297,13 +296,11 @@ start
 	;
 %%
 
-#include <stdio.h>
-
-int yyerror(char *s)
+void 
+yyerror(const char *s)
 {
 	fflush(stdout);
 	fprintf(stderr, "from yacc %s\n", s);
-        return -1;
 }
 /*
 void yyerror(char const *msg)
@@ -325,9 +322,7 @@ int main(int argc, char** argv)
     yyin = myfile;
   }
 
- // do {	
-    yyparse();
- // } while (!feof(yyin));
+  yyparse();
 
   return 0;
 }

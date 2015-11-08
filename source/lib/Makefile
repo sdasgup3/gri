@@ -3,7 +3,7 @@ TARGET=gri
 LEX=flex
 YACC=bison
 CC=gcc
-CXX=g++
+CXX=g++ -std=c++11
 LDFLAGS= -
 INC=
 SOURCE=
@@ -11,8 +11,8 @@ TESTFILES=$(wildcard tests/*.txt)
 
 all: $(TARGET)
  
-$(TARGET): lex.yy.c $(SOURCE).tab.c $(SOURCE).tab.h
-	   	$(CC) -o gri lex.yy.c  $(SOURCE).tab.c 
+$(TARGET): lex.yy.c $(SOURCE).tab.c $(SOURCE).tab.h base.h stringtable.h
+	   	$(CXX) -o gri lex.yy.c  $(SOURCE).tab.c  stringtable.cpp base.cpp
 
 
 lex.yy.c: $(SOURCE).l
@@ -30,7 +30,7 @@ test:	$(TARGET)
 
 clean:
 	rm -rf \
-	  lex.yy.c *.tab.c *.tab.h \
+	  lex.yy.*  *.tab.c *.tab.h \
 	  ./gri
 
 		
