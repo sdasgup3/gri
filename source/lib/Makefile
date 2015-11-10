@@ -1,9 +1,9 @@
 LIBRARY = libgri.so
 TARGET = $(LIBRARY)
 
-PROJECT_DIR = ..
-BUILD_DIR = $(PROJECT_DIR)/build/lib
-GENERATED_DIR = generated
+PROJECT_DIR=..
+BUILD_DIR=$(PROJECT_DIR)/build/lib
+GENERATED_DIR=generated
 
 
 CC = g++
@@ -49,3 +49,9 @@ $(BUILD_DIR)/%.o: %.cpp
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR) $(DIST_DIR)/$(LIBRARY)*
+
+printvars::
+	@echo "PROJECT_DIR    	: " '$(PROJECT_DIR)'
+	@echo "BUILD_DIR    	: " '$(BUILD_DIR)'
+	@echo "SOURCES    	: " '$(SOURCES)'
+	

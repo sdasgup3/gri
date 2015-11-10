@@ -1,5 +1,6 @@
 PROJECT_DIR = .
 BUILD_DIR = $(PROJECT_DIR)/build
+TESTS=$(wildcard *.cpp) 
 
 .PHONY: all
 all: compile
@@ -8,6 +9,9 @@ all: compile
 compile:
 	make -C lib all
 	make -C gri all
+
+test:	
+	
 
 .PHONY: install
 install:
@@ -26,3 +30,10 @@ clean:
 	make -C lib clean
 	make -C gri clean
 	rm -rf $(BUILD_DIR)
+
+printvars::
+	@echo "PROJECT_DIR    	: " '$(PROJECT_DIR)'
+	@echo "GENERATED_DIR    : " '$(GENERATED_DIR)'
+	@echo "BUILD_DIR    	: " '$(BUILD_DIR)'
+	@echo "TESTS    	: " '$(TESTS)'
+
