@@ -1,6 +1,8 @@
 PROJECT_DIR = .
 BUILD_DIR = $(PROJECT_DIR)/build
-TESTS=$(wildcard *.cpp) 
+TESTS=$(wildcard tests/*.txt)
+EXEC=$(BUILD_DIR)/gri/gri
+
 
 .PHONY: all
 all: compile
@@ -11,6 +13,10 @@ compile:
 	make -C gri all
 
 test:	
+	for t in $(TESTS); do 	\
+		echo "Parsing $$t"; \
+		$(EXEC) $$t; 	\
+	done
 	
 
 .PHONY: install
@@ -36,4 +42,5 @@ printvars::
 	@echo "GENERATED_DIR    : " '$(GENERATED_DIR)'
 	@echo "BUILD_DIR    	: " '$(BUILD_DIR)'
 	@echo "TESTS    	: " '$(TESTS)'
+	@echo "EXEC    		: " '$(EXEC)'
 
