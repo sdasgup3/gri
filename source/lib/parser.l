@@ -1,11 +1,17 @@
 %{
 #include"parser.hpp"
 #include "general.h"
-#include  "stringtable.h"
-#define STR2ID(str) STRTABLE.getID(str)
-#define ID2STR(id) STRTABLE.getString(id)
+#include "context.h"
+//#include  "stringtable.h"
+//#define STR2ID(str) STRTABLE.getID(str)
+//#define ID2STR(id) STRTABLE.getString(id)
+//StringTable STRTABLE;  
 
-StringTable STRTABLE;  
+#define CONTEXT Context::getInstance()
+#define STR2ID(str) CONTEXT->getStringTable()->getID(str)
+#define ID2STR(id) CONTEXT.getStringTable()->getString(id)
+
+
 map<identifier, string> m_defines;
 YY_BUFFER_STATE main_buffer = 0 ;
 YY_BUFFER_STATE expansion_buffer = 0 ;
@@ -366,9 +372,10 @@ static void comment(void)
 static void token_dump(const char* const  tok) {
   printf("<%s>\n", tok);
 }
-static void token_dump(std::string &tok) {
-  std::cout << "<" << tok << ">"<< std::endl;
-}
+
+//static void token_dump(std::string &tok) {
+//  std::cout << "<" << tok << ">"<< std::endl;
+//}
 
 static void 
 strip_quotes(const char* const quoted_str, int len, std::string &name1, std::string &name2) {
