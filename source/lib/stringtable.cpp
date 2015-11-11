@@ -36,21 +36,24 @@ string& StringTable::getString(identifier id)
 }
 
 
-void StringTable::dump(ostream& os) const
+void StringTable::dump(ostream& os, uint indent) const
 {
+	dumpIndent(os, indent);
 	os << "<StringTable>" << endl;
 
 	vector<string>::const_iterator it;
 	for(it = m_data.begin(); it != m_data.end(); it++)
 	{
+	        dumpIndent(os, indent+1);
 		os << "<string id=\"" << (it - m_data.begin()) << "\">" << (*it) << "</string>" << endl;
 	}
+	dumpIndent(os, indent);
 	os << "</StringTable>" << endl;
 }
 
 ostream& operator<<(ostream& os, const StringTable& node)
 {
-	node.dump(os);
+	node.dump(os,0);
 	return os;
 }
 

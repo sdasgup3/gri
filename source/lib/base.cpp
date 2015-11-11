@@ -47,3 +47,9 @@ void Base::printMemoryLeaks(uint number_of_static_objects)
         */
 }
 #endif // CHECK_MEMORY_LEAKS
+
+void Base::dumpIndent(ostream& os, uint indent)
+{
+	for(uint i = 0; i < indent; i++)
+		os << "    ";
+}
