@@ -8,7 +8,9 @@ GENERATED_DIR=generated
 
 CC = g++
 
-SOURCES = $(wildcard *.cpp) $(GENERATED_DIR)/parser.cpp $(GENERATED_DIR)/lexer.cpp
+OPERATOR_SOURCES = $(wildcard generated/nodeunary*.cpp generated/nodebinary*.cpp)
+#BUILTIN_SOURCES = $(wildcard generated/nodebuiltin*.cpp)
+SOURCES = $(wildcard *.cpp) $(OPERATOR_SOURCES) $(GENERATED_DIR)/parser.cpp $(GENERATED_DIR)/lexer.cpp
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.cpp=.o))
 
 CFLAGS = -MMD -std=c++11 -pedantic -Wall -Wextra  -fPIC -g
@@ -48,7 +50,7 @@ $(BUILD_DIR)/%.o: %.cpp
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) $(DIST_DIR)/$(LIBRARY)*
+	rm -rf $(BUILD_DIR) $(DIST_DIR)/$(LIBRARY)* $(GENERATED_DIR)/lexer.cpp $(GENERATED_DIR)/parser.cpp
 
 printvars::
 	@echo "PROJECT_DIR    	: " '$(PROJECT_DIR)'

@@ -1,15 +1,16 @@
 %{
-#include"parser.hpp"
+  
 #include "general.h"
+#include "nodeblock.h"
+#include "node.h"
+
+#include"parser.hpp"
 #include "context.h"
 //#include  "stringtable.h"
 //#define STR2ID(str) STRTABLE.getID(str)
 //#define ID2STR(id) STRTABLE.getString(id)
 //StringTable STRTABLE;  
 
-#define CONTEXT Context::getInstance()
-#define STR2ID(str) CONTEXT->getStringTable()->getID(str)
-#define ID2STR(id) CONTEXT.getStringTable()->getString(id)
 
 
 map<identifier, string> m_defines;
@@ -197,7 +198,7 @@ QS  \"(\\.|[^\\"])*\"
                                           }
                                         }
 {ID}                                    {
-                                          yylval.string_val = yytext;
+                                          yylval.int_val = STR2ID(std::string(yytext));
                                           token_dump(yytext);
                                           if(false == expandMacro(std::string(yytext))) {
                                             return LEX_IDENTIFIER; 

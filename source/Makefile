@@ -13,11 +13,7 @@ compile:
 	make -C gri all
 
 test:	
-	for t in $(TESTS); do 	\
-		echo "Parsing $$t"; \
-		$(EXEC) $$t; 	\
-	done
-	
+	make -C tests
 
 .PHONY: install
 install:
