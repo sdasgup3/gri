@@ -12,7 +12,7 @@ public:
 	StringTable(uint expectedsize = 100);
 	virtual ~StringTable();
 
-	virtual void dump(ostream& os) const;
+	virtual void dump(ostream& os,  uint indent) const;
 
 	identifier getID(const string& str);
 	string& getString(identifier id);
