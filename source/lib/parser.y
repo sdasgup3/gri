@@ -1,5 +1,4 @@
 %{
-#include <cassert>
 #include "general.h"
 
 #include "node.h"

@@ -6,6 +6,6 @@ TESTS=$(wildcard *.txt)
 test:	
 	for t in $(TESTS); do 	\
 		echo "Parsing $$t"; \
-		$(EXEC) $$t; 	\
+		$(EXEC) -f $$t -d; 	\
 	done
 

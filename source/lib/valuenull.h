@@ -32,7 +32,10 @@ class ValueNull : public Value
 public:
 	static inline CountPtr<Value>& getInstance(void)
 	{
-		return *m_instance;
+          if(0 == m_instance) {
+            m_instance = new CountPtr<Value>(new ValueNull);
+          }
+	  return *m_instance;
 	}
 
 	static void initInstance(void);

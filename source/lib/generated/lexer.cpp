@@ -2503,7 +2503,7 @@ static void comment(void)
 }
 
 static void token_dump(const char* const  tok) {
-  printf("<%s>\n", tok);
+  //printf("<%s>\n", tok);
 }
 
 //static void token_dump(std::string &tok) {

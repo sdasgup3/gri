@@ -13,12 +13,18 @@ class ValueBool : public Value
 public:
 	static inline CountPtr<Value>& getInstanceTrue(void)
 	{
-		return *m_instance_true;
+          if(0 == m_instance_true) {
+            m_instance_true = new CountPtr<Value>(new ValueBool(true));
+          }
+	  return *m_instance_true;
 	}
 
 	static inline CountPtr<Value>& getInstanceFalse(void)
 	{
-		return *m_instance_false;
+          if(0 == m_instance_false) {
+            m_instance_false = new CountPtr<Value>(new ValueBool(false));
+          }
+	  return *m_instance_false;
 	}
 
 	static void initInstance(void);

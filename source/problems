@@ -1,10 +1,1 @@
-tests/03_arrays.txt
-tests/08_linked_list_ref.txt
-tests/08_linked_list.txt
-tests/09_debugging.txt
-tests/15_visualizations.txt
-tests/16_draw_house.txt
-tests/17_graphs.txt
-tests/18_get_graph.txt
-tests/19_dfs_visualization.txt
 tests/tests.txt
