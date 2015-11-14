@@ -45,6 +45,7 @@ public:
   CountPtr<Value> setLocalVariable(identifier name, CountPtr<Value> val);
   CountPtr<Value> setLocalVariableAllowRef(identifier name, CountPtr<Value> val);
   void deleteLocalVariable(identifier name);
+  void executeMain();
 
 
 private:
