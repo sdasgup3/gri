@@ -1,23 +1,3 @@
-/*
- * Copyright 2008 Michal Turek
- *
- * This file is part of Graphal library.
- * http://graphal.sourceforge.net/
- *
- * Graphal library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License.
- *
- * Graphal library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Graphal library.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 #include <list>
 #include "nodefunctioncall.h"
 #include "nodefunction.h"
@@ -54,69 +34,37 @@ NodeFunctionCall::~NodeFunctionCall()
 /////////////////////////////////////////////////////////////////////////////
 ////
 
-CountPtr<Value> NodeFunctionCall::execute(void)
+CountPtr<Value> 
+NodeFunctionCall::execute(void)
 {
-  /*
-	NodeFunction* function = CONTEXT->getFunction(m_name);
+  NodeFunction* function = CONTEXT->getFunction(m_name);
+  assert(NULL != function && "Called function not available");
 
-	if(function == NULL)
-	{
-		//ERR_P(_("Function ") + ID2STR(m_name) + _("() has not been defined"));
-		return VALUENULL;
-	}
+  const list<identifier>& formalparams =  function->getParameterNames();
+  assert(formalparams.size() == m_parameters->m_commands.size() &&
+      "Numer of formals and actuals parameters not matching");
 
-	const list<identifier>& names = function->getParameterNames();
+  CONTEXT->pushLocal(m_name, CONTEXT->getPosition());
 
-	if(names.size() == m_parameters->getNumberOfCommands())
-	{
-		list< CountPtr<Value> > values;
+  list<identifier>::const_iterator fIB = formalparams.begin(), fIE = formalparams.end();
+  std::list<Node*>:: iterator aIB = m_parameters->m_commands.begin(), aIE = m_parameters->m_commands.end(); 
 
-		// Evaluate parameters in the old function context
-		list<Node*>::iterator itc;
-		for(itc = m_parameters->m_commands.begin(); itc != m_parameters->m_commands.end(); itc++)
-		{
-			CountPtr<Value> tmp((*itc)->execute());
+  for(;aIB != aIE; aIB++, fIB++) {
+    CountPtr<Value> value = (*aIB)->execute();
+    CONTEXT->setLocalVariable((*fIB), value);
+  }
+  CountPtr<Value> ret = function->execute();
 
-			if(tmp->isLValue())
-			{
-				// Passing by value
-				values.push_back(tmp->getReferredValue());
-			}
-			else
-				values.push_back(tmp);
-		}
+  CONTEXT->popLocal();
 
-		CONTEXT.pushLocal(m_name, CONTEXT.getPosition());
-			list<identifier>::const_iterator itn;
-			list< CountPtr<Value> >::iterator itv;
 
-			// Set parameters in the new function context
-			for(itn = names.begin(), itv = values.begin(); itn != names.end(); itn++, itv++)
-				CONTEXT.setLocalVariable(*itn, *itv);
+  if(false == function->isBuiltIn() && NULL != 
+        m_position) {
+    CONTEXT->setPositionReturnFromFunction(m_position);
+  }
 
-			CountPtr<Value> ret = function->execute();
-		CONTEXT.popLocal();
 
-		// Ignore return from main() and from built-in functions
-		if(m_position != NULL && !function->isBuiltIn())
-			CONTEXT.setPositionReturnFromFunction(m_position);// Set caller's position
-
-		return ret;
-	}
-	else
-	{
-		stringstream ss;
-		ss << ID2STR(m_name) << _("(") << names << _(")");
-		ERR_P(_("Wrong number of parameters was passed to the function"));
-		ERR_PP(function->declarationPos()->toString(), ss.str());
-
-		return VALUENULL;
-	}
-
-	// Should never be called
-	assert(false);
-        */
-	return VALUENULL;
+  return ret;
 }
 
 void NodeFunctionCall::dump(ostream& os, uint indent) const

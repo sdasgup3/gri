@@ -9,7 +9,7 @@ CC = g++
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.cpp=.o))
 
-CFLAGS = -MMD -std=c++98 -pedantic -Wall -Wextra -Werror -g
+CFLAGS = -MMD -std=c++98 -pedantic -Wall -Wextra  -g -O0
 INCLUDE_DIRS = -I. -I$(PROJECT_DIR)/lib/ 
 LDFLAGS =
 LDLIBS = -lgri

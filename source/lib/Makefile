@@ -9,11 +9,11 @@ GENERATED_DIR=generated
 CC = g++
 
 OPERATOR_SOURCES = $(wildcard generated/nodeunary*.cpp generated/nodebinary*.cpp)
-#BUILTIN_SOURCES = $(wildcard generated/nodebuiltin*.cpp)
-SOURCES = $(wildcard *.cpp) $(OPERATOR_SOURCES) $(GENERATED_DIR)/parser.cpp $(GENERATED_DIR)/lexer.cpp
+BUILTIN_SOURCES = $(wildcard generated/nodebuiltin*.cpp)
+SOURCES = $(wildcard *.cpp) $(OPERATOR_SOURCES) $(BUILTIN_SOURCES) $(GENERATED_DIR)/parser.cpp $(GENERATED_DIR)/lexer.cpp
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.cpp=.o))
 
-CFLAGS = -MMD -std=c++11 -pedantic -Wall -Wextra  -fPIC -g
+CFLAGS = -MMD -std=c++11 -pedantic -Wall -Wextra  -fPIC -g -O0
 INCLUDE_DIRS = -I. -Igenerated
 LDFLAGS = -Wl,--no-undefined
 LDLIBS =

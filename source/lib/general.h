@@ -3,9 +3,12 @@
 
 #include <iostream>
 #include <map>
+#include <list>
+#include <vector>
 #include <cassert>
 #include <cstring>
 using namespace std;
+// int _debugflag_;
 
 
 typedef unsigned int uint;

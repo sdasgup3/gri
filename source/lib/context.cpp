@@ -19,11 +19,10 @@ Context::Context()
 	m_global_variables(),
 	m_call_stack(),
 	m_position(NULL),
-	m_stringtable()
+	m_stringtable(),
+	m_builtin_declaration_pos(new CodePosition(m_stringtable.getID("built-in function"), 0))
 	//m_include_dirs(),
 	//m_breakpointsEnabled(true),
-	//m_builtin_declaration_pos(new CodePosition(m_stringtable.getID(_("built-in function")), 0))
-
 {
 
 }
@@ -34,6 +33,27 @@ Context::~Context()
 	clear();
 }
 
+void Context::clear(void)
+{
+
+  m_global_variables.clear();
+  m_call_stack.clear();
+
+  map<identifier, NodeFunction*>::iterator it;
+  for(it = m_functions.begin(); it != m_functions.end(); it++) {
+    delete it->second;
+    it->second = NULL;
+  }
+
+  m_stringtable.clear();
+  m_functions.clear();
+
+  //if(m_builtin_declaration_pos != NULL) {
+  //  delete m_builtin_declaration_pos;
+  //  m_builtin_declaration_pos = new CodePosition(m_stringtable.getID(_("built-in function")), 0);
+  //}
+
+}
 
 void Context::setPosition(const CodePosition* pos)
 {
@@ -85,27 +105,6 @@ void Context::deleteLocalVariable(identifier name)
 
 
 
-void Context::clear(void)
-{
-
-  m_global_variables.clear();
-  m_call_stack.clear();
-
-  map<identifier, NodeFunction*>::iterator it;
-  for(it = m_functions.begin(); it != m_functions.end(); it++) {
-    delete it->second;
-    it->second = NULL;
-  }
-
-  m_stringtable.clear();
-  m_functions.clear();
-
-  //if(m_builtin_declaration_pos != NULL) {
-  //  delete m_builtin_declaration_pos;
-  //  m_builtin_declaration_pos = new CodePosition(m_stringtable.getID(_("built-in function")), 0);
-  //}
-
-}
 
 NodeFunction* Context::getFunction(identifier name)
 {
@@ -157,10 +156,81 @@ void Context::dump(ostream& os, uint indent) const
 
 }
 
+void Context::executeMain(int argc, char** argv)
+{
+  map<identifier, NodeFunction*>::iterator it;
+  it = m_functions.find(STR2ID("main"));
+  assert(m_functions.end() != it && "No Main function found");
+
+  NodeFunction* function  = it->second;
+  assert(1 == function->getNumberOfParameters() &&
+       "Number of parameters to function main must be 1");
+
+  setPosition(function->declarationPos());
+
+  ValueArray* va = new ValueArray(argc); 
+  for(int i = 0 ; i < argc; i++) {
+    va->setItem(i,CountPtr<Value>(new ValueString(argv[i])));     
+  }
+
+  NodeBlock* parameters = new NodeBlock(new NodeValue(va));  
+  NodeFunctionCall *mainFuncCall = new NodeFunctionCall(function->getName(),
+                                                      parameters,
+                                                      NULL);
+  mainFuncCall->execute();
+  return;
+}
+
 ostream& operator<<(ostream& os, const Context& node)
 {
 	node.dump(os,0);
 	return os;
 }
+
+void 
+Context::pushLocal(identifier function_name, const CodePosition* return_address) 
+{
+  if(1) {
+    cout<< "Context::pushLocal\n";
+    cout << "\t" << ID2STR(function_name) << "\n";
+    if(NULL !=  return_address) {      
+      return_address->dump(cout,0);
+    }
+  }
+  m_call_stack.push_back(
+      CallStackItem(function_name, return_address));  
+}
+
+void 
+Context::popLocal(void) 
+{
+  m_call_stack.pop_back();
+}
+
+identifier 
+Context::getExecutedFunctionName(void) const 
+{
+  assert(false == m_call_stack.empty());
+  return m_call_stack.back().getFunctionName();
+}
+
+int 
+Context::getStackSize(void) const 
+{
+  return m_call_stack.size();
+}
+
+void 
+Context::printStackTrace() const 
+{
+  deque<CallStackItem>::const_reverse_iterator iB,iE;
+
+  for(iB = m_call_stack.rbegin(), iE= m_call_stack.rend();
+        iB != iE; iB++) {
+    iB->dump(cout,0);
+  }
+}
+
+
 
 Context * Context::s_instance =  0;
