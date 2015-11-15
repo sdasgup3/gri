@@ -374,10 +374,6 @@ static void token_dump(const char* const  tok) {
   //printf("<%s>\n", tok);
 }
 
-//static void token_dump(std::string &tok) {
-//  std::cout << "<" << tok << ">"<< std::endl;
-//}
-
 static void 
 strip_quotes(const char* const quoted_str, int len, std::string &name1, std::string &name2) {
   int i = 1;

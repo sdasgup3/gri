@@ -48,7 +48,8 @@ NodeFunctionCall::execute(void)
   std::list<Node*>:: iterator aIB = m_parameters->m_commands.begin(), aIE = m_parameters->m_commands.end(); 
   for(;aIB != aIE; aIB++) {
     CountPtr<Value> value = (*aIB)->execute();
-    value->dump(cout,0);
+    //std::cout << "DSAND :Initial execute\n";
+    //value->dump(cout,0);
     if(value->isLValue()) {
       values.push_back(value->getReferredValue());
     } else {
@@ -61,10 +62,10 @@ NodeFunctionCall::execute(void)
   list<identifier>::const_iterator fIB = formalparams.begin(), fIE = formalparams.end();
   list<CountPtr<Value>>::iterator vIB = values.begin(), vIE = values.end();
   for(; fIB != fIE; fIB++, vIB++) {
-    std::cout << "formal actual association\n";
-    std::cout << "\t" << ID2STR(*fIB) << " : ";
-    (*vIB)->dump(cout,1);
-    std::cout << "\n\n\n";
+    //std::cout << "formal actual association\n";
+    //std::cout << "\t" << ID2STR(*fIB) << " : ";
+    //(*vIB)->dump(cout,1);
+    //std::cout << "\n\n\n";
     CONTEXT->setLocalVariable(*fIB, *vIB);
   }
 

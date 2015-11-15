@@ -34,14 +34,16 @@ ValueIdentifier::~ValueIdentifier(void)
 
 CountPtr<Value> ValueIdentifier::getReferredValue(void) const
 {
-	//std::cout << "ValueIdentifier::getReferredValue(void) const\n" << ID2STR(m_val) << "\n"; 
-	CountPtr<Value> tmp(CONTEXT->getLocalVariable(m_val));
-
-	while(tmp->isLValue())
-		tmp = tmp->getReferredValue();
+  //std::cout << "DSAND: ValueIdentifier::getReferredValue(void) const" << ID2STR(m_val) << "\n"; 
+  CountPtr<Value> tmp(CONTEXT->getLocalVariable(m_val));
 
   //tmp->dump(cout,2);
-	return tmp;
+  while(tmp->isLValue()) {
+    tmp = tmp->getReferredValue();
+  }
+
+  //tmp->dump(cout,2);
+  return tmp;
 }
 
 
@@ -97,13 +99,16 @@ ostream& operator<<(ostream& os, const ValueIdentifier& node)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-////
-
-CountPtr<Value> ValueIdentifier::add(const Value& right)          const { return this->getReferredValue()->add(right); } // +
+CountPtr<Value> ValueIdentifier::add(const Value& right)          const { 
+  //std::cout << "ValueIdentifier::add(const Value& right)\n";
+  return this->getReferredValue()->add(right); 
+} // +
 CountPtr<Value> ValueIdentifier::add(const ValueNull& left)       const { return static_cast<const Value&>(left).add(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::add(const ValueBool& left)       const { return static_cast<const Value&>(left).add(*getReferredValue()); }
-CountPtr<Value> ValueIdentifier::add(const ValueInt& left)        const { return static_cast<const Value&>(left).add(*getReferredValue()); }
+CountPtr<Value> ValueIdentifier::add(const ValueInt& left)        const { 
+  //std::cout << "ValueIdentifier::add(const ValueInt& left)\n";
+  return static_cast<const Value&>(left).add(*getReferredValue()); 
+}
 CountPtr<Value> ValueIdentifier::add(const ValueFloat& left)      const { return static_cast<const Value&>(left).add(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::add(const ValueString& left)     const { return static_cast<const Value&>(left).add(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::add(const ValueStruct& left)     const { return static_cast<const Value&>(left).add(*getReferredValue()); }

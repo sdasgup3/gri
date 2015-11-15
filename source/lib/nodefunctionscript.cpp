@@ -17,7 +17,6 @@ NodeFunctionScript::NodeFunctionScript(identifier name, list<identifier>* parame
 	m_position(pos)
 {
 	assert(m_position != NULL);
-        m_position->dump(cout,0);
 }
 
 NodeFunctionScript::~NodeFunctionScript()
