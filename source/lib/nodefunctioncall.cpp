@@ -44,15 +44,30 @@ NodeFunctionCall::execute(void)
   assert(formalparams.size() == m_parameters->m_commands.size() &&
       "Numer of formals and actuals parameters not matching");
 
+  list< CountPtr<Value> > values;
+  std::list<Node*>:: iterator aIB = m_parameters->m_commands.begin(), aIE = m_parameters->m_commands.end(); 
+  for(;aIB != aIE; aIB++) {
+    CountPtr<Value> value = (*aIB)->execute();
+    value->dump(cout,0);
+    if(value->isLValue()) {
+      values.push_back(value->getReferredValue());
+    } else {
+      values.push_back(value);
+    }
+  }
+
   CONTEXT->pushLocal(m_name, CONTEXT->getPosition());
 
   list<identifier>::const_iterator fIB = formalparams.begin(), fIE = formalparams.end();
-  std::list<Node*>:: iterator aIB = m_parameters->m_commands.begin(), aIE = m_parameters->m_commands.end(); 
-
-  for(;aIB != aIE; aIB++, fIB++) {
-    CountPtr<Value> value = (*aIB)->execute();
-    CONTEXT->setLocalVariable((*fIB), value);
+  list<CountPtr<Value>>::iterator vIB = values.begin(), vIE = values.end();
+  for(; fIB != fIE; fIB++, vIB++) {
+    std::cout << "formal actual association\n";
+    std::cout << "\t" << ID2STR(*fIB) << " : ";
+    (*vIB)->dump(cout,1);
+    std::cout << "\n\n\n";
+    CONTEXT->setLocalVariable(*fIB, *vIB);
   }
+
   CountPtr<Value> ret = function->execute();
 
   CONTEXT->popLocal();

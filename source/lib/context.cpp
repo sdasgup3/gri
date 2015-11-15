@@ -168,7 +168,8 @@ void Context::executeMain(int argc, char** argv)
 
   setPosition(function->declarationPos());
 
-  ValueArray* va = new ValueArray(argc); 
+  ValueArray* va = new ValueArray(); 
+  va->resize(argc);
   for(int i = 0 ; i < argc; i++) {
     va->setItem(i,CountPtr<Value>(new ValueString(argv[i])));     
   }
@@ -190,7 +191,7 @@ ostream& operator<<(ostream& os, const Context& node)
 void 
 Context::pushLocal(identifier function_name, const CodePosition* return_address) 
 {
-  if(1) {
+  if(0) {
     cout<< "Context::pushLocal\n";
     cout << "\t" << ID2STR(function_name) << "\n";
     if(NULL !=  return_address) {      

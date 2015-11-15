@@ -1,23 +1,3 @@
-/*
- * Copyright 2008 Michal Turek
- *
- * This file is part of Graphal library.
- * http://graphal.sourceforge.net/
- *
- * Graphal library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License.
- *
- * Graphal library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Graphal library.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 #include "valueidentifier.h"
 #include "valuenull.h"
 #include "valuebool.h"
@@ -54,12 +34,13 @@ ValueIdentifier::~ValueIdentifier(void)
 
 CountPtr<Value> ValueIdentifier::getReferredValue(void) const
 {
-	
+	//std::cout << "ValueIdentifier::getReferredValue(void) const\n" << ID2STR(m_val) << "\n"; 
 	CountPtr<Value> tmp(CONTEXT->getLocalVariable(m_val));
 
 	while(tmp->isLValue())
 		tmp = tmp->getReferredValue();
 
+  //tmp->dump(cout,2);
 	return tmp;
 }
 
@@ -288,10 +269,10 @@ CountPtr<Value> ValueIdentifier::member(const ValueVertex& left)        const { 
 CountPtr<Value> ValueIdentifier::member(const ValueEdge& left)          const { return const_cast<ValueEdge&>(left).getItem(m_val); }
 CountPtr<Value> ValueIdentifier::member(const ValueSet& /*left*/)       const {/* WARN_P(_("Member access to the VertexSet variable"));*/ return VALUENULL; }
 
-CountPtr<Value> ValueIdentifier::index(const Value& right)         const { return this->getReferredValue()->index(right); } // []
 CountPtr<Value> ValueIdentifier::index(const ValueNull& left)      const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueBool& left)      const { return static_cast<const Value&>(left).index(*getReferredValue()); }
-CountPtr<Value> ValueIdentifier::index(const ValueInt& left)       const { return static_cast<const Value&>(left).index(*getReferredValue()); }
+CountPtr<Value> ValueIdentifier::index(const ValueInt& left)       const { std::cout << "ValueIdentifier::index(const ValueInt& left)\n"; return static_cast<const Value&>(left).index(*getReferredValue()); }
+CountPtr<Value> ValueIdentifier::index(const Value& right)         const { std::cout << "ValueIdentifier::index(const Value& right)\n";   return this->getReferredValue()->index(right); } // []
 CountPtr<Value> ValueIdentifier::index(const ValueFloat& left)     const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueString& left)    const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueStruct& left)    const { return static_cast<const Value&>(left).index(*getReferredValue()); }

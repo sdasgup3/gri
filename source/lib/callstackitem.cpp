@@ -1,23 +1,3 @@
-/*
- * Copyright 2009 Michal Turek
- *
- * This file is part of Graphal library.
- * http://graphal.sourceforge.net/
- *
- * Graphal library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License.
- *
- * Graphal library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Graphal library.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 #include "callstackitem.h"
 #include "context.h"
 #include "valuenull.h"
@@ -54,8 +34,10 @@ void CallStackItem::dump(ostream& os, uint indent) const
 	m_return_address->dump(os, indent+1);
 
 	map<identifier, CountPtr<Value> >::const_iterator it;
-	for(it = m_local_variables.begin(); it != m_local_variables.end(); ++it)
+	for(it = m_local_variables.begin(); it != m_local_variables.end(); ++it) {
+                os <<  ID2STR(it->first) << "\n";
 		it->second->dump(os, indent+1);
+        }
 
 	dumpIndent(os, indent);
 	os << "</CallStackItem>" << endl;
