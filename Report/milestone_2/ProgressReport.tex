@@ -36,7 +36,7 @@
 
 \section{Problem Statement}
 
-   In this project we are planning to work on a dynamically typed language to 
+   In this project we are planning to implement a dynamically typed language to 
    represent graphs and apply various computations on them.
  
 \section{Language Syntax}
@@ -47,9 +47,8 @@
   \subsection{Progress}
   \begin{itemize}
     \item We have implemented the tokenizer and syntax analyzer using flex and 
-    bison.  
-    \item We are supporting syntax like \#include("filename") and 
-    \#define("PI", "3.14") while doing a single pass of parsing  (i.e. 
+    bison.  \item We are supporting syntax like \#include("filename") and 
+    \#define("PI", "3.14") while doing a single pass of parsing  (i.e.  
         Preprocessing of these constructs are done while parsing). This is 
     achieved by using flex's internal stack to manage multiple buffers.
 
@@ -57,11 +56,11 @@
     ~\url{http://www.quut.com/c/ANSI-C-grammar-y.html}. The rules are compiled 
     by bison tool to generate the C parser. 
 
-    \item  We are able to generate the AST corresponding to the grammar rule for 
-    a confirming test case. Our AST is basically a list of 
-    function definitions. Each function definition class contains name of the 
-    function, a set of formal arguments and a list of body statements. These 
-    body statements could be a assignment, loop-statement, function call, etc.
+    \item  We are able to generate the AST corresponding to test-cases 
+    confirming to the grammar rules. Our AST is basically a list of function 
+    definitions. Each function definition object contains name of the function, 
+    a set of formal arguments and a list of body statements. These body 
+    statements could be an assignment, loop-statement, function call, etc.
     The leafs of the AST could be an identifier, int, float, true, false, null, 
     string, vertex, edge or graph.
 
@@ -72,11 +71,12 @@
 
       \item Support of {\tt\emph{break}}, {\tt\emph{continue}} within loop-body 
       and {\tt\emph{return}} in function-body.
-      As we are representing both loop-body and function-body (i.e. anything 
-          between ``\{'' \& ``\}'') as compound statements so we do not have to
-      distinguish these two cases. The semantics of executing a 
-{\tt\emph{break}}, {\tt\emph{continue}} and {\tt\emph{return}} will be discussed 
-in the interpreter runtime section.
+      As we are representing both loop-body and function-body as compound 
+      statements (i.e. anything between ``\{'' \& ``\}''), so we do not have to
+      distinguish these two cases. But we will error-out if break is used inside 
+      non-loop body. The detailed semantics of executing a {\tt\emph{break}},   
+{\tt\emph{continue}} and {\tt\emph{return}} will be discussed in the interpreter 
+runtime section.
 
       \item Supporting graph as first class object {\tt\emph{valuegraph}}.
       The syntax to declare a graph is {\tt\emph{g = graph();}} which will be 
@@ -121,21 +121,24 @@ The following are the key features of the runtime:
 
   \item The semantics of {\tt\emph{break}}, {\tt\emph{continue}} or 
 {\tt\emph{return}} is supported using the try-catch mechanism of C++.
-  For example, while interpreting a {\tt\emph{loop-body}}, whenever a {\tt\emph{break}}is 
-  encountered, a corresponding {\tt\emph{break-object}} is thrown, which is caught in a place 
-  outside the entire loop execution in order to implement the semantics of break. 
+
+  For example, while interpreting a {\tt\emph{loop-body}}, whenever a 
+{\tt\emph{break}}is encountered, a corresponding {\tt\emph{break-object}} is 
+thrown, which is caught in a place outside the entire loop execution in order to 
+implement the semantics of break. 
 
   Similarly, while executing a {\tt\emph{loop-body}}, whenever a 
-{\tt\emph{continue}} is encountered, a {\tt\emph{continue-object}} is thrown, which is caught outside
-  the {\tt\emph{loop-body}} execution so as to skip the current iteration 
-    and continue with the {\tt\emph{loop-incr}} execution (in case of for loop) 
-    and {\tt\emph{loop-condition-expr}} execution.
+{\tt\emph{continue}} is encountered, a {\tt\emph{continue-object}} is thrown, 
+  which is caught outside
+  the {\tt\emph{loop-body}} execution so as to skip the current iteration and 
+  continue with the {\tt\emph{loop-incr}} execution (in case of for loop) and 
+{\tt\emph{loop-condition-expr}} execution.
 
   And finally, while executing a  {\tt\emph{function-body}}, which is a list
   of statements, when any one of those statements is a {\tt\emph{return}}, a 
-  {\tt\emph{return-object}} is thrown, which is caught outside of the loop
+{\tt\emph{return-object}} is thrown, which is caught outside of the loop
   which is going over that list and in this way the semantics of return is 
-    maintained.
+  maintained.
   
   \item Occurrence of {\tt\emph{break}} and {\tt\emph{continue}} within non-loop
     body triggers an error. While interpreting a node-block (which is a set 
@@ -169,9 +172,9 @@ The following are the future work.
       vertices/edges.
     \end{itemize}
       Most of these ideas behind choosing the operators are borrowed from 
-      Guess~\cite{Adar}. The intuition behind these operators is that the users do 
-      not have to remember longer commands. Also its very intuitive to build up 
-      complex operations using the simpler ones.
+      Guess~\cite{Adar}. The intuition behind these operators is that the users 
+      do not have to remember longer commands. Also its very intuitive to build 
+      up complex operations using the simpler ones.
 
     \item To support saving of state and retrieving it back using
     routines like saveSateFromFile \& loadStaeFromFile.
@@ -183,10 +186,10 @@ The following are the future work.
   \end{itemize}
 
 \subsection{Evaluation Strategy}
-The baseline of our evaluation will be the open source Graphal~\cite{Graphal} system.  
-Graphal~\cite{Graphal} is an interpreter of a programming language that is mainly 
-oriented to graph algorithms. There is a command line interpreter and a 
-graphical integrated development environment. The IDE contains text editor for 
+The baseline of our evaluation will be the open source Graphal~\cite{Graphal} 
+system.  Graphal~\cite{Graphal} is an interpreter of a programming language that 
+is mainly oriented to graph algorithms. There is a command line interpreter and 
+a graphical integrated development environment. The IDE contains text editor for 
 programmers, compilation and script output, advanced debugger and visualization 
 window. The evaluation will be between command line version of Graphal with our
 implementation.
@@ -205,8 +208,8 @@ implementation.
     \item Performance
     \begin{itemize}
       \item As we are planning to keep the compiled version of frequently used 
-      graph routines (like dfs\_iterators(vertex), bfs\_iterators(vertex)), we are 
-      expecting to achieve better performance in terms of runtime.  
+      graph routines (like dfs\_iterators(vertex), bfs\_iterators(vertex)), we 
+      are expecting to achieve better performance in terms of runtime.  
       \end{itemize}
   \end{itemize}
 
