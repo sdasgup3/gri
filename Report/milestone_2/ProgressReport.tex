@@ -53,11 +53,11 @@
         Preprocessing of these constructs are done while parsing). This is 
     achieved by using flex's internal stack to manage multiple buffers.
 
-    \item The gramer rules are borrowed from 
+    \item The grammar rules are borrowed from 
     ~\url{http://www.quut.com/c/ANSI-C-grammar-y.html}. The rules are compiled 
     by bison tool to generate the C parser. 
 
-    \item  We are able to generate the AST corresponding to the grammer rule for 
+    \item  We are able to generate the AST corresponding to the grammar rule for 
     a confirming test case. Our AST is basically a list of 
     function definitions. Each function definition class contains name of the 
     function, a set of formal arguments and a list of body statements. These 
@@ -103,11 +103,11 @@ The following are the key features of the runtime:
 \begin{itemize}
 
   \item The runtime starts with searching for function definition
-  {\tt\emph{function main(argv)}} and then creats a function call out of it and 
+  {\tt\emph{function main(argv)}} and then creates a function call out of it and 
   execute it.  While creating the function call it uses the command-line 
   parameters as the actual parameters of the function call.
 
-  \item The execution of a function call involves finding the correspoding 
+  \item The execution of a function call involves finding the corresponding 
   function definition, checking if the number of formal and actuals are equal 
   and then pushing a call stack frame ( which contains the mapping between the 
       formal and actual values passed to them) in a global call stack. After 
