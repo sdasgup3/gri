@@ -48,7 +48,7 @@
  
 \section{Language Syntax}
   The syntax of the language is an oversimplified version  of C, but
-    without the mention of any types. The operations on incompatible types
+    without mention of any types. The operations on incompatible types
     will be error-ed out while interpreting.
 
   \subsection{Progress}
@@ -56,90 +56,115 @@
     \item We have implemented the tokenizer using flex. Appendix A shows the 
       tokens sent to the parser routine.
     \item We are supporting syntax like \#include("filename") and \#define("PI", 
-        "3.14") while doing a single pass of parsing  (i.e. both
-    preprocessing of these constructs done while parsing). This is achieved by 
-          using flex internal stack to manage multiple buffers.
+        "3.14") while doing a single pass of parsing  (i.e. Preprocessing of 
+          these constructs are done while parsing). This is achieved by 
+          using flex's internal stack to manage multiple buffers.
     \item Appendix B shows the parser rules. These are borrowed from 
-     ~\url{http://www.quut.com/c/ANSI-C-grammar-y.html}. The rules are compiled 
-     by bison tool to generate the C parser.
+    ~\url{http://www.quut.com/c/ANSI-C-grammar-y.html}. The rules are compiled 
+    by bison tool to generate the C parser.
 
-    \item  We are done with generating the AST. Our AST is basically a list of 
-    function definitions. Each function definition class holds name of the 
-    function, a set of formal arguments and a list of body statements. These body 
-    statements could be a assignment, loop-statement, function call, etc.
-    The leafs of the AST could be an identifier, int, float, true, false, null, string, vertex, 
-    edge or graph.
+    \item  We are able to generate the AST. Our AST is basically a list of 
+    function definitions. Each function definition class contains name of the 
+    function, a set of formal arguments and a list of body statements. These 
+    body statements could be a assignment, loop-statement, function call, etc.
+    The leafs of the AST could be an identifier, int, float, true, false, null, 
+    string, vertex, edge or graph.
     \item Some of the key features of the parser is as follows:
 
     \begin{itemize}
-      \item Support of C statements like  \emph{if then}, \emph{if then else}, 
-        \emph{while}, \emph{for}. 
+      \item Support of C statements like  {\tt\emph{if then}}, {\tt\emph{if then 
+        else}}, {\tt\emph{while}}, {\tt\emph{for}}. 
 
-      \item Support of break, continue within loop constructs and return in 
-      function body.
-      As we are representing both loop-body and function body (i.e. anything 
+      \item Support of {\tt\emph{break}}, {\tt\emph{continue}} within loop-body 
+        and {\tt\emph{return}} in function-body.
+      As we are representing both loop-body and function-body (i.e. anything 
           between ``\{'' \& ``\}'') as compound statements so we do not have to
-      distinguish the two cases. The semantics of executing a break, continue 
-      and return will be discussed in the semantics section.
+      distinguish these two cases. The semantics of executing a {\tt\emph{break}}, 
+      {\tt\emph{continue}} and {\tt\emph{return}} will be discussed in the 
+        interpreter runtime section.
 
-      \item Supporting vertices, edges and graphs as first class objects 
-      valuevertex, valueedge, valuegraph respectively.
+      \item Supporting graph as first class object {\tt\emph{valuegraph}}.
       The syntax to declare a graph is {\tt\emph{g = graph();}} which will be 
-      parsed as a assignment node with left Value as an identifier and right
-      value as a function call. Now this function call corresponds to a built in 
-      function that returns a valuegraph (which is of one the leaf nodes of AST).
-      \item The first class object of vertex and edge contains a map to add
-      properties. This feature is useful in various graph algorithms like in dfs 
-      traversal we may use a vertex property ``visited'' to keep track of 
-      vertices already explored.
+      represented in AST as an assignment-node with left-node containing an 
+      identifier and right
+      node as a function call. Now this function call corresponds to a built in 
+      function that returns a {\tt\emph{valuegraph}} (which is of one the leaf 
+          nodes of AST) on execution.
+
+      \item Supporting vertices and edges as first class objects which contains 
+      a map to add properties. This feature is useful in various graph 
+      algorithms like in dfs traversal we may use a vertex property ``visited'' 
+      to keep track of vertices already explored.
     \end{itemize}
-    
   \end{itemize}
   
 
 
 \section{Language Semantics}
-\begin{itemize}
-   \item As ``nodes'' and ``edges'' are the backbone of any graph structure, we 
-     proposed to have them as first-class objects. Even though the user will not 
-     necessarily
-  be accessing individual nodes/edges, but the option is available to them.
-  \item Providing users with the option to specify attributes on nodes and edges 
-  and later use
-  those attributes for computing results. For example: to find all the red 
-  colored nodes (where color is marked as an attribute of
-      node) connected to a specific node.
-\end{itemize}
+The language semantics will be same as that of C as we are using a subset of it.
 
-\section{Interpretor Runtime}
+\section{Interpreter Runtime}
+The following are the key features of the runtime:
+\begin{itemize}
+
+  \item The runtime starts with searching for function definition
+  {\tt\emph{function main(argv)}} and then creats a function call out of it and 
+  execute it. 
+  While creating the function call it uses the command-line parameters as the 
+  actual parameters of the function call.
+
+  \item The execution of a function call involves finding the correspoding 
+  function definition, checking if the number of formal and actuals are equal 
+  and then pushing a call stack frame ( which contains the mapping between the formal 
+  and actual values passed to them) in a global call stack. After that, the function
+  is executed w.r.t the current context(i.e. the top of the call stack).
+
+  \item The execution of the function involves executing a list of statements.
+  The statements may add further mappings in the current call stack frame.
+  Whenever a name (identifier) is refereed, the mapping in the current context 
+  need to be consulted to get the actual value of it. 
+
+  \item The semantics of {\tt\emph{break}}, {\tt\emph{continue}} or 
+  {\tt\emph{return}} is supported using the try-catch mechanism of C++.
+  For example, while interpreting a loop-body, whenever a 
+  {\tt\emph{break}}is encountered, a corresponding object is thrown, which 
+  is caught in a place outside of the loop execution in order to implement 
+    the semantics of break. 
+  
+  \item Occurrence of {\tt\emph{break}} and {\tt\emph{continue}} within non-loop
+    body triggers an error. While interpreting a node-block (which is a set statements within ``\{'' 
+        and ``\}''), whenever the runtime finds a {\tt\emph{break}} or  
+   {\tt\emph{continue}} it throws a object. Now if this object is caught
+  inside a non-loop block then error is reported.
+
+  \item Division by zero and operations on incompatible types are runtime errors.  
+\end{itemize}
 
 \section{Future Work}
 The following are the future work.
   \begin{itemize}
-    \item 
-      To support  additional operators to specify relationships between 
-      the nodes/edges or their groups. The operator that we are planning to 
-      support are the described next with their semantics.
+    \item To support  additional operators to specify relationships between the 
+      nodes/edges or their groups. The operator that we are planning to support 
+      are the described next with their semantics.
 
     \begin{itemize}
-      \item v1$\leftarrow$v2: Select all the directed edges from 
-        vertices v1 to v2.
-      \item v1$\rightarrow$v2: Select all the directed edges from 
-      vertices v2 to v1.
-      \item v1$\leftrightarrow$v2: Select all the directed edges 
-      between vertices v1 and v1.
-      \item v1$?$v2: Select all the edges (directed or undirected) 
-      between vertices v1 and v1.
+      \item v1$\leftarrow$v2: Select all the directed edges from vertices v1 to 
+        v2.
+      \item v1$\rightarrow$v2: Select all the directed edges from vertices v2 to 
+      v1.
+      \item v1$\leftrightarrow$v2: Select all the directed edges between 
+      vertices v1 and v1.
+      \item v1$?$v2: Select all the edges (directed or undirected) between 
+      vertices v1 and v1.
       \item S1$\cap$S2: Selects the intersection between the set of
       vertices/edges.
     \end{itemize}
       Most of these ideas behind choosing the operators are borrowed from 
-        ~\cite{Adar}. The intuition behind these operators is that the users 
-        do not have to remember longer commands. Also its very intuitive to 
-          build up complex operations using the simpler ones.
+        ~\cite{Adar}. The intuition behind these operators is that the users do 
+        not have to remember longer commands. Also its very intuitive to build 
+        up complex operations using the simpler ones.
 
-    \item 
-    To support saving of state and retrieving it back using
+    \item To support saving of state and retrieving it back using
     routines like saveSateFromFile \& loadStaeFromFile.
     This idea is borrowed from ~\cite{Adar} and this seems a useful service 
     provided to do exploratory programming, as the user might be interested to 
