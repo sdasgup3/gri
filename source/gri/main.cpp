@@ -3,6 +3,9 @@
 #include "general.h"
 #include "context.h"
 #include "generated/nodebuiltinprintln.h"
+#include "generated/nodebuiltinstruct.h"
+#include "generated/nodebuiltinsize.h"
+#include "generated/nodebuiltinarray.h"
 
 
 extern int 
@@ -26,6 +29,12 @@ addExternalFunctions(void) {
 
   CONTEXT->addFunction(
       new NodeBuiltinPrintln(STR2ID("println"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinStruct(STR2ID("struct"), new std::list<identifier>(p0,p0) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinStruct(STR2ID("size"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinArray(STR2ID("array"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }

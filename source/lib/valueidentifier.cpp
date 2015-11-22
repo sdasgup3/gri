@@ -276,8 +276,12 @@ CountPtr<Value> ValueIdentifier::member(const ValueSet& /*left*/)       const {/
 
 CountPtr<Value> ValueIdentifier::index(const ValueNull& left)      const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueBool& left)      const { return static_cast<const Value&>(left).index(*getReferredValue()); }
-CountPtr<Value> ValueIdentifier::index(const ValueInt& left)       const { std::cout << "ValueIdentifier::index(const ValueInt& left)\n"; return static_cast<const Value&>(left).index(*getReferredValue()); }
-CountPtr<Value> ValueIdentifier::index(const Value& right)         const { std::cout << "ValueIdentifier::index(const Value& right)\n";   return this->getReferredValue()->index(right); } // []
+CountPtr<Value> ValueIdentifier::index(const ValueInt& left)       const { 
+//std::cout << "ValueIdentifier::index(const ValueInt& left)\n"; 
+return static_cast<const Value&>(left).index(*getReferredValue()); }
+CountPtr<Value> ValueIdentifier::index(const Value& right)         const { 
+//std::cout << "ValueIdentifier::index(const Value& right)\n";   
+return this->getReferredValue()->index(right); } // []
 CountPtr<Value> ValueIdentifier::index(const ValueFloat& left)     const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueString& left)    const { return static_cast<const Value&>(left).index(*getReferredValue()); }
 CountPtr<Value> ValueIdentifier::index(const ValueStruct& left)    const { return static_cast<const Value&>(left).index(*getReferredValue()); }
