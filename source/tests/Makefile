@@ -13,3 +13,4 @@ test:
 	$(eval filename=$(shell echo $(basename $<)))
 	$(EXEC) -f $< > $(filename).temp
 	diff $(filename).OUT $(filename).temp
+	rm -rf $(filename).temp
