@@ -14,15 +14,15 @@
 //#include "exitvalue.h"
 
 Context::Context()
-	: Base(),
-       	m_functions(),
-	m_global_variables(),
-	m_call_stack(),
-	m_position(NULL),
-	m_stringtable(),
-	m_builtin_declaration_pos(new CodePosition(m_stringtable.getID("built-in function"), 0))
-	//m_include_dirs(),
-	//m_breakpointsEnabled(true),
+  : Base(),
+         m_functions(),
+  m_global_variables(),
+  m_call_stack(),
+  m_position(NULL),
+  m_stringtable(),
+  m_builtin_declaration_pos(new CodePosition(m_stringtable.getID("built-in function"), 0))
+  //m_include_dirs(),
+  //m_breakpointsEnabled(true),
 {
 
 }
@@ -30,7 +30,7 @@ Context::Context()
 
 Context::~Context()
 {
-	clear();
+  clear();
 }
 
 void Context::clear(void)
@@ -57,50 +57,50 @@ void Context::clear(void)
 
 void Context::setPosition(const CodePosition* pos)
 {
-	m_position = pos;
+  m_position = pos;
 }
 
 void Context::setPositionEnterToFunction(const CodePosition* pos)
 {
-	m_position = pos;
+  m_position = pos;
 }
 
 void Context::setPositionReturnFromFunction(const CodePosition* pos)
 {
-	m_position = pos;
+  m_position = pos;
 }
 
 bool Context::isVariableSet(identifier name)
 {
-	if(m_call_stack.empty())
-		return false;
+  if(m_call_stack.empty())
+    return false;
 
-	return m_call_stack.back().isVariableSet(name);
+  return m_call_stack.back().isVariableSet(name);
 }
 
 CountPtr<Value> Context::getLocalVariable(identifier name)
 {
-	assert(!m_call_stack.empty());
-	return m_call_stack.back().getVariable(name);
+  assert(!m_call_stack.empty());
+  return m_call_stack.back().getVariable(name);
 }
 
 
 CountPtr<Value> Context::setLocalVariable(identifier name, CountPtr<Value> val)
 {
-	assert(!m_call_stack.empty());
-	return m_call_stack.back().setVariable(name, val);
+  assert(!m_call_stack.empty());
+  return m_call_stack.back().setVariable(name, val);
 }
 
 CountPtr<Value> Context::setLocalVariableAllowRef(identifier name, CountPtr<Value> val)
 {
-	assert(!m_call_stack.empty());
-	return m_call_stack.back().setVariableAllowRef(name, val);
+  assert(!m_call_stack.empty());
+  return m_call_stack.back().setVariableAllowRef(name, val);
 }
 
 void Context::deleteLocalVariable(identifier name)
 {
-	assert(!m_call_stack.empty());
-	m_call_stack.back().deleteVariable(name);
+  assert(!m_call_stack.empty());
+  m_call_stack.back().deleteVariable(name);
 }
 
 
@@ -108,13 +108,13 @@ void Context::deleteLocalVariable(identifier name)
 
 NodeFunction* Context::getFunction(identifier name)
 {
-	
-	map<identifier, NodeFunction*>::iterator it = m_functions.find(name);
+  
+  map<identifier, NodeFunction*>::iterator it = m_functions.find(name);
 
-	if(it != m_functions.end())
-		return it->second;
-	else
-		return NULL;
+  if(it != m_functions.end())
+    return it->second;
+  else
+    return NULL;
 }
 
 
@@ -123,15 +123,15 @@ void Context::addFunction(NodeFunction* function)
   assert(function != NULL);
 
   pair< map<identifier, NodeFunction*>::iterator, bool> ret
-	= m_functions.insert(pair<identifier, NodeFunction*>(function->getName(), function));
+  = m_functions.insert(pair<identifier, NodeFunction*>(function->getName(), function));
 
   if(!ret.second) {
     /*
-	WARN_PP(function->declarationPos()->toString(),
-		_("Function ") + ID2STR(function->getName())
-		+ _("() has been already defined, redefinition ignored"));
-	WARN_PP(ret.first->second->declarationPos()->toString(),
-		ID2STR(function->getName()) + _("()"));
+  WARN_PP(function->declarationPos()->toString(),
+    _("Function ") + ID2STR(function->getName())
+    + _("() has been already defined, redefinition ignored"));
+  WARN_PP(ret.first->second->declarationPos()->toString(),
+    ID2STR(function->getName()) + _("()"));
                 */
 
     delete function;
@@ -142,17 +142,19 @@ void Context::addFunction(NodeFunction* function)
 
 void Context::dump(ostream& os, uint indent) const
 {
-        dumpIndent(os, indent);
-	os << "<Context>" << endl;
+  dumpIndent(os, indent);
+  os << "<Context>" << endl;
 
-	map<identifier, NodeFunction*>::const_iterator it;
-	for(it = m_functions.begin(); it != m_functions.end(); it++)
-		it->second->dump(os, indent+1);
+  map<identifier, NodeFunction*>::const_iterator it;
+  for(it = m_functions.begin(); it != m_functions.end(); it++)  {
+    //std::cout << "DSAND : " << ID2STR(it->first) << "\n";
+    it->second->dump(os, indent+1);
+  }
 
-	m_stringtable.dump(os, indent+1);
+  m_stringtable.dump(os, indent+1);
 
-	dumpIndent(os, indent);
-	os << "</Context>" << endl;
+  dumpIndent(os, indent);
+  os << "</Context>" << endl;
 
 }
 
@@ -184,8 +186,8 @@ void Context::executeMain(int argc, char** argv)
 
 ostream& operator<<(ostream& os, const Context& node)
 {
-	node.dump(os,0);
-	return os;
+  node.dump(os,0);
+  return os;
 }
 
 void 

@@ -38,7 +38,10 @@ CountPtr<Value>
 NodeFunctionCall::execute(void)
 {
   NodeFunction* function = CONTEXT->getFunction(m_name);
-  assert(NULL != function && "Called function not available");
+  if(NULL == function) {
+    std::cerr << ID2STR(m_name) <<"\n";
+    assert(NULL != function && "Called function not available");
+  }
 
   const list<identifier>& formalparams =  function->getParameterNames();
   assert(formalparams.size() == m_parameters->m_commands.size() &&

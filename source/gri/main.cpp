@@ -6,6 +6,18 @@
 #include "generated/nodebuiltinstruct.h"
 #include "generated/nodebuiltinsize.h"
 #include "generated/nodebuiltinarray.h"
+#include "generated/nodebuiltingraph.h"
+#include "generated/nodebuiltingeneratevertex.h"
+#include "generated/nodebuiltingenerateedge.h"
+#include "generated/nodebuiltindeleteedge.h"
+#include "generated/nodebuiltindeletevertex.h"
+#include "generated/nodebuiltinisdirected.h"
+#include "generated/nodebuiltinsetdirected.h"
+#include "generated/nodebuiltingetnumvertices.h"
+#include "generated/nodebuiltingetnumedges.h"
+#include "generated/nodebuiltingetdegree.h"
+#include "generated/nodebuiltingetbeginvertex.h"
+#include "generated/nodebuiltingetendvertex.h"
 
 
 extern int 
@@ -25,6 +37,8 @@ addExternalFunctions(void) {
 
   std::list<identifier>::iterator p0 = fparameters->begin();
   std::list<identifier>::iterator p1 = ++p0;
+  std::list<identifier>::iterator p2 = ++p0;
+  std::list<identifier>::iterator p3 = ++p0;
   p0 = fparameters->begin();
 
   CONTEXT->addFunction(
@@ -35,6 +49,30 @@ addExternalFunctions(void) {
       new NodeBuiltinStruct(STR2ID("size"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinArray(STR2ID("array"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGraph(STR2ID("graph"), new std::list<identifier>(p0,p0) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGenerateVertex(STR2ID("generateVertex"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGenerateEdge(STR2ID("generateEdge"), new std::list<identifier>(p0,p3) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinDeleteVertex(STR2ID("deleteVertex"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinDeleteEdge(STR2ID("deleteEdge"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinIsDirected(STR2ID("isDirected"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinSetDirected(STR2ID("setDirected"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetNumVertices(STR2ID("getNumVertices"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetNumEdges(STR2ID("getNumEdges"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetDegree(STR2ID("getDegree"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetBeginVertex(STR2ID("getBeginVertex"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetEndVertex(STR2ID("getEndVertex"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }

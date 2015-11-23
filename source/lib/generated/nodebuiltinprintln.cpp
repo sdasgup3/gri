@@ -65,7 +65,5 @@ NodeBuiltinPrintln::dump(ostream& os, uint indent) const
 {
   dumpIndent(os, indent);
   os << "<BuiltinFunction name=\"" << ID2STR(getName()) << "\" id=\"" << getName() << "\" />" << endl;
-
-
 }
 

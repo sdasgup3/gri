@@ -9,3 +9,7 @@ test:
 		$(EXEC) -f $$t -d; 	\
 	done
 
+%-test:	%.txt %.out
+	$(eval filename=$(shell echo $(basename $<)))
+	$(EXEC) -f $< > $(filename).temp
+	diff $(filename).OUT $(filename).temp
