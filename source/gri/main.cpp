@@ -18,6 +18,8 @@
 #include "generated/nodebuiltingetdegree.h"
 #include "generated/nodebuiltingetbeginvertex.h"
 #include "generated/nodebuiltingetendvertex.h"
+#include "generated/nodebuiltingetvertices.h"
+#include "generated/nodebuiltingetedges.h"
 
 
 extern int 
@@ -73,6 +75,10 @@ addExternalFunctions(void) {
       new NodeBuiltinGetBeginVertex(STR2ID("getBeginVertex"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinGetEndVertex(STR2ID("getEndVertex"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetVertices(STR2ID("getVertices"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetEdges(STR2ID("getEdges"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }

@@ -54,7 +54,6 @@ NodeForeach::~NodeForeach(void)
 
 CountPtr<Value> NodeForeach::execute(void)
 {
-  /*
 	CountPtr<Value> it(m_iterable->execute()->iterator());
 
 	try
@@ -63,8 +62,8 @@ CountPtr<Value> NodeForeach::execute(void)
 		{
 			try
 			{
-				CONTEXT.deleteLocalVariable(m_var_name);
-				CONTEXT.setLocalVariableAllowRef(m_var_name, it->next());
+				CONTEXT->deleteLocalVariable(m_var_name);
+				CONTEXT->setLocalVariableAllowRef(m_var_name, it->next());
 				m_body->execute();
 			}
 			catch(NodeJumpContinue* ex)
@@ -77,7 +76,6 @@ CountPtr<Value> NodeForeach::execute(void)
 	{
 		// Only the exception jump is needed
 	}
-        */
 
 	return VALUENULL;
 }
