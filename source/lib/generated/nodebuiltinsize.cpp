@@ -14,7 +14,7 @@
 ////
 
 NodeBuiltinSize::NodeBuiltinSize(identifier name, list<identifier>* parameters)
-	: NodeFunction(name, parameters)
+  : NodeFunction(name, parameters)
 {
 
 }
@@ -28,7 +28,6 @@ vector< CountPtr<Value> >
 NodeBuiltinSize::getParametersValues(void) const
 {
   const list<identifier>& pnames = getParameterNames();
-  //std::cout <<  pnames.size() << "\n" ;
   vector< CountPtr<Value> > pvalues;
   pvalues.reserve(pnames.size());
 
@@ -42,28 +41,26 @@ NodeBuiltinSize::getParametersValues(void) const
 
 CountPtr<Value> NodeBuiltinSize::execute(void)
 {
-	vector< CountPtr<Value> > par = getParametersValues();
-	assert(par.size() == 1);
+  vector< CountPtr<Value> > par = getParametersValues();
+  assert(par.size() == 1);
 
-	ValueArray* a = NULL;
-	ValueStruct* st = NULL;
-	ValueSet* se = NULL;
-	ValueString* s = NULL;
+  ValueArray* a = NULL;
+  ValueStruct* st = NULL;
+  ValueSet* se = NULL;
+  ValueString* s = NULL;
 
-	if((a = par[0]->toValueArray()) != NULL)
-		return CountPtr<Value>(new ValueInt(a->getSize()));
-	else if((st = par[0]->toValueStruct()) != NULL)
-		return CountPtr<Value>(new ValueInt(st->getSize()));
-	else if((se = par[0]->toValueSet()) != NULL)
-		return CountPtr<Value>(new ValueInt(se->getSize()));
-	else if((s = par[0]->toValueString()) != NULL)
-		return CountPtr<Value>(new ValueInt(s->getSize()));
-	else
-	{
-		assert(0 && "Bad parameters type: size(array|struct|set|string) : int|null");
-		return VALUENULL;
-	}
-
+  if((a = par[0]->toValueArray()) != NULL) {
+    return CountPtr<Value>(new ValueInt(a->getSize()));
+  } else if((st = par[0]->toValueStruct()) != NULL) {
+    return CountPtr<Value>(new ValueInt(st->getSize()));
+  } else if((se = par[0]->toValueSet()) != NULL) {
+    return CountPtr<Value>(new ValueInt(se->getSize()));
+  } else if((s = par[0]->toValueString()) != NULL) {
+    return CountPtr<Value>(new ValueInt(s->getSize()));
+  } else {
+    assert(0 && "Bad parameters type: size(array|struct|set|string) : int|null");
+    return VALUENULL;
+  }
 }
 
 const CodePosition* 
@@ -80,8 +77,8 @@ NodeBuiltinSize::isBuiltIn(void) const
 
 ostream& operator<<(ostream& os, const NodeBuiltinSize& node)
 {
-	node.dump(os, 0);
-	return os;
+  node.dump(os, 0);
+  return os;
 }
 void 
 NodeBuiltinSize::dump(ostream& os, uint indent) const 

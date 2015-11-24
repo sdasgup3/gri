@@ -1,0 +1,47 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+  foreach(vertex; vertices.iterator()) {
+    print(" " + vertex.__id + " ");
+  }
+
+  println("");
+
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+        
+    foreach(item; line.iterator()) {
+      if(item == true) {
+        print("" + 1 + " ");
+      } else {
+        print("" + 0 + " ");
+      }
+    }
+    println("");
+  }
+}
+
+
+function main(argv) 
+{
+  g = graph();
+  g.loadFromFile("graphs/02_graph_5_5_5.txt");
+  //g.loadFromFile(argv[0]);
+  matrix = g.getAdjacencyMatrix();
+  displayAdjacencyMatrix(matrix, g.getVertices());
+
+  size  = matrix.size();
+
+  for(k = 0 ; k < size; k++) {
+    for(i = 0 ; i < size; i++) {
+      for(j = 0 ; j < size; j++) {
+        matrix[i][j] = matrix[i][j] || (matrix[i][k] && matrix[k][j]);
+      }
+    }
+  }
+
+  displayAdjacencyMatrix(matrix, g.getVertices());
+}

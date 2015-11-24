@@ -58,7 +58,7 @@ addExternalFunctions(void) {
   CONTEXT->addFunction(
       new NodeBuiltinStruct(STR2ID("struct"), new std::list<identifier>(p0,p0) ));
   CONTEXT->addFunction(
-      new NodeBuiltinStruct(STR2ID("size"), new std::list<identifier>(p0,p1) ));
+      new NodeBuiltinSize(STR2ID("size"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinArray(STR2ID("array"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
