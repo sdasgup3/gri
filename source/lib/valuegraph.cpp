@@ -351,6 +351,57 @@ bool ValueGraph::containsEdge(CountPtr<Value> edge) const
   return m_edges.contains(edge);
 }
 
+CountPtr<Value> 
+ValueGraph::getTransitiveClosure(void) const
+{
+  int size = m_vertices.getSize();
+  map<ValueVertex*, int> trans_table;
+  vector< vector<int> > matrix(size, vector<int>(size, 0));
+
+  // Array of indices
+  int pos = 0;
+  set_container::const_iterator it;
+  for(it = m_vertices.begin(); it != m_vertices.end(); ++it)
+    trans_table[(*it)->toValueVertex()] = pos++;
+
+  // Adjacency Matrix
+  for(it = m_vertices.begin(); it != m_vertices.end(); ++it) {
+    CountPtr<Value> neighbors = (*it)->toValueVertex()->getNeighbors();
+    ValueSet* vertices = neighbors->toValueSet();
+    assert(vertices != NULL);
+    set_container::const_iterator vertex;
+
+    for(vertex = vertices->begin(); vertex != vertices->end(); ++vertex)
+    {
+      if(!isDirected() && *vertex == *it)
+        matrix[trans_table[(*vertex)->toValueVertex()]][trans_table[(*it)->toValueVertex()]] += 2;
+      else
+        ++matrix[trans_table[(*vertex)->toValueVertex()]][trans_table[(*it)->toValueVertex()]];
+    }
+  }
+
+  // transitive closure Matrix
+  for(int k = 0; k < pos; k++) {
+    for(int i = 0; i < pos; i++) {
+      for(int j = 0; j < pos; j++) {
+        matrix[i][j] = matrix[i][j] | (matrix[i][k] & matrix[k][j]);
+      }
+    }
+  }
+
+  // Convert the matrix to the script form
+  ValueArray* ret = new ValueArray(size);
+  for(int j = 0; j < size; j++)
+  {
+    ValueArray* line = new ValueArray(size);
+    ret->setItem(j, CountPtr<Value>(line));
+
+    for(int i = 0; i < size; i++)
+      line->setItem(i, CountPtr<Value>(new ValueInt(matrix[i][j])));
+  }
+
+  return CountPtr<Value>(ret);
+}
 
 CountPtr<Value> ValueGraph::getAdjacencyMatrix(void) const
 {

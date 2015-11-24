@@ -27,6 +27,7 @@
 #include "generated/nodebuiltingetneighbors.h"
 #include "generated/nodebuiltinloadfromfile.h"
 #include "generated/nodebuiltingetadjacencymatrix.h"
+#include "generated/nodebuiltingettransitiveclosure.h"
 
 
 extern int 
@@ -101,6 +102,9 @@ addExternalFunctions(void) {
         std::list<identifier>(p0,p2) ));
   CONTEXT->addFunction(
       new NodeBuiltinGetAdjacencyMatrix(STR2ID("getAdjacencyMatrix"), new 
+        std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetTransitiveClosure(STR2ID("getTransitiveClosure"), new 
         std::list<identifier>(p0,p1) ));
 
   delete fparameters;

@@ -5,51 +5,51 @@ define("CLOSED", "1");
 // Recursive depth first search
 function dfs(v)
 {
-	if(v.state == CLOSED)
-		return;
+  if(v.state == CLOSED)
+    return;
 
-	println("Closing vertex: " + v.num);
-	v.state = CLOSED;
+  println("Closing vertex: " + v.num);
+  v.state = CLOSED;
 
-	foreach(neighbor; v.getNeighbors())
-		dfs(neighbor);
+  foreach(neighbor; v.getNeighbors())
+    dfs(neighbor);
 }
 
 // Generate testing graph and run DFS
 function main(argv)
 {
-//	o 0----- o 1----- o 2----- ...o 9
-//	|       |       |
-//	|       |       |
-//	o 10      o 11      o
+//  o 0----- o 1----- o 2----- ...o 9
+//  |       |       |
+//  |       |       |
+//  o 10      o 11      o
 
-	g = graph();
-	v1 = g.generateVertex();
-	v1.num = 0;
-	first = v1;
+  g = graph();
+  v1 = g.generateVertex();
+  v1.num = 0;
+  first = v1;
 
-	// Generate first layer
-	for(i = 1; i < NUM_VERTICES; i++)
-	{
-		v2 = g.generateVertex();
-		v2.num = i;
+  // Generate first layer
+  for(i = 1; i < NUM_VERTICES; i++)
+  {
+    v2 = g.generateVertex();
+    v2.num = i;
 
-		g.generateEdge(v1, v2);
-		v1 = v2;
-	}
+    g.generateEdge(v1, v2);
+    v1 = v2;
+  }
 
-	// Generate second layer
-	foreach(v1; g.getVertices())
-	{
-		v2 = g.generateVertex();
-		v2.num = i++;
-		g.generateEdge(v1, v2);
-	}
+  // Generate second layer
+  foreach(v1; g.getVertices())
+  {
+    v2 = g.generateVertex();
+    v2.num = i++;
+    g.generateEdge(v1, v2);
+  }
 
-	// Initialize states
-	foreach(v; g.getVertices())
-		v.state = NEW;
+  // Initialize states
+  foreach(v; g.getVertices())
+    v.state = NEW;
 
-	// Run (any vertex first)
-	dfs(first);
+  // Run (any vertex first)
+  dfs(first);
 }

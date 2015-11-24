@@ -44,8 +44,10 @@ NodeFunctionCall::execute(void)
   }
 
   const list<identifier>& formalparams =  function->getParameterNames();
-  assert(formalparams.size() == m_parameters->m_commands.size() &&
-      "Numer of formals and actuals parameters not matching");
+  if(formalparams.size() != m_parameters->m_commands.size()) {
+    std::cerr << ID2STR(m_name) <<"\n";
+    assert(0 && "Numer of formals and actuals parameters not matching");
+  }
 
   list< CountPtr<Value> > values;
   std::list<Node*>:: iterator aIB = m_parameters->m_commands.begin(), aIE = m_parameters->m_commands.end(); 

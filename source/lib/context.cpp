@@ -126,14 +126,7 @@ void Context::addFunction(NodeFunction* function)
   = m_functions.insert(pair<identifier, NodeFunction*>(function->getName(), function));
 
   if(!ret.second) {
-    /*
-  WARN_PP(function->declarationPos()->toString(),
-    _("Function ") + ID2STR(function->getName())
-    + _("() has been already defined, redefinition ignored"));
-  WARN_PP(ret.first->second->declarationPos()->toString(),
-    ID2STR(function->getName()) + _("()"));
-                */
-
+    std::cerr << ID2STR(function->getName()) << "has been already defined, redefinition ignored\n";
     delete function;
     function = NULL;
   }

@@ -46,6 +46,7 @@ public:
 	ValueSet* getEdgesPtr(void) { return &m_edges; }
 
 	CountPtr<Value> getAdjacencyMatrix(void) const;
+	CountPtr<Value> getTransitiveClosure(void) const;
 
 	void setPropertyToAllVertices(identifier name, CountPtr<Value> value);
 	void setPropertyToAllEdges(identifier name, CountPtr<Value> value);
