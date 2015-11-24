@@ -24,6 +24,8 @@
 #include "generated/nodebuiltinhasnext.h"
 #include "generated/nodebuiltinnext.h"
 #include "generated/nodebuiltingetneighbors.h"
+#include "generated/nodebuiltinloadfromfile.h"
+#include "generated/nodebuiltingetadjacencymatrix.h"
 
 
 extern int 
@@ -91,6 +93,12 @@ addExternalFunctions(void) {
       new NodeBuiltinNext(STR2ID("next"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinGetNeighbors(STR2ID("getNeighbors"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinLoadFromFile(STR2ID("loadFromFile"), new 
+        std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetAdjacencyMatrix(STR2ID("getAdjacencyMatrix"), new 
+        std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }

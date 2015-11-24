@@ -1,10 +1,8 @@
 function displayAdjacencyMatrix(matrix, vertices)
 {
-	echo("  |");
 	foreach(vertex; vertices.iterator())
-		echo("" + vertex.__id + " ");
+		println("" + vertex.__id + " ");
 
-	echo("\n--+-------\n");
 
 	it = vertices.iterator();
 
@@ -13,17 +11,17 @@ function displayAdjacencyMatrix(matrix, vertices)
 		if(it.hasNext())
 			vertex = it.next();
 
-		echo("" + vertex.__id + " |");
+		println("" + vertex.__id + " |");
 		foreach(item; line.iterator())
-			echo("" + item + " ");
+			println("" + item + " ");
 
-		echo("\n");
+		println("\n");
 	}
 }
 
 function main(argv)
 {
 	g = graph();
-	assert(g.loadFromFile("../graphs/00_simple.txt"));
+	g.loadFromFile("/home/dsand/GRI/source/tests/graphs/00_simple.txt");
 	displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
 }

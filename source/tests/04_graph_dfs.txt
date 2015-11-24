@@ -18,10 +18,10 @@ function dfs(v)
 // Generate testing graph and run DFS
 function main(argv)
 {
-//	o ----- o ----- o ----- ...
+//	o 0----- o 1----- o 2----- ...o 9
 //	|       |       |
 //	|       |       |
-//	o       o       o
+//	o 10      o 11      o
 
 	g = graph();
 	v1 = g.generateVertex();

@@ -9,7 +9,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_SUBMINOR_VERSION 35
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -142,7 +142,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -154,12 +162,7 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
-extern yy_size_t yyleng;
+extern int yyleng;
 
 extern FILE *yyin, *yyout;
 
@@ -168,7 +171,6 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -185,6 +187,11 @@ extern FILE *yyin, *yyout;
 	while ( 0 )
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
+
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
 
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
@@ -203,7 +210,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	yy_size_t yy_n_chars;
+	int yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -273,8 +280,8 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
-yy_size_t yyleng;
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */
+int yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
@@ -302,7 +309,7 @@ static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
 
 YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
 YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,int len  );
 
 void *yyalloc (yy_size_t  );
 void *yyrealloc (void *,yy_size_t  );
@@ -634,7 +641,7 @@ static bool expandMacro(std::string m_string);
 
 
 
-#line 638 "generated/lexer.cpp"
+#line 645 "generated/lexer.cpp"
 
 #define INITIAL 0
 #define INCLUDE 1
@@ -675,7 +682,7 @@ FILE *yyget_out (void );
 
 void yyset_out  (FILE * out_str  );
 
-yy_size_t yyget_leng (void );
+int yyget_leng (void );
 
 char *yyget_text (void );
 
@@ -717,7 +724,12 @@ static int input (void );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -818,6 +830,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
+#line 48 "parser.l"
+
+#line 836 "generated/lexer.cpp"
+
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -844,11 +860,6 @@ YY_DECL
 		yy_load_buffer_state( );
 		}
 
-	{
-#line 48 "parser.l"
-
-#line 851 "generated/lexer.cpp"
-
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = (yy_c_buf_p);
@@ -865,7 +876,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -1197,14 +1208,17 @@ case 32:
 YY_RULE_SETUP
 #line 207 "parser.l"
 { 
-                                          yylval.string_val = yytext;
-                                          token_dump(yytext);
+                                          std::string name1(""), name2("");
+                                          strip_quotes(yytext, yyleng, name1, name2);
+                                          yylval.string_val = const_cast<char *> 
+                                            (name1.c_str());
+                                          token_dump(name1.c_str());
                                           return LEX_STRING; 
                                         }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 213 "parser.l"
+#line 216 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '='; 
@@ -1212,7 +1226,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 217 "parser.l"
+#line 220 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_EQ_OP; 
@@ -1220,7 +1234,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 221 "parser.l"
+#line 224 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '<'; 
@@ -1228,7 +1242,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 225 "parser.l"
+#line 228 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_LE_OP; 
@@ -1236,7 +1250,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 229 "parser.l"
+#line 232 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '!'; 
@@ -1244,7 +1258,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 233 "parser.l"
+#line 236 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_NE_OP; 
@@ -1252,7 +1266,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 237 "parser.l"
+#line 240 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '>'; 
@@ -1260,7 +1274,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 241 "parser.l"
+#line 244 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_GE_OP; 
@@ -1268,7 +1282,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 245 "parser.l"
+#line 248 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '+'; 
@@ -1276,7 +1290,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 249 "parser.l"
+#line 252 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_ADD_ASSIGN; 
@@ -1284,7 +1298,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 253 "parser.l"
+#line 256 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_INC_OP; 
@@ -1292,7 +1306,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 257 "parser.l"
+#line 260 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '-'; 
@@ -1300,7 +1314,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 261 "parser.l"
+#line 264 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_SUB_ASSIGN; 
@@ -1308,7 +1322,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 265 "parser.l"
+#line 268 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_DEC_OP; 
@@ -1316,14 +1330,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 269 "parser.l"
+#line 272 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '*'; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 272 "parser.l"
+#line 275 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_MUL_ASSIGN; 
@@ -1331,7 +1345,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 276 "parser.l"
+#line 279 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '/'; 
@@ -1339,7 +1353,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 280 "parser.l"
+#line 283 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_DIV_ASSIGN; 
@@ -1347,7 +1361,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 284 "parser.l"
+#line 287 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '%'; 
@@ -1355,7 +1369,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 288 "parser.l"
+#line 291 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_MOD_ASSIGN; 
@@ -1363,7 +1377,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 292 "parser.l"
+#line 295 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_AND_OP; 
@@ -1371,7 +1385,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 296 "parser.l"
+#line 299 "parser.l"
 {
                                           token_dump(yytext);
                                           return LEX_REF_ASSIGN; 
@@ -1379,7 +1393,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 300 "parser.l"
+#line 303 "parser.l"
 { 
                                           token_dump(yytext);
                                           return LEX_OR_OP; 
@@ -1387,7 +1401,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 304 "parser.l"
+#line 307 "parser.l"
 { 
                                           token_dump(yytext);
                                           return ','; 
@@ -1395,7 +1409,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 308 "parser.l"
+#line 311 "parser.l"
 { 
                                           token_dump(yytext);
                                           return ';'; 
@@ -1403,7 +1417,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 312 "parser.l"
+#line 315 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '?'; 
@@ -1411,7 +1425,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 316 "parser.l"
+#line 319 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '('; 
@@ -1419,7 +1433,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 320 "parser.l"
+#line 323 "parser.l"
 { 
                                           token_dump(yytext);
                                           return ')'; 
@@ -1427,7 +1441,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 324 "parser.l"
+#line 327 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '['; 
@@ -1435,7 +1449,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 328 "parser.l"
+#line 331 "parser.l"
 { 
                                           token_dump(yytext);
                                           return ']'; 
@@ -1443,7 +1457,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 332 "parser.l"
+#line 335 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '{'; 
@@ -1451,7 +1465,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 336 "parser.l"
+#line 339 "parser.l"
 { 
                                           token_dump(yytext);
                                           return '}'; 
@@ -1459,7 +1473,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 340 "parser.l"
+#line 343 "parser.l"
 { 
                                           token_dump(yytext);
                                           return ':'; 
@@ -1468,20 +1482,20 @@ YY_RULE_SETUP
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 344 "parser.l"
+#line 347 "parser.l"
 { /* whitespace separates tokens */ }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 345 "parser.l"
+#line 348 "parser.l"
 { /* discard bad characters */ }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 347 "parser.l"
+#line 350 "parser.l"
 ECHO;
 	YY_BREAK
-#line 1485 "generated/lexer.cpp"
+#line 1499 "generated/lexer.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1610,7 +1624,6 @@ ECHO;
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
-	} /* end of user's declarations */
 } /* end of yylex */
 
 /* yy_get_next_buffer - try to read in a new buffer
@@ -1666,21 +1679,21 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			yy_size_t num_to_read =
+			int num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
 			{ /* Not enough room in the buffer - grow it. */
 
 			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
 
 			int yy_c_buf_p_offset =
 				(int) ((yy_c_buf_p) - b->yy_ch_buf);
 
 			if ( b->yy_is_our_buffer )
 				{
-				yy_size_t new_size = b->yy_buf_size * 2;
+				int new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1711,7 +1724,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), num_to_read );
+			(yy_n_chars), (size_t) num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -1806,7 +1819,7 @@ static int yy_get_next_buffer (void)
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 	yy_is_jam = (yy_current_state == 203);
 
-		return yy_is_jam ? 0 : yy_current_state;
+	return yy_is_jam ? 0 : yy_current_state;
 }
 
     static void yyunput (int c, register char * yy_bp )
@@ -1821,7 +1834,7 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register yy_size_t number_to_move = (yy_n_chars) + 2;
+		register int number_to_move = (yy_n_chars) + 2;
 		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		register char *source =
@@ -1870,7 +1883,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
+			int offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -2030,6 +2043,10 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
+#ifndef __cplusplus
+extern int isatty (int );
+#endif /* __cplusplus */
+    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -2142,7 +2159,7 @@ void yypop_buffer_state (void)
  */
 static void yyensure_buffer_stack (void)
 {
-	yy_size_t num_to_alloc;
+	int num_to_alloc;
     
 	if (!(yy_buffer_stack)) {
 
@@ -2239,12 +2256,12 @@ YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
 	yy_size_t n;
-	yy_size_t i;
+	int i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
@@ -2326,7 +2343,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-yy_size_t yyget_leng  (void)
+int yyget_leng  (void)
 {
         return yyleng;
 }
@@ -2474,7 +2491,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 347 "parser.l"
+#line 350 "parser.l"
 
 
 
@@ -2509,7 +2526,7 @@ static void token_dump(const char* const  tok) {
 static void 
 strip_quotes(const char* const quoted_str, int len, std::string &name1, std::string &name2) {
   int i = 1;
-  for(i = 1;i  < len-1 && quoted_str[i] != '"'; i++) {
+  for(i = 1; i  < len-1 && quoted_str[i] != '"'; i++) {
     name1.push_back(quoted_str[i]);
   }
   name1.push_back('\0');

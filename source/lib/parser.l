@@ -204,9 +204,12 @@ QS  \"(\\.|[^\\"])*\"
                                             return LEX_IDENTIFIER; 
                                           }
                                         }
-\"(\\.|[^\\"])*\"	                { 
-                                          yylval.string_val = yytext;
-                                          token_dump(yytext);
+{QS}	                                { 
+                                          std::string name1(""), name2("");
+                                          strip_quotes(yytext, yyleng, name1, name2);
+                                          yylval.string_val = const_cast<char *> 
+                                            (name1.c_str());
+                                          token_dump(name1.c_str());
                                           return LEX_STRING; 
                                         }
 
@@ -377,7 +380,7 @@ static void token_dump(const char* const  tok) {
 static void 
 strip_quotes(const char* const quoted_str, int len, std::string &name1, std::string &name2) {
   int i = 1;
-  for(i = 1;i  < len-1 && quoted_str[i] != '"'; i++) {
+  for(i = 1; i  < len-1 && quoted_str[i] != '"'; i++) {
     name1.push_back(quoted_str[i]);
   }
   name1.push_back('\0');
