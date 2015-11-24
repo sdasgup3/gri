@@ -4,12 +4,7 @@ EXEC=$(BUILD_DIR)/gri/gri
 TESTS=$(wildcard *.txt)
 
 test:	
-	for t in $(TESTS); do 	\
-		echo "Interpreting $$t"; \
-	        test=`echo $$t | cut -f 1 -d '.'`; \
-		$(EXEC) -f $$t > out; 	\
-                diff $$test.OUT out;\
-	done
+	@for t in $(TESTS); do test=`echo $$t | cut -f 1 -d '.'`; $(EXEC) -f $$t 1>out 2>&1; diff $$test.OUT out; if [ $$? = 0 ]; then echo "$$t: PASS"; else echo "$$t: FAIL"; fi; 	done 
 
 %-test:	%.txt %.OUT
 	$(eval filename=$(shell echo $(basename $<)))
