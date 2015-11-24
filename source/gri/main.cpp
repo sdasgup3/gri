@@ -20,6 +20,10 @@
 #include "generated/nodebuiltingetendvertex.h"
 #include "generated/nodebuiltingetvertices.h"
 #include "generated/nodebuiltingetedges.h"
+#include "generated/nodebuiltiniterator.h"
+#include "generated/nodebuiltinhasnext.h"
+#include "generated/nodebuiltinnext.h"
+#include "generated/nodebuiltingetneighbors.h"
 
 
 extern int 
@@ -79,6 +83,14 @@ addExternalFunctions(void) {
       new NodeBuiltinGetVertices(STR2ID("getVertices"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinGetEdges(STR2ID("getEdges"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinIterator(STR2ID("iterator"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinHasNext(STR2ID("hasNext"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinNext(STR2ID("next"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetNeighbors(STR2ID("getNeighbors"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }
@@ -88,7 +100,6 @@ int main(int argc, char** argv)
 {
 
   bool ast_dump = false;
-  bool parsecode = false;
 
   for(int i = 1 ; i < argc; i++) {
 
@@ -97,7 +108,6 @@ int main(int argc, char** argv)
     } else if(0 == strcmp(argv[i], "-f") || 0 == strcmp(argv[i], "-file")) {
       i++;
       if(-1 != parseCode(argv[i])) {
-        parsecode = true;
         addExternalFunctions();
         if(true == ast_dump) {
           CONTEXT->dump(cout, 0);

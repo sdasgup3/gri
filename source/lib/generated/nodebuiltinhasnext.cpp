@@ -1,4 +1,5 @@
-#include "generated/nodebuiltinprintln.h"
+#include <cassert>
+#include "generated/nodebuiltinhasnext.h"
 #include "valuenull.h"
 #include "context.h"
 
@@ -6,19 +7,19 @@
 /////////////////////////////////////////////////////////////////////////////
 ////
 
-NodeBuiltinPrintln::NodeBuiltinPrintln(identifier name, list<identifier>* parameters)
+NodeBuiltinHasNext::NodeBuiltinHasNext(identifier name, list<identifier>* parameters)
   : NodeFunction(name, parameters)
 {
 
 }
 
-NodeBuiltinPrintln::~NodeBuiltinPrintln(void)
+NodeBuiltinHasNext::~NodeBuiltinHasNext(void)
 {
 
 }
 
 vector< CountPtr<Value> > 
-NodeBuiltinPrintln::getParametersValues(void) const
+NodeBuiltinHasNext::getParametersValues(void) const
 {
   const list<identifier>& pnames = getParameterNames();
   //std::cout <<  pnames.size() << "\n" ;
@@ -32,36 +33,34 @@ NodeBuiltinPrintln::getParametersValues(void) const
   return pvalues;
 }
 
-CountPtr<Value> NodeBuiltinPrintln::execute(void)
+CountPtr<Value> 
+NodeBuiltinHasNext::execute(void)
 {
   vector< CountPtr<Value> > par = getParametersValues();
   assert(par.size() == 1);
-  std::cout << par[0]->toString() + '\n';
-  return par[0];
+
+  return par[0]->hasNext();
 }
 
 const CodePosition* 
-NodeBuiltinPrintln::declarationPos(void) const { 
+NodeBuiltinHasNext::declarationPos(void) const { 
   return CONTEXT->getBuiltinDeclarationPos(); 
 }
 
 bool 
-NodeBuiltinPrintln::isBuiltIn(void) const 
+NodeBuiltinHasNext::isBuiltIn(void) const 
 {
   return true;
 }
 
-
-
-
-ostream& operator<<(ostream& os, const NodeBuiltinPrintln& node)
+ostream& operator<<(ostream& os, const NodeBuiltinHasNext& node)
 {
   node.dump(os, 0);
   return os;
 }
 
 void 
-NodeBuiltinPrintln::dump(ostream& os, uint indent) const 
+NodeBuiltinHasNext::dump(ostream& os, uint indent) const 
 {
   dumpIndent(os, indent);
   os << "<BuiltinFunction name=\"" << ID2STR(getName()) << "\" id=\"" << getName() << "\" />" << endl;

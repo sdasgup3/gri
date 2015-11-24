@@ -1,0 +1,39 @@
+"--- array items ---"
+0
+1
+2
+3
+4
+"--- struct items ---"
+42
+3.14
+"bagr"
+"--- struct items using iterator ---"
+42
+3.14
+"bagr"
+"--- vertex set ---"
+""#Vertex": ""red"
+""#Vertex": ""green"
+""#Vertex": ""blue"
+"--- edge set ---"
+""#Edge": "0.5
+""#Edge": "0.4
+"--- vertex neighbors ---"
+""#Vertex": ""red"
+""#Vertex": ""blue"
+"--- graph dump ---"
+#Graph
+"\t"#Vertex
+"\t\t""red"
+"\t\t""new"
+"\t"#Vertex
+"\t\t""green"
+"\t\t""closed"
+"\t"#Vertex
+"\t\t""blue"
+"\t\t""new"
+"\t"#Edge
+"\t\t"0.5
+"\t"#Edge
+"\t\t"0.4
