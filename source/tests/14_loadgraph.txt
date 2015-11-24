@@ -1,27 +1,59 @@
 function displayAdjacencyMatrix(matrix, vertices)
 {
-	foreach(vertex; vertices.iterator())
-		println("" + vertex.__id + " ");
+  foreach(vertex; vertices.iterator()) {
+    print( " " + vertex.__id + " ");
+  }
 
+  println("");
 
-	it = vertices.iterator();
+  it = vertices.iterator();
 
-	foreach(line; matrix.iterator())
-	{
-		if(it.hasNext())
-			vertex = it.next();
+  foreach(line; matrix.iterator())
+  {
+    if(it.hasNext())
+      vertex = it.next();
 
-		println("" + vertex.__id + " |");
-		foreach(item; line.iterator())
-			println("" + item + " ");
+    print("" + vertex.__id + " |");
+    foreach(item; line.iterator())
+      print("" + item + " ");
 
-		println("\n");
-	}
+    println("");
+  }
 }
 
 function main(argv)
 {
-	g = graph();
-	g.loadFromFile("/home/dsand/GRI/source/tests/graphs/00_simple.txt");
-	displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+  g = graph();
+
+  g.loadFromFile("graphs/00_simple.txt");
+  println("graphs/00_simple.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/01_house.txt");
+  println("graphs/01_house.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_1_2_3.txt");
+  println("graphs/02_graph_1_2_3.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_2_2_2.txt");
+  println("graphs/02_graph_2_2_2.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_3_2_3.txt");
+  println("graphs/02_graph_3_2_3.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_4_3_2.txt");
+  println("graphs/02_graph_4_3_2.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_5_5_5.txt");
+  println("graphs/02_graph_5_5_5.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  g.loadFromFile("graphs/02_graph_6_4_3.txt");
+  println("graphs/02_graph_6_4_3.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
 }

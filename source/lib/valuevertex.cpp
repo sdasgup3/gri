@@ -1,23 +1,3 @@
-/*
- * Copyright 2008 Michal Turek
- *
- * This file is part of Graphal library.
- * http://graphal.sourceforge.net/
- *
- * Graphal library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License.
- *
- * Graphal library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Graphal library.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 #include <cassert>
 #include "valuevertex.h"
 #include "valuebool.h"
@@ -32,26 +12,26 @@
 ////
 
 ValueVertex::ValueVertex(ValueGraph* graph)
-	: Value(),
-	m_graph(graph),
-	m_edges(new ValueSet),
-	m_properties(new ValueStruct)
+  : Value(),
+  m_graph(graph),
+  m_edges(new ValueSet),
+  m_properties(new ValueStruct)
 {
-	assert(graph != NULL);
+  assert(graph != NULL);
 }
 
 ValueVertex::~ValueVertex(void)
 {
-	
+  
 
-	set_container::iterator it;
-	for(it = m_edges->begin(); it != m_edges->end(); ++it)
-		(*it)->toValueEdge()->removeVertex(this);
+  set_container::iterator it;
+  for(it = m_edges->begin(); it != m_edges->end(); ++it)
+    (*it)->toValueEdge()->removeVertex(this);
 
-	delete m_edges;
-	m_edges = NULL;
-	delete m_properties;
-	m_properties = NULL;
+  delete m_edges;
+  m_edges = NULL;
+  delete m_properties;
+  m_properties = NULL;
 }
 
 
@@ -60,9 +40,9 @@ ValueVertex::~ValueVertex(void)
 
 void ValueVertex::clear(void)
 {
-	
-	m_edges->clear();
-	m_properties->clear();
+  
+  m_edges->clear();
+  m_properties->clear();
 }
 
 
@@ -71,16 +51,16 @@ void ValueVertex::clear(void)
 
 void ValueVertex::addEdge(CountPtr<Value> edge)
 {
-	
-	assert(edge->toValueEdge() != NULL);
-	m_edges->insert(edge);
+  
+  assert(edge->toValueEdge() != NULL);
+  m_edges->insert(edge);
 }
 
 void ValueVertex::deleteEdge(CountPtr<Value> edge)
 {
-	
-	assert(edge->toValueEdge() != NULL);
-	m_edges->remove(edge);
+  
+  assert(edge->toValueEdge() != NULL);
+  m_edges->remove(edge);
 }
 
 
@@ -89,43 +69,43 @@ void ValueVertex::deleteEdge(CountPtr<Value> edge)
 
 CountPtr<Value> ValueVertex::getNeighbors(void)
 {
-	
-	ValueSet* ret = new ValueSet;
-	CountPtr<Value> retval(ret);
-	set_container::iterator it;
+  
+  ValueSet* ret = new ValueSet;
+  CountPtr<Value> retval(ret);
+  set_container::iterator it;
 
-	if(m_graph == NULL)
-	{
-		//WARN_P(_("The graph is invalid (deleted?)"));
-		return VALUENULL;
-	}
+  if(m_graph == NULL)
+  {
+    assert(0 && "The graph is invalid (deleted?)");
+    return VALUENULL;
+  }
 
-	if(m_graph->isDirected())
-	{
-		for(it = m_edges->begin(); it != m_edges->end(); ++it)
-		{
-			ValueEdge* edge = (*it)->toValueEdge();
-			assert(edge != NULL);
+  if(m_graph->isDirected())
+  {
+    for(it = m_edges->begin(); it != m_edges->end(); ++it)
+    {
+      ValueEdge* edge = (*it)->toValueEdge();
+      assert(edge != NULL);
 
-			if(edge->getBeginVertex()->toValueVertex() == this)
-				ret->insert((*it)->toValueEdge()->getEndVertex());
-		}
-	}
-	else
-	{
-		for(it = m_edges->begin(); it != m_edges->end(); ++it)
-		{
-			ValueEdge* edge = (*it)->toValueEdge();
-			assert(edge != NULL);
+      if(edge->getBeginVertex()->toValueVertex() == this)
+        ret->insert((*it)->toValueEdge()->getEndVertex());
+    }
+  }
+  else
+  {
+    for(it = m_edges->begin(); it != m_edges->end(); ++it)
+    {
+      ValueEdge* edge = (*it)->toValueEdge();
+      assert(edge != NULL);
 
-			if(edge->getBeginVertex()->toValueVertex() == this)
-				ret->insert(edge->getEndVertex());
-			else
-				ret->insert(edge->getBeginVertex());
-		}
-	}
+      if(edge->getBeginVertex()->toValueVertex() == this)
+        ret->insert(edge->getEndVertex());
+      else
+        ret->insert(edge->getBeginVertex());
+    }
+  }
 
-	return retval;
+  return retval;
 }
 
 
@@ -134,8 +114,8 @@ CountPtr<Value> ValueVertex::getNeighbors(void)
 
 uint ValueVertex::getDegree(void) const
 {
-	
-	return m_edges->getSize();
+  
+  return m_edges->getSize();
 }
 
 
@@ -144,8 +124,8 @@ uint ValueVertex::getDegree(void) const
 
 CountPtr<Value> ValueVertex::getEdgesCopy(void)
 {
-	
-	return m_edges->clone();
+  
+  return m_edges->clone();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -153,19 +133,19 @@ CountPtr<Value> ValueVertex::getEdgesCopy(void)
 
 void ValueVertex::dump(ostream& os, uint indent) const
 {
-	
+  
 
-	dumpIndent(os, indent);
-	os << "<ValueVertex>" << endl;
-	m_properties->dump(os, indent+1);
-	dumpIndent(os, indent);
-	os << "</ValueVertex>" << endl;
+  dumpIndent(os, indent);
+  os << "<ValueVertex>" << endl;
+  m_properties->dump(os, indent+1);
+  dumpIndent(os, indent);
+  os << "</ValueVertex>" << endl;
 }
 
 ostream& operator<<(ostream& os, const ValueVertex& node)
 {
-	node.dump(os, 0);
-	return os;
+  node.dump(os, 0);
+  return os;
 }
 
 

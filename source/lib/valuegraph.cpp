@@ -2,14 +2,12 @@
 #include <vector>
 #include <algorithm>
 #include "valuegraph.h"
-//#include "logger.h"
 #include "valuebool.h"
 #include "valuevertex.h"
 #include "valueedge.h"
 #include "context.h"
 #include "valueint.h"
 #include "valuefloat.h"
-//#include "objectcreator.h"
 #include "valuearray.h"
 #include "valueset.h"
 
@@ -194,13 +192,13 @@ CountPtr<Value> ValueGraph::generateEdge(CountPtr<Value> begin, CountPtr<Value> 
 
   if(bv == NULL || ev == NULL)
   {
-    //WARN_P(_("The parameter is not a vertex"));
+    assert(0 && "The parameter is not a vertex");
     return VALUENULL;
   }
 
   if(!(bv->getGraph() == this && ev->getGraph() == this))
   {
-    //WARN_P(_("The vertices belong to the different graphs"));
+    assert(0 && "The vertices belong to the different graphs");
     return VALUENULL;
   }
 
@@ -354,13 +352,8 @@ bool ValueGraph::containsEdge(CountPtr<Value> edge) const
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-////
-
 CountPtr<Value> ValueGraph::getAdjacencyMatrix(void) const
 {
-  
-
   int size = m_vertices.getSize();
   map<ValueVertex*, int> trans_table;
   vector< vector<int> > matrix(size, vector<int>(size, 0));

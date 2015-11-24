@@ -3,6 +3,7 @@
 #include "general.h"
 #include "context.h"
 #include "generated/nodebuiltinprintln.h"
+#include "generated/nodebuiltinprint.h"
 #include "generated/nodebuiltinstruct.h"
 #include "generated/nodebuiltinsize.h"
 #include "generated/nodebuiltinarray.h"
@@ -51,6 +52,8 @@ addExternalFunctions(void) {
 
   CONTEXT->addFunction(
       new NodeBuiltinPrintln(STR2ID("println"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinPrint(STR2ID("print"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinStruct(STR2ID("struct"), new std::list<identifier>(p0,p0) ));
   CONTEXT->addFunction(
