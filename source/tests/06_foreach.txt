@@ -67,15 +67,15 @@ function dumpGraph(g)
 	println(g);
 	foreach(vertex ; g.getVertices())
 	{
-		println("\t" + vertex);
+		println("  " + vertex);
 		foreach(item ; vertex)
-			println("\t\t" + item);
+			println("    " + item);
 	}
 
 	foreach(edge ; g.getEdges())
 	{
-		println("\t" + edge);
+		println("  " + edge);
 		foreach(item ; edge)
-			println("\t\t" + item);
+			println("    " + item);
 	}
 }

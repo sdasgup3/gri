@@ -1,21 +1,21 @@
-"Processing vertices"
-"Vertex: "0
-"Vertex: "1
-"Vertex: "2
-"Vertex: "3
-"Vertex: "4
-"Vertex: "5
-"Vertex: "6
-"Vertex: "7
-"Vertex: "8
-"Vertex: "9
-"Processing edges"
-"Edge: between "0" and "1
-"Edge: between "1" and "2
-"Edge: between "2" and "3
-"Edge: between "3" and "4
-"Edge: between "4" and "5
-"Edge: between "5" and "6
-"Edge: between "6" and "7
-"Edge: between "7" and "8
-"Edge: between "8" and "9
+Processing vertices
+Vertex: 0
+Vertex: 1
+Vertex: 2
+Vertex: 3
+Vertex: 4
+Vertex: 5
+Vertex: 6
+Vertex: 7
+Vertex: 8
+Vertex: 9
+Processing edges
+Edge: between 0 and 1
+Edge: between 1 and 2
+Edge: between 2 and 3
+Edge: between 3 and 4
+Edge: between 4 and 5
+Edge: between 5 and 6
+Edge: between 6 and 7
+Edge: between 7 and 8
+Edge: between 8 and 9

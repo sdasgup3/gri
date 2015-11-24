@@ -1,8 +1,8 @@
-"arr["0"]: ""bagr"
-"arr["1"]: "5.5
-"arr["2"]: "NULL
-"arr["3"]: "NULL
-"arr["4"]: "3
-"st.bagr: ""bagr"
-"st.brm: "true
-"st.bagr: ""jiny bagr"
+arr[0]: bagr
+arr[1]: 5.5
+arr[2]: NULL
+arr[3]: NULL
+arr[4]: 3
+st.bagr: bagr
+st.brm: true
+st.bagr: jiny bagr
