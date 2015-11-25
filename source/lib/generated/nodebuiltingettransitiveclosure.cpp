@@ -17,7 +17,7 @@ NodeBuiltinGetTransitiveClosure::~NodeBuiltinGetTransitiveClosure(void)
 }
 
 
-vector< CountPtr<Value> > 
+vector< CountPtr<Value>> 
 NodeBuiltinGetTransitiveClosure::getParametersValues(void) const
 {
   const list<identifier>& pnames = getParameterNames();
@@ -41,7 +41,7 @@ NodeBuiltinGetTransitiveClosure::execute(void)
 
   if((g = par[0]->toValueGraph()) != NULL) {
     return g->getTransitiveClosure();
-        } else {
+  } else {
     assert(0 && "Bad parameters type: getTransitiveClosure(graph) : array");
     return VALUENULL;
   }

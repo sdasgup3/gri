@@ -28,7 +28,8 @@
 #include "generated/nodebuiltinloadfromfile.h"
 #include "generated/nodebuiltingetadjacencymatrix.h"
 #include "generated/nodebuiltingettransitiveclosure.h"
-
+#include "generated/nodebuiltingetshortestpath.h"
+#include "generated/nodebuiltingetshortestdistance.h"
 
 extern int 
 parseCode(char*);
@@ -49,6 +50,7 @@ addExternalFunctions(void) {
   std::list<identifier>::iterator p1 = ++p0;
   std::list<identifier>::iterator p2 = ++p0;
   std::list<identifier>::iterator p3 = ++p0;
+  std::list<identifier>::iterator p4 = ++p0;
   p0 = fparameters->begin();
 
   CONTEXT->addFunction(
@@ -106,6 +108,12 @@ addExternalFunctions(void) {
   CONTEXT->addFunction(
       new NodeBuiltinGetTransitiveClosure(STR2ID("getTransitiveClosure"), new 
         std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetShortestPath(STR2ID("getShortestPath"), new 
+        std::list<identifier>(p0,p4) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetShortestDistance(STR2ID("getShortestDistance"), new 
+        std::list<identifier>(p0,p4) ));
 
   delete fparameters;
 }

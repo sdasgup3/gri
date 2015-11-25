@@ -1,0 +1,114 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+  print("   ");
+  foreach(vertex; vertices.iterator()) {
+    print("" + vertex.__id + " ");
+  }
+
+    println("");
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+        
+    foreach(item; line.iterator())  {
+      print("" + item + " ");
+    }
+
+    println("");
+  }
+}
+
+function displaySTPD_1(matrix, vertices)
+{
+  println("");
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+        
+    print("" + line + " ");
+
+    println("");
+  }
+}
+
+function displaySTPD_2(matrix, end)
+{
+  println("");
+  print("" + end.__id + " |");
+  it = matrix.iterator();
+  val = it.next();
+  print("" + val + " ");
+  println("");
+}
+
+function displaySTP_1(matrix, vertices)
+{
+  println("");
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+        
+    foreach(item; line.iterator())  {
+      print("" + item + " ");
+    }
+
+    println("");
+  }
+}
+
+function displaySTP_2(matrix, end)
+{
+  println("");
+  foreach(line; matrix.iterator()) {
+    print("" + end.__id + " |");
+        
+    foreach(item; line.iterator())  {
+      print("" + item + " ");
+    }
+
+    println("");
+  }
+}
+
+function main(argv) 
+{
+  g = graph();
+  g.loadFromFile("graphs/simple_shortestpath.txt");
+  //g.loadFromFile(argv[0]);
+
+  vertices = g.getVertices();
+  it = vertices.iterator();
+  start = it.next();
+  it.next();
+  it.next();
+  it.next();
+  end = it.next();
+
+  matrix = g.getAdjacencyMatrix();
+  displayAdjacencyMatrix(matrix, vertices);
+
+
+  path = g.getShortestPath("__w", start, NULL);
+  displaySTP_1(path, vertices);
+
+  path = g.getShortestPath("__w", start, end);
+  displaySTP_2(path, end);
+
+  dist = g.getShortestDistance("__w", start, NULL);
+  displaySTPD_1(dist, vertices);
+
+  dist = g.getShortestDistance("__w", start, end);
+  displaySTPD_2(dist, end);
+}
+
+
+

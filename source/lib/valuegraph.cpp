@@ -1,5 +1,7 @@
 #include <fstream>
 #include <vector>
+#include <queue>
+#include <climits>
 #include <algorithm>
 #include "valuegraph.h"
 #include "valuebool.h"
@@ -11,9 +13,17 @@
 #include "valuearray.h"
 #include "valueset.h"
 
+class heapnode {
+  public:
+    heapnode(int a, int b): id(a), dist(b) {}
+    int id;
+    int dist;
+};
 
-/////////////////////////////////////////////////////////////////////////////
-////
+bool
+operator<(const heapnode& a,const  heapnode& b) {
+  return a.dist > b.dist;
+}
 
 ValueGraph::ValueGraph(bool directed)
   : Value(),
@@ -77,16 +87,14 @@ ValueGraph::loadFromFile(const string& filename)
   is >> num_edges_props;
   edges_props.reserve(num_edges_props);
 
-  for(int i = 0; i < num_edges_props; i++)
-  {
+  for(int i = 0; i < num_edges_props; i++) {
     string name;
     is >> name;
     edges_props.push_back(STR2ID(name));
   }
 
   // Vertices
-  for(int j = 0; j < num_vertices; j++)
-  {
+  for(int j = 0; j < num_vertices; j++) {
     int id = 0;
     is >> id;
 
@@ -349,6 +357,246 @@ bool ValueGraph::containsEdge(CountPtr<Value> edge) const
 {
   
   return m_edges.contains(edge);
+}
+
+void
+getPath(std::vector<int> &parent, int& start, int &end,
+      std::vector<int> &path)
+{
+  int runner = end;
+  while(runner != start) {
+    path.push_back(runner);
+    runner = parent[runner];
+  }
+  path.push_back(start);
+}
+
+CountPtr<Value>
+ValueGraph::getShortestPath(const string& wt, 
+      ValueVertex* startV, ValueVertex* endV) const
+{
+  int size = m_vertices.getSize();
+
+  vector< vector<float> > matrix(size, vector<float>(size, 0.0));
+
+  // transition table from vertices to ints
+  //setting start and end
+  map<ValueVertex*, int> trans_table;
+  map<int, ValueVertex*> trans_table_r;
+  int pos = 0;
+  int start = -1;
+  int end = -1;
+
+  set_container::const_iterator it;
+  for(it = m_vertices.begin(); it != m_vertices.end(); ++it, pos++) {
+    ValueVertex* v = (*it)->toValueVertex();
+    if(v == startV) {
+      start = pos;
+    }
+    if(endV && v == endV) {
+      end = pos;
+    }
+    trans_table[v] = pos;
+    trans_table_r[pos] = v;
+  }
+
+  // Adjacency Matrix
+  for(it = m_edges.begin(); it != m_edges.end(); ++it) {
+    ValueEdge* edge     = (*it)->toValueEdge();
+    ValueVertex* begin  = edge->getBeginVertexPtr();
+    ValueVertex* end    = edge->getEndVertexPtr();
+
+    ValueFloat* weight = edge->getItem(STR2ID(wt))->toValueFloat();
+
+    matrix[trans_table[begin]][trans_table[end]] = weight->getVal();
+    matrix[trans_table[end]][trans_table[begin]] = weight->getVal();
+  }
+
+  /*
+  //print the weight matrix   
+  std::cout << start << " " << end << "\n ";
+  for(int i = 0 ; i < size ; i ++) {
+    for(int j = 0 ; j < size ; j ++) {
+      std::cout << matrix[i][j] << " ";
+    }
+    std::cout << "\n ";
+  }
+  */
+
+  vector<float> dist(size, INT_MAX);
+  vector<int> parent(size, -1);
+  dijkstra(matrix, start, end, dist, parent);
+
+  /*
+  //print the dist and parent
+  for(int v = 0 ; v < size; v++) {
+    std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
+  }
+  */
+
+  // Convert the parent to the script form
+  vector<int> path;
+  ValueArray* ret;
+
+  if(-1 != end) {
+    getPath(parent, start, end, path);
+
+    ret = new ValueArray(1);
+    int pathsize = path.size();
+    ValueArray* line = new ValueArray(pathsize);
+    ret->setItem(0, CountPtr<Value>(line));
+    for(int i = 0; i < pathsize; i++) {
+      //line->setItem(i, CountPtr<Value>(trans_table_r[path[pathsize-1-i]]));
+      ValueVertex* v = trans_table_r[path[pathsize-1-i]];
+      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+      line->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    }
+    return CountPtr<Value>(ret);
+  }
+
+  ret = new ValueArray(size);
+  for(int i = 0; i < size; i++) {
+    end = i;
+    getPath(parent, start, end, path);
+    int pathsize = path.size();
+
+    /*
+    std::cout << i << "\n\t";
+    for(int i = pathsize-1; i>= 0; i--) {
+      std::cout << path[i] << "% ";
+    }
+    std::cout << "\n ";
+    */
+
+    ValueArray* line = new ValueArray(pathsize);
+    ret->setItem(end, CountPtr<Value>(line));
+    for(int i = 0; i < pathsize; i++) {
+      //line->setItem(i, CountPtr<Value>(trans_table_r[path[pathsize-1-i]]));
+      ValueVertex* v = trans_table_r[path[pathsize-1-i]];
+      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+      line->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    }
+    path.clear();
+  }
+  return CountPtr<Value>(ret);
+}
+
+CountPtr<Value>
+ValueGraph::getShortestDistance(const string& wt, 
+      ValueVertex* startV, ValueVertex* endV) const
+{
+  int size = m_vertices.getSize();
+  map<ValueVertex*, int> trans_table;
+
+  vector< vector<float> > matrix(size, vector<float>(size, 0.0));
+
+  // transition table from vertices to ints
+  //setting start and end
+  int pos = 0;
+  int start = -1;
+  int end = -1;
+
+  set_container::const_iterator it;
+  for(it = m_vertices.begin(); it != m_vertices.end(); ++it, pos++) {
+    ValueVertex* v = (*it)->toValueVertex();
+    if(v == startV) {
+      start = pos;
+    }
+    if(endV && v == endV) {
+      end = pos;
+    }
+    trans_table[v] = pos;
+  }
+
+  // Adjacency Matrix
+  for(it = m_edges.begin(); it != m_edges.end(); ++it) {
+    ValueEdge* edge     = (*it)->toValueEdge();
+    ValueVertex* begin  = edge->getBeginVertexPtr();
+    ValueVertex* end    = edge->getEndVertexPtr();
+
+    ValueFloat* weight = edge->getItem(STR2ID(wt))->toValueFloat();
+
+    matrix[trans_table[begin]][trans_table[end]] = weight->getVal();
+    matrix[trans_table[end]][trans_table[begin]] = weight->getVal();
+  }
+
+  /*
+  //print the weight matrix   
+  std::cout << start << " " << end << "\n ";
+  for(int i = 0 ; i < size ; i ++) {
+    for(int j = 0 ; j < size ; j ++) {
+      std::cout << matrix[i][j] << " ";
+    }
+    std::cout << "\n ";
+  }
+  */
+  vector<float> dist(size, INT_MAX);
+  vector<int> parent(size, -1);
+  dijkstra(matrix, start, end, dist, parent);
+
+  /*
+  //print the dist and parent
+  for(int v = 0 ; v < size; v++) {
+    std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
+  }
+  */
+
+  // Convert the dist to the script form
+  ValueArray* ret;
+
+  if(-1 != end) {
+
+    ret = new ValueArray(1);
+    ret->setItem(0, CountPtr<Value>(new ValueFloat(dist[end])));
+    return CountPtr<Value>(ret);
+  }
+
+  ret = new ValueArray(size);
+  for(int i = 0; i < size; i++) {
+    end = i;
+    ret->setItem(end, CountPtr<Value>(new ValueFloat(dist[end])));
+  }
+  return CountPtr<Value>(ret);
+}
+
+void
+ValueGraph::dijkstra(std::vector<std::vector<float>> &graph,
+      int &start, int &end, vector<float>& dist, 
+      vector<int>& parent) const
+{
+
+  int V = dist.size();
+  std::priority_queue<heapnode> Q;
+  std::vector<bool> visited(V, false);
+
+  Q.push(heapnode(0,0));
+  dist[start] = start;
+  parent[start] = start;
+
+  while(false == Q.empty()) {
+
+    heapnode minNode = Q.top();
+    Q.pop();
+    int minI = minNode.id;
+
+
+    visited[minI] = true;
+    if(end == minI) {
+      break;
+    }
+
+    for(int i = 0; i < V; i++) {
+      if(i == minI || 0 == graph[minI][i] || true == visited[i]) {
+        continue;
+      }
+
+      if(dist[minI] + graph[minI][i] < dist[i]) {
+        dist[i] = dist[minI] + graph[minI][i];
+        Q.push(heapnode(i, dist[i]));
+        parent[i] = minI;
+      }
+    }
+  }
 }
 
 CountPtr<Value> 

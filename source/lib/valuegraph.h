@@ -47,6 +47,12 @@ public:
 
 	CountPtr<Value> getAdjacencyMatrix(void) const;
 	CountPtr<Value> getTransitiveClosure(void) const;
+	CountPtr<Value> getShortestPath(const string& wt, 
+              ValueVertex* start,
+              ValueVertex* end) const;
+	CountPtr<Value> getShortestDistance(const string& wt,
+              ValueVertex* start,
+              ValueVertex* end) const;
 
 	void setPropertyToAllVertices(identifier name, CountPtr<Value> value);
 	void setPropertyToAllEdges(identifier name, CountPtr<Value> value);
@@ -70,6 +76,11 @@ public:
 	virtual CountPtr<Value> member(const Value&  right) const; // .
 	virtual CountPtr<Value> index(const Value&   right) const; // []
 	virtual CountPtr<Value> logNOT(void)                const; // !
+
+public:
+        void dijkstra(std::vector<std::vector<float>>&,
+              int& , int&, std::vector<float>&, 
+              std::vector<int>&) const;
 
 private:
 	bool m_directed;

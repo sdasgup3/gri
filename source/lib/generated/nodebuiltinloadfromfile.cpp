@@ -7,11 +7,8 @@
 #include "valuebool.h"
 
 
-/////////////////////////////////////////////////////////////////////////////
-////
-
 NodeBuiltinLoadFromFile::NodeBuiltinLoadFromFile(identifier name, list<identifier>* parameters)
-	: NodeFunction(name, parameters)
+  : NodeFunction(name, parameters)
 {
 
 }
@@ -39,19 +36,19 @@ NodeBuiltinLoadFromFile::getParametersValues(void) const
 
 CountPtr<Value> NodeBuiltinLoadFromFile::execute(void)
 {
-	vector< CountPtr<Value> > par = getParametersValues();
-	assert(par.size() == 2);
+  vector< CountPtr<Value> > par = getParametersValues();
+  assert(par.size() == 2);
 
-	ValueGraph* g = NULL;
-	ValueString* path = NULL;
+  ValueGraph* g = NULL;
+  ValueString* path = NULL;
 
-	if((g = par[0]->toValueGraph()) != NULL && (path = par[1]->toValueString()) != NULL)
-		return g->loadFromFile(path->getVal()) ? VALUEBOOL_TRUE : VALUEBOOL_FALSE;
-	else
-	{
-		assert(0 &&"Bad parameters type: loadFromFile(graph, string) : bool");
-		return VALUEBOOL_FALSE;
-	}
+  if((g = par[0]->toValueGraph()) != NULL && (path = par[1]->toValueString()) != NULL)
+    return g->loadFromFile(path->getVal()) ? VALUEBOOL_TRUE : VALUEBOOL_FALSE;
+  else
+  {
+    assert(0 &&"Bad parameters type: loadFromFile(graph, string) : bool");
+    return VALUEBOOL_FALSE;
+  }
 
 }
 
@@ -69,8 +66,8 @@ NodeBuiltinLoadFromFile::isBuiltIn(void) const
 
 ostream& operator<<(ostream& os, const NodeBuiltinLoadFromFile& node)
 {
-	node.dump(os, 0);
-	return os;
+  node.dump(os, 0);
+  return os;
 }
 
 void 
