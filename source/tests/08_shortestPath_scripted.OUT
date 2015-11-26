@@ -9,26 +9,16 @@
 7 |1 1 0 0 0 0 1 0 1 
 8 |0 0 1 0 0 0 1 1 0 
 
-0 | 0 NULL 
-1 | 0 1 NULL 
-2 | 0 1 2 NULL 
-3 | 0 1 2 3 NULL 
-4 | 0 7 6 5 4 NULL 
-5 | 0 7 6 5 NULL 
-6 | 0 7 6 NULL 
-7 | 0 7 NULL 
-8 | 0 1 2 8 NULL 
+Print distance / path
+0 | 0 | 0 NULL 
+1 | 4 | 0 1 NULL 
+2 | 12 | 0 1 2 NULL 
+3 | 19 | 0 1 2 3 NULL 
+4 | 21 | 0 7 6 5 4 NULL 
+5 | 11 | 0 7 6 5 NULL 
+6 | 9 | 0 7 6 NULL 
+7 | 8 | 0 7 NULL 
+8 | 14 | 0 1 2 8 NULL 
 
-4 | 0 7 6 5 4 NULL 
-
-0 | 0
-1 | 4
-2 | 12
-3 | 19
-4 | 21
-5 | 11
-6 | 9
-7 | 8
-8 | 14
-
-4 | 21
+Print distance / path
+4 | 21 | 0 7 6 5 4 NULL 
