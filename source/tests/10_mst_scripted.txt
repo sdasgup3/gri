@@ -46,7 +46,7 @@ function mst_helper(g)
     matrix[end.__id][begin.__id] = wt;
   }
 
-  displayAdjacencyMatrix(matrix, vertices);
+  //displayAdjacencyMatrix(matrix, vertices);
 
   pathNdist = mst(matrix, numvertices);
   println("");

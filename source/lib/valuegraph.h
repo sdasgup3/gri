@@ -50,9 +50,7 @@ public:
 	CountPtr<Value> getShortestPath(const string& wt, 
               ValueVertex* start,
               ValueVertex* end) const;
-	CountPtr<Value> getShortestDistance(const string& wt,
-              ValueVertex* start,
-              ValueVertex* end) const;
+	CountPtr<Value> getMST(const string& wt) const;
 
 	void setPropertyToAllVertices(identifier name, CountPtr<Value> value);
 	void setPropertyToAllEdges(identifier name, CountPtr<Value> value);
@@ -81,6 +79,8 @@ public:
         void dijkstra(std::vector<std::vector<float>>&,
               int& , int&, std::vector<float>&, 
               std::vector<int>&) const;
+        void mst(std::vector<std::vector<float>>&, 
+              std::vector<float>&, std::vector<int>&) const;
 
 private:
 	bool m_directed;

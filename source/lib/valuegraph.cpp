@@ -445,30 +445,22 @@ ValueGraph::getShortestPath(const string& wt,
 }
 
 CountPtr<Value>
-ValueGraph::getShortestDistance(const string& wt, 
-      ValueVertex* startV, ValueVertex* endV) const
+ValueGraph::getMST(const string& wt) const
 {
   int size = m_vertices.getSize();
   map<ValueVertex*, int> trans_table;
+  map<int, ValueVertex*> trans_table_r;
 
   vector< vector<float> > matrix(size, vector<float>(size, 0.0));
 
   // transition table from vertices to ints
-  //setting start and end
   int pos = 0;
-  int start = -1;
-  int end = -1;
 
   set_container::const_iterator it;
   for(it = m_vertices.begin(); it != m_vertices.end(); ++it, pos++) {
     ValueVertex* v = (*it)->toValueVertex();
-    if(v == startV) {
-      start = pos;
-    }
-    if(endV && v == endV) {
-      end = pos;
-    }
     trans_table[v] = pos;
+    trans_table_r[pos] = v;
   }
 
   // Adjacency Matrix
@@ -485,7 +477,6 @@ ValueGraph::getShortestDistance(const string& wt,
 
   /*
   //print the weight matrix   
-  std::cout << start << " " << end << "\n ";
   for(int i = 0 ; i < size ; i ++) {
     for(int j = 0 ; j < size ; j ++) {
       std::cout << matrix[i][j] << " ";
@@ -495,7 +486,7 @@ ValueGraph::getShortestDistance(const string& wt,
   */
   vector<float> dist(size, INT_MAX);
   vector<int> parent(size, -1);
-  dijkstra(matrix, start, end, dist, parent);
+  mst(matrix, dist, parent);
 
   /*
   //print the dist and parent
@@ -505,21 +496,61 @@ ValueGraph::getShortestDistance(const string& wt,
   */
 
   // Convert the dist to the script form
-  ValueArray* ret;
+  ValueArray* ret = new ValueArray(2);
 
-  if(-1 != end) {
+  ValueArray* distarray = new ValueArray(size);
+  ValueArray* parentarray = new ValueArray(size);
 
-    ret = new ValueArray(1);
-    ret->setItem(0, CountPtr<Value>(new ValueFloat(dist[end])));
-    return CountPtr<Value>(ret);
-  }
+  ret->setItem(0, CountPtr<Value>(parentarray));
+  ret->setItem(1, CountPtr<Value>(distarray));
 
-  ret = new ValueArray(size);
   for(int i = 0; i < size; i++) {
-    end = i;
-    ret->setItem(end, CountPtr<Value>(new ValueFloat(dist[end])));
+    ValueVertex* v = trans_table_r[parent[i]];
+    ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+    parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
   }
+
+  for(int i = 0; i < size; i++) {
+    distarray->setItem(i, CountPtr<Value>(new ValueFloat(dist[i])));
+  }
+
   return CountPtr<Value>(ret);
+}
+
+void
+ValueGraph::mst(std::vector<std::vector<float>> &graph, 
+    vector<float>& dist, vector<int>& parent) const
+{
+
+  int V = dist.size();
+  std::priority_queue<heapnode> Q;
+  std::vector<bool> visited(V, false);
+
+  Q.push(heapnode(0,0));
+  dist[0] = 0.0;
+  parent[0] = 0;
+
+  while(false == Q.empty()) {
+
+    heapnode minNode = Q.top();
+    Q.pop();
+    int minI = minNode.id;
+
+
+    visited[minI] = true;
+
+    for(int i = 0; i < V; i++) {
+      if(i == minI || 0 == graph[minI][i] || true == visited[i]) {
+        continue;
+      }
+
+      if(graph[minI][i] < dist[i]) {
+        dist[i] = graph[minI][i];
+        Q.push(heapnode(i, dist[i]));
+        parent[i] = minI;
+      }
+    }
+  }
 }
 
 void

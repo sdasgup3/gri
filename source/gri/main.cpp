@@ -29,7 +29,7 @@
 #include "generated/nodebuiltingetadjacencymatrix.h"
 #include "generated/nodebuiltingettransitiveclosure.h"
 #include "generated/nodebuiltingetshortestpath.h"
-#include "generated/nodebuiltingetshortestdistance.h"
+#include "generated/nodebuiltingetmst.h"
 #include "generated/nodebuiltinpushfront.h"
 #include "generated/nodebuiltinpushback.h"
 #include "generated/nodebuiltinpopfront.h"
@@ -114,7 +114,7 @@ addExternalFunctions(void) {
   CONTEXT->addFunction(
       new NodeBuiltinGetShortestPath(STR2ID("getShortestPath"), new std::list<identifier>(p0,p4) ));
   CONTEXT->addFunction(
-      new NodeBuiltinGetShortestDistance(STR2ID("getShortestDistance"), new std::list<identifier>(p0,p4) ));
+      new NodeBuiltinGetMST(STR2ID("getMST"), new std::list<identifier>(p0,p2) ));
   CONTEXT->addFunction(
       new NodeBuiltinPushFront(STR2ID("pushFront"), new std::list<identifier>(p0,p2) ));
   CONTEXT->addFunction(
