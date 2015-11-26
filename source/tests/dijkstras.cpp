@@ -3,39 +3,144 @@
 #include<climits> 
 #include<cassert> 
 #include<queue> 
-#define V 9
+#include<fstream>
+#include<map>
 
-class node {
-  public:
-    node(int a, int b): id(a), dist(b) {}
-    int id;
-    int dist;
-};
+using namespace std;
 
-bool
-operator<(const node& a,const  node& b) {
-  return a.dist > b.dist;
+std::vector<std::vector<float>> 
+loadFromFile(std::string& filename) {
+
+  ifstream is(filename.c_str());
+
+  if(!is.is_open()) {
+    std::cerr  << filename.c_str();
+    assert(0 && "File was not found or is not readable: ");
+  }
+
+  int m_directed;
+  int num_vertices = 0;
+  int num_edges = 0;
+  int num_vertices_props = 0;
+  int num_edges_props = 0;
+
+  map<int, int > vertices;
+
+  // Is directed flag, number of vertices, number of edges
+  is >> m_directed;
+  is >> num_vertices;
+  is >> num_edges;
+
+  // Number of properties for vertices, names of properties for vertices
+  is >> num_vertices_props;
+  for(int i = 0; i < num_vertices_props; i++) {
+    string name;
+    is >> name;
+  }
+
+  // Number of properties for edges, names of properties for edges
+  is >> num_edges_props;
+  for(int i = 0; i < num_edges_props; i++) { 
+    string name;
+    is >> name;
+  }
+  
+   // Vertices
+  std::vector<std::vector<float>> 
+    graph(num_vertices, std::vector<float>(num_vertices, 0.0));
+  for(int j = 0; j < num_vertices; j++) {
+    int id = 0;
+    is >> id;
+    vertices.insert(make_pair(id, j));
+    
+    for(int i = 0; i < num_vertices_props; i++) {
+      float value = 0.0f;
+      is >> value;
+    }
+  }
+
+  // Edges
+  for(int j = 0; j < num_edges; j++) {
+    int id = 0;
+    is >> id;
+
+    map<int, int >::iterator begin = vertices.find(id);
+    if(begin == vertices.end()) {
+      assert(0 && "edge id does not belong to a vertex");
+    }
+
+    is >> id;
+
+    map<int, int >::iterator end = vertices.find(id);
+    if(end == vertices.end()) {
+      assert(0 && "edge id does not belong to a vertex");
+    }
+
+
+    float value = 0.0f;
+    for(int i = 0; i < num_edges_props; i++) {
+      is >> value;
+    }
+
+    graph[(*begin).second][(*end).second] = value;
+    if(0 == m_directed) {
+      graph[(*end).second][(*begin).second] = value;
+    }
+
+  }
+
+  is.close();
+  return graph;
+}
+
+
+vector<int>
+getPath(std::vector<int> parent, int start, int end)
+{
+  vector<int> path;
+  int runner = end;
+  while(runner != start) {
+    path.push_back(runner);
+    runner = parent[runner];
+  }
+  path.push_back(start);
+
+  return path;
 }
 
 std::vector<int>
-dijkstra(int graph[V][V], int start) 
+dijkstra(vector<vector<float>> graph, int start) 
 {
+  int V = graph.size();
   std::vector<int> dist(V, INT_MAX);
   std::vector<int> parent(V, -1);
-  std::priority_queue<node> Q;
+  //std::priority_queue<node> Q;
   std::vector<bool> visited(V, false);
 
 
-  Q.push(node(0,0));
-  dist[0] = 0;
+  //Q.push(node(0,0));
+  dist[start] = 0;
   parent[0] = 0;
 
-  while(false == Q.empty()) {
+  //while(false == Q.empty()) {
+  for(int count = 0 ; count < V; count ++) {  
 
-    node minNode = Q.top();
-    Q.pop();
-    int minI = minNode.id;
+    int min = INT_MAX;
+    int minI = -1;
+    for(int i = 0 ; i < V; i++) {
+      if(dist[i] < min && false == visited[i]) {
+        min = dist[i];
+        minI = i;
+      }
+    }
 
+    if(-1 == minI) {
+      break;
+    }
+
+    //node minNode = Q.top();
+    //Q.pop();
+    //int minI = minNode.id;
 
     visited[minI] = true;
 
@@ -46,7 +151,7 @@ dijkstra(int graph[V][V], int start)
 
       if(dist[minI] + graph[minI][i] < dist[i]) {
         dist[i] = dist[minI] + graph[minI][i];
-        Q.push(node(i, dist[i]));
+        //Q.push(node(i, dist[i]));
         parent[i] = minI;
 
       }
@@ -58,37 +163,48 @@ dijkstra(int graph[V][V], int start)
     std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
   }
 
+  for(int v = 0 ; v < V; v++) {
+    vector<int> path = getPath(parent, start, v);
+    cout << "" << v << " | ";
+    for(int i  =  path.size() -1;  i >= 0; i--) {
+      cout << "" << path[i] << " " ;    
+    }
+    cout<<"\n";
+  }
+
   return parent;
 }
 
+
 void
-getPath(std::vector<int> T, int start, int end)
+displayADJMatrix(std::vector<std::vector<float>> &graph) 
 {
-  if(end == start) {
-    std::cout << start << " ";
-    return;
+  int size = graph.size();
+  std::cout << "  ";
+  for(int i = 0 ; i < size; i++) {
+    std::cout << i << " ";
   }
-  getPath(T, start, T[end]);
-  std::cout << end << " ";
+  std::cout << "\n";
+
+  for(int i = 0 ; i < size; i++) {
+    std::cout << i << "|";
+    for(int j  = 0 ; j <  size; j++) {
+      std::cout << graph[i][j] << " "; 
+    }
+    std::cout << "\n"; 
+  }
+    std::cout << "\n"; 
 }
 
-int main()
+
+int main(int argc, char** argv)
 {
-   /* Let us create the example graph discussed above */
-   int graph[V][V] = {
-            //         0    1   2   3   4   5   6   7   8    
-                      {0,   4,  0,  0,  0,  0,  0,  8, 0},
-                      {4,   0,  8,  0,  0,  0,  0, 11, 0},
-                      {0,   8,  0,  7,  0,  4,  0,  0, 2},
-                      {0,   0,  7,  0,  9,  14, 0,  0, 0},
-                      {0,   0,  0,  9,  0,  10, 0,  0, 0},
-                      {0,   0,  4,  14, 10,  0,  2,  0, 0},
-                      {0,   0,  0,  0, 0,   2,  0,  1, 6},
-                      {8,   11, 0, 0,   0,  0,  1,  0, 7},
-                      {0,   0,  2, 0,   0,  0,  6,  7, 0}
-                     };
- 
+   string filename(argv[1]);
+    std::vector<std::vector<float>> graph = 
+          loadFromFile(filename);
+
+   displayADJMatrix(graph);
+
    std::vector<int > T = dijkstra(graph, 0);
-   getPath(T, 0, 4);
    return 0;
 }
