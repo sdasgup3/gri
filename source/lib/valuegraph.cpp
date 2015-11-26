@@ -359,18 +359,6 @@ bool ValueGraph::containsEdge(CountPtr<Value> edge) const
   return m_edges.contains(edge);
 }
 
-void
-getPath(std::vector<int> &parent, int& start, int &end,
-      std::vector<int> &path)
-{
-  int runner = end;
-  while(runner != start) {
-    path.push_back(runner);
-    runner = parent[runner];
-  }
-  path.push_back(start);
-}
-
 CountPtr<Value>
 ValueGraph::getShortestPath(const string& wt, 
       ValueVertex* startV, ValueVertex* endV) const
@@ -435,49 +423,24 @@ ValueGraph::getShortestPath(const string& wt,
   */
 
   // Convert the parent to the script form
-  vector<int> path;
-  ValueArray* ret;
+  ValueArray* ret = new ValueArray(2);
 
-  if(-1 != end) {
-    getPath(parent, start, end, path);
+  ValueArray* distarray = new ValueArray(size);
+  ValueArray* parentarray = new ValueArray(size);
 
-    ret = new ValueArray(1);
-    int pathsize = path.size();
-    ValueArray* line = new ValueArray(pathsize);
-    ret->setItem(0, CountPtr<Value>(line));
-    for(int i = 0; i < pathsize; i++) {
-      //line->setItem(i, CountPtr<Value>(trans_table_r[path[pathsize-1-i]]));
-      ValueVertex* v = trans_table_r[path[pathsize-1-i]];
-      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
-      line->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
-    }
-    return CountPtr<Value>(ret);
-  }
+  ret->setItem(0, CountPtr<Value>(parentarray));
+  ret->setItem(1, CountPtr<Value>(distarray));
 
-  ret = new ValueArray(size);
   for(int i = 0; i < size; i++) {
-    end = i;
-    getPath(parent, start, end, path);
-    int pathsize = path.size();
-
-    /*
-    std::cout << i << "\n\t";
-    for(int i = pathsize-1; i>= 0; i--) {
-      std::cout << path[i] << "% ";
-    }
-    std::cout << "\n ";
-    */
-
-    ValueArray* line = new ValueArray(pathsize);
-    ret->setItem(end, CountPtr<Value>(line));
-    for(int i = 0; i < pathsize; i++) {
-      //line->setItem(i, CountPtr<Value>(trans_table_r[path[pathsize-1-i]]));
-      ValueVertex* v = trans_table_r[path[pathsize-1-i]];
-      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
-      line->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
-    }
-    path.clear();
+    ValueVertex* v = trans_table_r[parent[i]];
+    ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+    parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
   }
+
+  for(int i = 0; i < size; i++) {
+    distarray->setItem(i, CountPtr<Value>(new ValueFloat(dist[i])));
+  }
+
   return CountPtr<Value>(ret);
 }
 

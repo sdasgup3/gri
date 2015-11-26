@@ -21,7 +21,7 @@ function displayAdjacencyMatrix(matrix, vertices)
   }
 }
 
-function shortestPath(g, startV, endV)
+function mst_helper(g)
 {
   vertices = g.getVertices();
   numvertices = g.getNumVertices();
@@ -46,52 +46,21 @@ function shortestPath(g, startV, endV)
     matrix[end.__id][begin.__id] = wt;
   }
 
-  //displayAdjacencyMatrix(matrix, vertices);
+  displayAdjacencyMatrix(matrix, vertices);
 
-  start = startV.__id;
-  end = -1;
-  if(NULL != endV) {
-    end = endV.__id;
-  }
-
-  pathNdist = dijkstra(matrix, start, end, numvertices);
-
-  displaySTP(pathNdist, start, end, numvertices);
-}
-
-function displaySTP(pathNdist, start, end, numvertices)
-{
+  pathNdist = mst(matrix, numvertices);
   println("");
 
   parent = pathNdist[0];
-  dist = pathNdist[1];
+  dst = pathNdist[1];
 
-  println("Print distance / path");
-
-  if(-1 != end) {
-    path = getPath(parent, start, end);
-
-    print("" + end + " | " + dist[end] + " | ");
-    for(i = 0 ; i < path.size(); i++) {
-      print("" + path[i] + " ");
-    }
+  for(i = 0 ; i < numvertices ; i++) {
+    print("" + i + " : " + dst[i] + " " + i + "--" + parent[i]);
     println("");
-
-  } else {
-    for(i = 0 ; i < numvertices ; i++) {
-      end = i;
-      path = getPath(parent, start, end);
-
-      print("" + end + " | " + dist[i] + " | ");
-      for(j = 0 ; j < path.size(); j++) {
-        print("" + path[j] + " ");
-      }
-      println("");
-    }
   }
 }
 
-function dijkstra(graph, start, end, V)
+function mst(graph, V)
 {
   dist = array(V);
   for(i = 0 ; i < V; i++) {
@@ -108,8 +77,8 @@ function dijkstra(graph, start, end, V)
     visited[i] = false;
   }
 
-  dist[start] = 0.0;
-  parent[start] = 0;
+  dist[0] = 0.0;
+  parent[0] = 0;
   
 
   for(count = 0 ; count < V; count ++) {
@@ -129,9 +98,6 @@ function dijkstra(graph, start, end, V)
     }
     //Finalize the current visited node
     visited[index] = true;
-    if(index == end) {
-      break;
-    }
 
     //upate the ngbrs
     for(i = 0 ; i < V; i++) {
@@ -140,8 +106,8 @@ function dijkstra(graph, start, end, V)
         continue;
       }
 
-      if(dist[index] + graph[index][i] < dist[i]) {
-        dist[i] = dist[index] + graph[index][i];
+      if(graph[index][i] < dist[i]) {
+        dist[i] = graph[index][i];
         parent[i] = index;
       }
     }
@@ -152,44 +118,24 @@ function dijkstra(graph, start, end, V)
   ret[1] = dist;
 
   return ret;
-
 }
 
-
-function getPath(parent, start, end)
-{
-  path = array(1);
-  runner = end;
-  while(runner != start) {
-    path.pushFront(runner);
-    runner = parent[runner];
-  }
-  path.pushFront(start);
-
-  return path;
-}
 
 function main(argv) 
 {
   g = graph();
-  g.loadFromFile("graphs/simple_shortestpath.txt");
+  g.loadFromFile("graphs/simple_mst.txt");
   //g.loadFromFile("graphs/02_graph_5_5_5.txt");
   //g.loadFromFile(argv[0]);
 
   vertices = g.getVertices();
-  it = vertices.iterator();
-  start = it.next();
-  it.next();
-  it.next();
-  it.next();
-  end = it.next();
 
-  matrix = g.getAdjacencyMatrix();
-  displayAdjacencyMatrix(matrix, vertices);
+  //matrix = g.getAdjacencyMatrix();
+
+  //displayAdjacencyMatrix(matrix, vertices);
 
 
-  shortestPath(g, start, NULL);
-  shortestPath(g, start, end);
+  mst_helper(g);
   
 }
 

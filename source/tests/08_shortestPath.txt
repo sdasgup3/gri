@@ -21,62 +21,50 @@ function displayAdjacencyMatrix(matrix, vertices)
   }
 }
 
-function displaySTPD_1(matrix, vertices)
+function displaySTP(pathNdist, start, end, numvertices)
 {
-  println("");
-  it = vertices.iterator();
-  foreach(line; matrix.iterator()) {
-    if(it.hasNext())
-      vertex = it.next();
 
-    print("" + vertex.__id + " |");
-        
-    print("" + line + " ");
+  parent = pathNdist[0];
+  dist = pathNdist[1];
 
-    println("");
-  }
-}
+  println("Print distance / path");
 
-function displaySTPD_2(matrix, end)
-{
-  println("");
-  print("" + end.__id + " |");
-  it = matrix.iterator();
-  val = it.next();
-  print("" + val + " ");
-  println("");
-}
+  if(-1 != end) {
+    path = getPath(parent, start, end);
 
-function displaySTP_1(matrix, vertices)
-{
-  println("");
-  it = vertices.iterator();
-  foreach(line; matrix.iterator()) {
-    if(it.hasNext())
-      vertex = it.next();
-
-    print("" + vertex.__id + " |");
-        
-    foreach(item; line.iterator())  {
-      print("" + item + " ");
+    print("" + end + " | " + dist[end] + " | ");
+    for(i = 0 ; i < path.size(); i++) {
+      print("" + path[i] + " ");
     }
-
     println("");
+
+  } else {
+    for(i = 0 ; i < numvertices ; i++) {
+      end = i;
+      path = getPath(parent, start, end);
+
+      print("" + end + " | " + dist[i] + " | ");
+      for(j = 0 ; j < path.size(); j++) {
+        print("" + path[j] + " ");
+      }
+      println("");
+    }
   }
 }
 
-function displaySTP_2(matrix, end)
-{
-  println("");
-  foreach(line; matrix.iterator()) {
-    print("" + end.__id + " |");
-        
-    foreach(item; line.iterator())  {
-      print("" + item + " ");
-    }
 
-    println("");
+
+function getPath(parent, start, end)
+{
+  path = array(1);
+  runner = end;
+  while(runner != start) {
+    path.pushFront(runner);
+    runner = parent[runner];
   }
+  path.pushFront(start);
+
+  return path;
 }
 
 function main(argv) 
@@ -98,17 +86,11 @@ function main(argv)
   displayAdjacencyMatrix(matrix, vertices);
 
 
-  path = g.getShortestPath("__w", start, NULL);
-  displaySTP_1(path, vertices);
+  pathNdist = g.getShortestPath("__w", start, NULL);
+  displaySTP(pathNdist, start.__id, -1, g.getNumVertices());
+  pathNdist = g.getShortestPath("__w", start, end);
+  displaySTP(pathNdist, start.__id, end.__id, g.getNumVertices());
 
-  path = g.getShortestPath("__w", start, end);
-  displaySTP_2(path, end);
-
-  dist = g.getShortestDistance("__w", start, NULL);
-  displaySTPD_1(dist, vertices);
-
-  dist = g.getShortestDistance("__w", start, end);
-  displaySTPD_2(dist, end);
 }
 
 
