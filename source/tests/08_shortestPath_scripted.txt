@@ -1,0 +1,239 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+  print("   ");
+  foreach(vertex; vertices.iterator()) {
+    print("" + vertex.__id + " ");
+  }
+
+    println("");
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+        
+    foreach(item; line.iterator())  {
+      print("" + item + " ");
+    }
+
+    println("");
+  }
+}
+
+function shortestPath(g, startV, endV)
+{
+  vertices = g.getVertices();
+  numvertices = g.getNumVertices();
+  edges = g.getEdges();
+  numedges = g.getNumEdges();
+
+  //Init dist matrix
+  matrix  = array(numvertices);
+  for(i = 0; i < numvertices; i++) {
+    matrix[i] = array(numvertices);
+    for(j = 0 ; j < numvertices; j++) {
+      matrix[i][j] = 0.0;
+    }
+  }
+
+  foreach(edge; edges.iterator()) {
+    begin = edge.getBeginVertex();
+    end = edge.getEndVertex();
+    wt = edge.__w;
+
+    matrix[begin.__id][end.__id] = wt;
+    matrix[end.__id][begin.__id] = wt;
+  }
+
+  //displayAdjacencyMatrix(matrix, vertices);
+
+  start = startV.__id;
+  end = -1;
+  if(NULL != endV) {
+    end = endV.__id;
+  }
+
+  pathNdist = dijkstra(matrix, start, end, numvertices);
+  println("");
+
+  parent = pathNdist[0];
+  if(-1 != end) {
+    path = getPath(parent, start, end);
+
+    print("" + end + " | ");
+    for(i = 0 ; i < path.size(); i++) {
+      print("" + path[i] + " ");
+    }
+    println("");
+
+  } else {
+    for(i = 0 ; i < numvertices ; i++) {
+      end = i;
+      path = getPath(parent, start, end);
+
+      print("" + end + " | ");
+      for(j = 0 ; j < path.size(); j++) {
+        print("" + path[j] + " ");
+      }
+      println("");
+    }
+  }
+}
+
+function shortestDistance(g, startV, endV)
+{
+  vertices = g.getVertices();
+  numvertices = g.getNumVertices();
+  edges = g.getEdges();
+  numedges = g.getNumEdges();
+
+  //Init dist matrix
+  matrix  = array(numvertices);
+  for(i = 0; i < numvertices; i++) {
+    matrix[i] = array(numvertices);
+    for(j = 0 ; j < numvertices; j++) {
+      matrix[i][j] = 0.0;
+    }
+  }
+
+  foreach(edge; edges.iterator()) {
+    begin = edge.getBeginVertex();
+    end = edge.getEndVertex();
+    wt = edge.__w;
+
+    matrix[begin.__id][end.__id] = wt;
+    matrix[end.__id][begin.__id] = wt;
+  }
+
+  //displayAdjacencyMatrix(matrix, vertices);
+
+  start = startV.__id;
+  end = -1;
+  if(NULL != endV) {
+    end = endV.__id;
+  }
+
+  pathNdist = dijkstra(matrix, start, end, numvertices);
+  println("");
+
+  dist = pathNdist[1];
+  if(-1 != end) {
+    print("" + end + " | " + dist[end]);
+    println("");
+  } else {
+    for(i = 0 ; i < numvertices ; i++) {
+      end = i;
+      print("" + end + " | " + dist[end]);
+      println("");
+    }
+  }
+}
+
+function dijkstra(graph, start, end, V)
+{
+  dist = array(V);
+  for(i = 0 ; i < V; i++) {
+    dist[i] = 9999.9999;
+  }
+
+  parent = array(V);
+  for(i = 0 ; i < V; i++) {
+    parent[i] = -1;
+  }
+
+  visited = array(V);
+  for(i = 0 ; i < V; i++) {
+    visited[i] = false;
+  }
+
+  dist[start] = 0.0;
+  parent[start] = 0;
+  
+
+  for(count = 0 ; count < V; count ++) {
+    //Find min distance
+    min = 999.999;
+    index = -1;
+
+    for(i = 0 ; i < V; i++) {
+      if(dist[i] < min && false == visited[i]) {
+        min = dist[i];
+        index = i;
+      }
+    }
+
+    if(-1 == index) {
+      break;
+    }
+    //Finalize the current visited node
+    visited[index] = true;
+    if(index == end) {
+      break;
+    }
+
+    //upate the ngbrs
+    for(i = 0 ; i < V; i++) {
+      if(i == index || 0.0 == graph[index][i]   
+            || true == visited[i]) {
+        continue;
+      }
+
+      if(dist[index] + graph[index][i] < dist[i]) {
+        dist[i] = dist[index] + graph[index][i];
+        parent[i] = index;
+      }
+    }
+  }
+
+  ret  = array(2);
+  ret[0] = parent;
+  ret[1] = dist;
+
+  return ret;
+
+}
+
+
+function getPath(parent, start, end)
+{
+  path = array(1);
+  runner = end;
+  while(runner != start) {
+    path.pushFront(runner);
+    runner = parent[runner];
+  }
+  path.pushFront(start);
+
+  return path;
+}
+
+function main(argv) 
+{
+  g = graph();
+  g.loadFromFile("graphs/simple_shortestpath.txt");
+  //g.loadFromFile("graphs/02_graph_5_5_5.txt");
+  //g.loadFromFile(argv[0]);
+
+  vertices = g.getVertices();
+  it = vertices.iterator();
+  start = it.next();
+  it.next();
+  it.next();
+  it.next();
+  end = it.next();
+
+  matrix = g.getAdjacencyMatrix();
+  displayAdjacencyMatrix(matrix, vertices);
+
+
+  shortestPath(g, start, NULL);
+  shortestPath(g, start, end);
+  
+  shortestDistance(g, start, NULL);
+  shortestDistance(g, start, end);
+  
+}
+
+
+

@@ -139,7 +139,12 @@ QS  \"(\\.|[^\\"])*\"
                                           token_dump(yytext);
                                           return LEX_FLOAT; 
                                         }
-{D}"."{D}*{E}?			        { 
+{D}+"."{D}*{E}?			        { 
+                                          yylval.float_val = strtod(yytext, NULL);                                
+                                          token_dump(yytext);
+                                          return LEX_FLOAT; 
+                                        }
+{D}*"."{D}+{E}?			        { 
                                           yylval.float_val = strtod(yytext, NULL);                                
                                           token_dump(yytext);
                                           return LEX_FLOAT; 

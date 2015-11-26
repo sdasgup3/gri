@@ -30,6 +30,10 @@
 #include "generated/nodebuiltingettransitiveclosure.h"
 #include "generated/nodebuiltingetshortestpath.h"
 #include "generated/nodebuiltingetshortestdistance.h"
+#include "generated/nodebuiltinpushfront.h"
+#include "generated/nodebuiltinpushback.h"
+#include "generated/nodebuiltinpopfront.h"
+#include "generated/nodebuiltinpopback.h"
 
 extern int 
 parseCode(char*);
@@ -100,20 +104,23 @@ addExternalFunctions(void) {
   CONTEXT->addFunction(
       new NodeBuiltinGetNeighbors(STR2ID("getNeighbors"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
-      new NodeBuiltinLoadFromFile(STR2ID("loadFromFile"), new 
-        std::list<identifier>(p0,p2) ));
+      new NodeBuiltinLoadFromFile(STR2ID("loadFromFile"), new std::list<identifier>(p0,p2) ));
   CONTEXT->addFunction(
-      new NodeBuiltinGetAdjacencyMatrix(STR2ID("getAdjacencyMatrix"), new 
-        std::list<identifier>(p0,p1) ));
+      new NodeBuiltinGetAdjacencyMatrix(STR2ID("getAdjacencyMatrix"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
-      new NodeBuiltinGetTransitiveClosure(STR2ID("getTransitiveClosure"), new 
-        std::list<identifier>(p0,p1) ));
+      new NodeBuiltinGetTransitiveClosure(STR2ID("getTransitiveClosure"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
-      new NodeBuiltinGetShortestPath(STR2ID("getShortestPath"), new 
-        std::list<identifier>(p0,p4) ));
+      new NodeBuiltinGetShortestPath(STR2ID("getShortestPath"), new std::list<identifier>(p0,p4) ));
   CONTEXT->addFunction(
-      new NodeBuiltinGetShortestDistance(STR2ID("getShortestDistance"), new 
-        std::list<identifier>(p0,p4) ));
+      new NodeBuiltinGetShortestDistance(STR2ID("getShortestDistance"), new std::list<identifier>(p0,p4) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinPushFront(STR2ID("pushFront"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinPushBack(STR2ID("pushBack"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinPopFront(STR2ID("popFront"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinPopBack(STR2ID("popBack"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }
