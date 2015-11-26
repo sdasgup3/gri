@@ -32,16 +32,30 @@ loadFromFile(std::string& filename) {
 
   // Number of properties for vertices, names of properties for vertices
   is >> num_vertices_props;
+  for(int i = 0; i < num_vertices_props; i++) {
+    string name;
+    is >> name;
+  }
 
   // Number of properties for edges, names of properties for edges
   is >> num_edges_props;
-
+  for(int i = 0; i < num_edges_props; i++) { 
+    string name;
+    is >> name;
+  }
+  
+   // Vertices
   std::vector<std::vector<int>> 
     graph(num_vertices, std::vector<int>(num_vertices, 0));
   for(int j = 0; j < num_vertices; j++) {
     int id = 0;
     is >> id;
     vertices.insert(make_pair(id, j));
+    
+    for(int i = 0; i < num_vertices_props; i++) {
+      float value = 0.0f;
+      is >> value;
+    }
   }
 
   // Edges
@@ -62,7 +76,15 @@ loadFromFile(std::string& filename) {
     }
 
     graph[(*begin).second][(*end).second] = 1;
-    graph[(*end).second][(*begin).second] = 1;
+    if(0 == m_directed) {
+      graph[(*end).second][(*begin).second] = 1;
+    }
+
+    for(int i = 0; i < num_edges_props; i++) {
+      float value = 0.0f;
+      is >> value;
+    }
+
   }
 
   is.close();
@@ -86,6 +108,7 @@ displayADJMatrix(std::vector<std::vector<int>> &graph)
     }
     std::cout << "\n"; 
   }
+    std::cout << "\n"; 
 }
 
 
@@ -173,9 +196,9 @@ isColor(std::vector<std::vector<int>> graph, int k)
   }
 
   //print coloring
-  for(int i = 0 ; i < V; i++) {
-    cout << i << " :" << finalColor[i] << "\n"; 
-  }
+  //for(int i = 0 ; i < V; i++) {
+  //  cout << i << " :" << finalColor[i] << "\n"; 
+ // }
   return true;
 
 }
@@ -191,9 +214,9 @@ int main(int argc, char** argv)
   
   for(int k = graph.size(); k>=1 ; k--) {
     if(isColor(graph, k)) {
-      std::cout << k << " colorable\n";
+      std::cout <<  "colorable : "<< k << "\n";
     } else {
-      std::cout << k << " non - colorable\n";
+      std::cout <<  "non-colorable : "<< k  << "\n";
       break;
     }
   }

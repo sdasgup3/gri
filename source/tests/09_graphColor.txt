@@ -1,0 +1,144 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+    print("  ");
+  foreach(vertex; vertices.iterator()) {
+    print("" + vertex.__id + " ");
+  }
+
+  println("");
+
+  it = vertices.iterator();
+  foreach(line; matrix.iterator()) {
+        if(it.hasNext())
+            vertex = it.next();
+
+        print("" + vertex.__id + "|");
+        
+    foreach(item; line.iterator())
+            print("" + item + " ");
+
+        println("");
+    }
+        println("");
+}
+
+
+
+function main(argv)
+{
+  g  = graph();
+  //g.loadFromFile(argv[0]);
+  g.loadFromFile("graphs/02_graph_6_4_3.txt");
+  graph = g.getAdjacencyMatrix();
+
+  displayAdjacencyMatrix(graph, g.getVertices());
+  
+  for(k = g.getNumVertices(); k>=1 ; k--) {
+    if(isColor(graph, k)) {
+      println("colorable : " + k);
+    } else {
+      println("non-colorable : " + k);
+      break;
+    }
+  }
+}
+
+function isColor(graph, k) 
+{
+  V = graph.size();
+
+  deleted = array(V);
+  for(i = 0 ; i < V; i++) {
+    deleted[i] = false;
+  }
+
+  stack = array(0);
+
+  while(stack.size() != V) {
+    //FInd the vextex to be deleted
+    normalD = false;
+    for(i = 0 ; i < V; i++) {
+      if(true == deleted[i]) {
+        continue;
+      }
+
+      count = 0;
+      for(j = 0 ; j < V; j++) {
+        if(true == deleted[j]) {
+          continue;
+        }
+        if(1 == graph[i][j]) {
+          count++;
+        }
+      }
+      if(count < k) {
+        stack.pushBack(i);
+        deleted[i] = true;
+        //println( "Normal: "  +  i );
+        normalD = true;
+        break;
+      }
+    }
+
+    if(false == normalD) {
+      //Cannot delete any because degree of all undeleted vertices >=k
+      //Delete any
+      for(i = 0 ; i < V; i++) {
+        if(true == deleted[i]) {
+          continue;
+        }
+        //println( "Force: "  +  i );
+        stack.pushBack(i);
+        deleted[i] = true;
+        break;
+      }
+    }
+  }
+
+  numcolor =0;
+  finalColor = array(V);
+  for(i = 0 ; i < V; i++) {
+    finalColor[i] = -1;
+  }
+
+  while(0 != stack.size()) {
+    vertexToColor = stack.back();
+    stack.popBack();
+    deleted[vertexToColor] = false;
+
+    possibleColors = array(k);
+    for(j = 0 ; j < k; j++) {
+      possibleColors[j] = true;
+    }
+
+    //FInd the colors already occupied by ngbrs
+    for( i = 0 ; i < V ; i++) {
+
+      if(deleted[i] || 0 == graph[vertexToColor][i] || -1 == finalColor[i]) {
+        continue;
+      }
+
+      //undeleted ngbr
+      ngbrColor = finalColor[i];
+      possibleColors[ngbrColor] = false;
+    }
+
+    //Find free colors
+    for(i = 0;  i < k; i++) {
+      if(possibleColors[i]) {
+        finalColor[vertexToColor] = i;
+        break;
+      }
+    }
+
+    if(-1 == finalColor[vertexToColor]) {
+      return false;
+    }
+  }
+
+  //print coloring
+  //for( i = 0 ; i < V; i++) {
+  //  print( i) ;  println( " : " + finalColor[i] ); 
+  //}
+  return true;
+}

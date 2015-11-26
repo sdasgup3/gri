@@ -34,6 +34,8 @@
 #include "generated/nodebuiltinpushback.h"
 #include "generated/nodebuiltinpopfront.h"
 #include "generated/nodebuiltinpopback.h"
+#include "generated/nodebuiltinback.h"
+#include "generated/nodebuiltinfront.h"
 
 extern int 
 parseCode(char*);
@@ -121,6 +123,10 @@ addExternalFunctions(void) {
       new NodeBuiltinPopFront(STR2ID("popFront"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinPopBack(STR2ID("popBack"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinBack(STR2ID("back"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinFront(STR2ID("front"), new std::list<identifier>(p0,p1) ));
 
   delete fparameters;
 }
