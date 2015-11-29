@@ -69,12 +69,25 @@ void ValueVertex::deleteEdge(CountPtr<Value> edge)
 /////////////////////////////////////////////////////////////////////////////
 ////
 CountPtr<Value> 
-ValueVertex::getNeighborEdges(ValueVertex* end, int type)
+ValueVertex::getNeighborEdges(Value* end, int type)
 {
+
+  ValueSet* vs = end->toValueSet();
+  ValueVertex* vv = end->toValueVertex();
+  ValueSet* V;
+
+  if(NULL == vs) {
+    V = new ValueSet();
+    V->insert(CountPtr<Value>(end));
+  } else {
+      V = vs;
+  }
+
   
   ValueSet* ret = new ValueSet;
   CountPtr<Value> retval(ret);
   set_container::iterator it;
+  set_container::iterator jt;
 
   if(m_graph == NULL) {
     assert(0 && "The graph is null");
@@ -89,25 +102,28 @@ ValueVertex::getNeighborEdges(ValueVertex* end, int type)
   }
 
   if(m_graph->isDirected()) {
-    for(it = m_edges->begin(); it != m_edges->end(); ++it)
-    {
+    for(it = m_edges->begin(); it != m_edges->end(); ++it) {
       ValueEdge* edge = (*it)->toValueEdge();
       assert(edge != NULL);
 
       ValueVertex* beginV = edge->getBeginVertex()->toValueVertex();
       ValueVertex* endV = edge->getEndVertex()->toValueVertex();
 
-      if(1 == type) {
-        if(this == beginV && end == endV) {
-          ret->insert(*it);
-        }
-      } else if(2 == type) {
-        if(this == endV && end == beginV) {
-          ret->insert(*it);
-        }
-      } else  {
-        if(end == endV || end == beginV) {
-          ret->insert(*it);
+      for(jt = V->begin(); jt != V->end(); jt++) {
+        ValueVertex* e = (*jt)->toValueVertex();
+        if(1 == type) {
+          if(this == beginV && e == endV) {
+            ret->insert(*it);
+          }
+        } else if(2 == type) {
+          if(this == endV && e == beginV) {
+            ret->insert(*it);
+          }
+        } else  {
+          if((this == beginV && e == endV) || 
+              (e == beginV && this == endV)) {
+            ret->insert(*it);
+          }
         }
       }
     }
@@ -131,8 +147,12 @@ ValueVertex::getNeighborEdges(ValueVertex* end, int type)
               " endV :   "   << endVID->getVal()  << "\n";
       */
 
-      if(end == beginV || end == endV) {
-        ret->insert(*it);
+      for(jt = V->begin(); jt != V->end(); jt++) {
+        ValueVertex* e = (*jt)->toValueVertex();
+        if((e == beginV && this == endV) || 
+            (e == endV && this == beginV)) {
+          ret->insert(*it);
+        }
       }
     }
   }

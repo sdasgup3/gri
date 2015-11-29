@@ -1,0 +1,56 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+  foreach(vertex; vertices.iterator()) {
+    print( " " + vertex.__id + " ");
+  }
+
+  println("");
+
+  it = vertices.iterator();
+
+  foreach(line; matrix.iterator())
+  {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+    foreach(item; line.iterator())
+      print("" + item + " ");
+
+    println("");
+  }
+}
+
+function main(argv) {
+
+  g = graph();
+  g.loadFromFile("graphs/00_simple.txt");
+
+  matrix = g.getAdjacencyMatrix();
+  vertices = g.getVertices();
+  vertices1 = g.getVertices();
+  displayAdjacencyMatrix(matrix, vertices);
+
+  println("------ <-> -----------");
+  foreach(start; vertices) {
+    foreach(end; vertices) {
+      edges = start<->end;
+      foreach(edge; edges) {
+        println("" + start.__id + " <-> " +  end.__id);
+        println(edge.__w);
+      }
+      println("");
+    }
+  }
+
+  println("------ <-> -----------");
+  foreach(start; vertices) {
+    edges = start <-> g.getVertices();
+    println("" + start.__id + " <-> All" );
+    foreach(edge; edges) {
+      println(edge.__w);
+    }
+    println("");
+  }
+}
+
