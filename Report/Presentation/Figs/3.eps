@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0 EPSF-3.0
-%%Title: 3.fig
+%%Title: /home/dsand/GRI/Report/Presentation/Figs/3.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5e
-%%CreationDate: Sun Nov 29 05:24:29 2015
-%%BoundingBox: 0 0 511 201
+%%CreationDate: Sun Nov 29 06:17:55 2015
+%%BoundingBox: 0 0 483 206
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -94,7 +94,7 @@ end
 
 /pageheader {
 save
-newpath 0 201 moveto 0 0 lineto 511 0 lineto 511 201 lineto closepath clip newpath
+newpath 0 206 moveto 0 0 lineto 483 0 lineto 483 206 lineto closepath clip newpath
 -84.1 343.9 translate
 1 -1 scale
 $F2psBegin
@@ -118,12 +118,6 @@ pageheader
 n 7290 2745 242 242 0 360 DrawEllipse gs col0 s gr
 
 % Ellipse
-n 5895 4770 242 242 0 360 DrawEllipse gs col0 s gr
-
-% Ellipse
-n 7290 4770 242 242 0 360 DrawEllipse gs col0 s gr
-
-% Ellipse
 n 5895 2745 242 242 0 360 DrawEllipse gs col0 s gr
 
 % Ellipse
@@ -132,9 +126,24 @@ n 8685 4770 242 242 0 360 DrawEllipse gs col0 s gr
 % Ellipse
 n 8630 2731 242 242 0 360 DrawEllipse gs col0 s gr
 
+% Ellipse
+n 5895 4770 242 242 0 360 DrawEllipse gs col1 s gr
+
+% Ellipse
+n 7290 4770 242 242 0 360 DrawEllipse gs col1 s gr
+
 % Polyline
 0 slj
 0 slc
+gs  clippath
+7128 4332 m 7233 4441 l 7276 4399 l 7172 4290 l 7172 4290 l 7234 4398 l 7128 4332 l cp
+eoclip
+n 5895 3015 m
+ 7245 4410 l gs col0 s gr gr
+
+% arrowhead
+n 7128 4332 m 7234 4398 l 7172 4290 l 7128 4332 l  cp gs 0.00 setgray ef gr  col0 s
+% Polyline
 gs  clippath
 8558 4341 m 8663 4450 l 8706 4408 l 8602 4299 l 8602 4299 l 8664 4407 l 8558 4341 l cp
 eoclip
@@ -188,42 +197,39 @@ n 8730 3015 m
 
 % arrowhead
 n 8760 3151 m 8730 3031 l 8700 3151 l 8760 3151 l  cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-gs  clippath
-7128 4332 m 7233 4441 l 7276 4399 l 7172 4290 l 7172 4290 l 7234 4398 l 7128 4332 l cp
-eoclip
-n 5895 3015 m
- 7245 4410 l gs col0 s gr gr
-
-% arrowhead
-n 7128 4332 m 7234 4398 l 7172 4290 l 7128 4332 l  cp gs 0.00 setgray ef gr  col0 s
 /Times-Roman ff 127.00 scf sf
-6210 2700 m
+5625 2295 m
 gs 1 -1 sc (M) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-7605 2700 m
-gs 1 -1 sc (M) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-8910 2700 m
-gs 1 -1 sc (M) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-6210 2835 m
+5625 2430 m
 gs 1 -1 sc (DPT_x) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-7605 2835 m
+6975 2295 m
+gs 1 -1 sc (M) col0 sh gr
+/Times-Roman ff 127.00 scf sf
+6975 2430 m
 gs 1 -1 sc (DPT_x) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-8910 2835 m
+8325 2295 m
+gs 1 -1 sc (M) col0 sh gr
+/Times-Roman ff 127.00 scf sf
+8325 2430 m
 gs 1 -1 sc (DPT_y) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-9000 4815 m
-gs 1 -1 sc (DPT_y) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-7605 4815 m
+5670 5175 m
 gs 1 -1 sc (DPT_x) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-6210 4815 m
+7065 5175 m
 gs 1 -1 sc (DPT_x) col0 sh gr
+/Times-Roman ff 190.50 scf sf
+1935 2385 m
+gs 1 -1 sc (  ) col0 sh gr
+/Times-Roman ff 190.50 scf sf
+4185 5445 m
+gs 1 -1 sc ( ) col0 sh gr
+/Times-Roman ff 190.50 scf sf
+6480 4545 m
+gs 1 -1 sc ( ) col0 sh gr
 /Times-Roman ff 127.00 scf sf
 5850 2790 m
 gs 1 -1 sc (0) col0 sh gr
@@ -245,9 +251,6 @@ gs 1 -1 sc (5) col0 sh gr
 /Times-Roman ff 127.00 scf sf
 1440 2565 m
 gs 1 -1 sc (  g = graph\(\);) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-1440 2715 m
-gs 1 -1 sc (  g = LoadFromFile\(argv[0]\);) col0 sh gr
 /Times-Roman ff 127.00 scf sf
 1530 3015 m
 gs 1 -1 sc (matrix = g.getAdjMatrix\(\);) col0 sh gr
@@ -287,15 +290,12 @@ gs 1 -1 sc (}) col0 sh gr
 /Times-Roman ff 127.00 scf sf
 1350 5310 m
 gs 1 -1 sc (}) col0 sh gr
-/Times-Roman ff 190.50 scf sf
-1935 2385 m
-gs 1 -1 sc (  ) col0 sh gr
-/Times-Roman ff 190.50 scf sf
-4185 5445 m
-gs 1 -1 sc ( ) col0 sh gr
-/Times-Roman ff 190.50 scf sf
-6480 4545 m
-gs 1 -1 sc ( ) col0 sh gr
+/Times-Roman ff 127.00 scf sf
+8550 5175 m
+gs 1 -1 sc (DPT_y) col0 sh gr
+/Times-Roman ff 127.00 scf sf
+1440 2715 m
+gs 1 -1 sc (  g.loadFromFile\(argv[0]\);) col0 sh gr
 % here ends figure;
 pagefooter
 showpage
