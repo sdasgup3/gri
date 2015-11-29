@@ -26,7 +26,7 @@ function main(argv)
 {
   g = graph();
 
-  g.loadFromFile("graphs/setops_input.txt");
+  g.loadFromFile(argv[0]);
   displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
 
   dpt_x_employee  = g.getVertexSetWithProperty("__DPT_x", 1.0);
@@ -35,6 +35,7 @@ function main(argv)
   /* Set of __DPT_x employees who are __MGR as well */
   dpt_x_AND_mgr = dpt_x_employee.intersection(mgr_employee);
 
+  println("Set of __DPT_x employees who are __MGR as well");
   foreach(employee; dpt_x_AND_mgr) {
     println(" " + employee.__id + " ");
   }
@@ -43,6 +44,9 @@ function main(argv)
   dpt_x_MINUS_mgr = dpt_x_employee.difference(mgr_employee);
 
   it = dpt_x_MINUS_mgr.iterator();
+
+
+  println("Set of __DPT_x employees who are NOT  __MGR");
   while(it.hasNext()) {
     employee = it.next();
     println(" " + employee.__id + " ");
@@ -51,6 +55,27 @@ function main(argv)
   // Email Exchanges from MGRs to non-MGR DPT_x employee 
   emailExchanges = mgr_employee -> dpt_x_MINUS_mgr;
 
+  println("Email Exchanges from MGRs to non-MGR DPT_x employee");
+  it = emailExchanges.iterator();
+  while(it.hasNext()) {
+    email = it.next();
+    println(" " + email.__EMAIL + " ");
+  }
+
+  // Email Exchanges from non-MGR DPT_x employee to MGRs*/
+  emailExchanges = mgr_employee <- dpt_x_MINUS_mgr;
+
+  println("Email Exchanges from non-MGR DPT_x employee to MGRs");
+  it = emailExchanges.iterator();
+  while(it.hasNext()) {
+    email = it.next();
+    println(" " + email.__EMAIL + " ");
+  }
+
+  // Email Exchanges between non-MGR DPT_x employee and MGRs*/
+  emailExchanges = mgr_employee <-> dpt_x_MINUS_mgr;
+
+  println("Email Exchanges between non-MGR DPT_x employee and MGRs");
   it = emailExchanges.iterator();
   while(it.hasNext()) {
     email = it.next();
