@@ -9,28 +9,28 @@
 ////
 
 ValueEdge::ValueEdge(ValueGraph* graph, CountPtr<Value> begin, CountPtr<Value> end)
-	: Value(),
-	m_graph(graph),
-	m_begin(begin->toValueVertex()),
-	m_end(end->toValueVertex()),
-	m_properties(new ValueStruct)
+  : Value(),
+  m_graph(graph),
+  m_begin(begin->toValueVertex()),
+  m_end(end->toValueVertex()),
+  m_properties(new ValueStruct)
 {
-	assert(graph != NULL);
-	assert(m_begin != NULL);
-	assert(m_end != NULL);
+  assert(graph != NULL);
+  assert(m_begin != NULL);
+  assert(m_end != NULL);
 }
 
 ValueEdge::~ValueEdge(void)
 {
-	
-	delete m_properties;
-	m_properties = NULL;
+  
+  delete m_properties;
+  m_properties = NULL;
 }
 
 void ValueEdge::clear(void)
 {
-	
-	m_properties->clear();
+  
+  m_properties->clear();
 }
 
 
@@ -39,10 +39,10 @@ void ValueEdge::clear(void)
 
 void ValueEdge::invertDirection(void)
 {
-	
-	ValueVertex* tmp = m_begin;
-	m_begin = m_end;
-	m_end = tmp;
+  
+  ValueVertex* tmp = m_begin;
+  m_begin = m_end;
+  m_end = tmp;
 }
 
 
@@ -51,28 +51,22 @@ void ValueEdge::invertDirection(void)
 
 CountPtr<Value> ValueEdge::getBeginVertex(void)
 {
-	
+  if(m_graph == NULL) {
+    assert(0 && "The graph is invalid (deleted?");
+    return VALUENULL;
+  }
 
-	if(m_graph == NULL)
-	{
-		//WARN_P(_("The graph is invalid (deleted?)"));
-		return VALUENULL;
-	}
-
-	return (m_begin == NULL) ? VALUENULL : m_graph->findVertex(m_begin);
+  return (m_begin == NULL) ? VALUENULL : m_graph->findVertex(m_begin);
 }
 
 CountPtr<Value> ValueEdge::getEndVertex(void)
 {
-	
+  if(m_graph == NULL) {
+    assert(0 && "The graph is invalid (deleted?");
+    return VALUENULL;
+  }
 
-	if(m_graph == NULL)
-	{
-		//WARN_P(_("The graph is invalid (deleted?)"));
-		return VALUENULL;
-	}
-
-	return (m_end == NULL) ? VALUENULL : m_graph->findVertex(m_end);
+  return (m_end == NULL) ? VALUENULL : m_graph->findVertex(m_end);
 }
 
 
@@ -81,12 +75,12 @@ CountPtr<Value> ValueEdge::getEndVertex(void)
 
 void ValueEdge::removeVertex(ValueVertex* vertex)
 {
-	
-	if(m_begin == vertex)
-		m_begin = NULL;
+  
+  if(m_begin == vertex)
+    m_begin = NULL;
 
-	if(m_end == vertex)
-		m_end = NULL;
+  if(m_end == vertex)
+    m_end = NULL;
 }
 
 
@@ -95,19 +89,19 @@ void ValueEdge::removeVertex(ValueVertex* vertex)
 
 void ValueEdge::dump(ostream& os, uint indent) const
 {
-	
+  
 
-	dumpIndent(os, indent);
-	os << "<ValueEdge>" << endl;
-	m_properties->dump(os, indent+1);
-	dumpIndent(os, indent);
-	os << "</ValueEdge>" << endl;
+  dumpIndent(os, indent);
+  os << "<ValueEdge>" << endl;
+  m_properties->dump(os, indent+1);
+  dumpIndent(os, indent);
+  os << "</ValueEdge>" << endl;
 }
 
 ostream& operator<<(ostream& os, const ValueEdge& node)
 {
-	node.dump(os, 0);
-	return os;
+  node.dump(os, 0);
+  return os;
 }
 
 

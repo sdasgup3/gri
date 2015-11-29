@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include "nodebinaryadd.h"
+#include "nodebinaryngbaccess.h"
 #include "nodebinaryand.h"
 #include "nodebinaryass.h"
 #include "nodebinaryassadd.h"
@@ -90,6 +91,7 @@ void yyerror( const char *msg);
 %token LEX_EQ_OP LEX_NE_OP LEX_LE_OP LEX_GE_OP
 %token LEX_OR_OP LEX_AND_OP
 %token LEX_REF_ASSIGN
+%token LEX_NGB_ACCESS_TYPE1 LEX_NGB_ACCESS_TYPE2 LEX_NGB_ACCESS_TYPE3 
 
 %token LEX_NULL
 %token LEX_TRUE
@@ -166,6 +168,9 @@ additive_expression
 	: multiplicative_expression { $$ = $1; }
 	| additive_expression '+' multiplicative_expression { $$ = new NodeBinaryAdd($1, $3); }
 	| additive_expression '-' multiplicative_expression { $$ = new NodeBinarySub($1, $3); }
+	| additive_expression LEX_NGB_ACCESS_TYPE1 multiplicative_expression { $$ = new NodeBinaryNgbAccess($1, $3, 1); }
+	| additive_expression LEX_NGB_ACCESS_TYPE2 multiplicative_expression { $$ = new NodeBinaryNgbAccess($1, $3, 2); }
+	| additive_expression LEX_NGB_ACCESS_TYPE3 multiplicative_expression { $$ = new NodeBinaryNgbAccess($1, $3, 3); }
 	;
 
 relational_expression

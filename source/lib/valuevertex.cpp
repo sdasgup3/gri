@@ -3,6 +3,8 @@
 #include "valuebool.h"
 #include "valuegraph.h"
 #include "valueedge.h"
+#include "valuefloat.h"
+#include "valueint.h"
 #include "context.h"
 #include "valueset.h"
 //#include "logger.h"
@@ -66,6 +68,77 @@ void ValueVertex::deleteEdge(CountPtr<Value> edge)
 
 /////////////////////////////////////////////////////////////////////////////
 ////
+CountPtr<Value> 
+ValueVertex::getNeighborEdges(ValueVertex* end, int type)
+{
+  
+  ValueSet* ret = new ValueSet;
+  CountPtr<Value> retval(ret);
+  set_container::iterator it;
+
+  if(m_graph == NULL) {
+    assert(0 && "The graph is null");
+    return VALUENULL;
+  }
+
+  assert((type == 1 || 2 == type || 3 == type) && "only possible operators are ->/<-/<->");
+
+  if(false == m_graph->isDirected() && ( 1 == type || 2 == type)) {
+    assert(0 && "->/<- are the wrong operators to be used for an undirected graph. Use <-> instead.");
+    return VALUENULL;
+  }
+
+  if(m_graph->isDirected()) {
+    for(it = m_edges->begin(); it != m_edges->end(); ++it)
+    {
+      ValueEdge* edge = (*it)->toValueEdge();
+      assert(edge != NULL);
+
+      ValueVertex* beginV = edge->getBeginVertex()->toValueVertex();
+      ValueVertex* endV = edge->getEndVertex()->toValueVertex();
+
+      if(1 == type) {
+        if(this == beginV && end == endV) {
+          ret->insert(*it);
+        }
+      } else if(2 == type) {
+        if(this == endV && end == beginV) {
+          ret->insert(*it);
+        }
+      } else  {
+        if(end == endV || end == beginV) {
+          ret->insert(*it);
+        }
+      }
+    }
+  } else {
+    for(it = m_edges->begin(); it != m_edges->end(); ++it) {
+      ValueEdge* edge = (*it)->toValueEdge();
+      assert(edge != NULL);
+
+      ValueVertex* beginV = edge->getBeginVertex()->toValueVertex();
+      ValueVertex* endV = edge->getEndVertex()->toValueVertex();
+      assert(beginV != NULL);
+      assert(endV != NULL);
+
+      /*
+      ValueInt* endID = end->getItem(STR2ID("__id"))->toValueInt();
+      ValueInt* beginVID = beginV->getItem(STR2ID("__id"))->toValueInt();
+      ValueInt* endVID = endV->getItem(STR2ID("__id"))->toValueInt();
+
+      cout << " end :    "   << endID->getVal() << 
+              " beginV : "   << beginVID->getVal()  <<
+              " endV :   "   << endVID->getVal()  << "\n";
+      */
+
+      if(end == beginV || end == endV) {
+        ret->insert(*it);
+      }
+    }
+  }
+
+  return retval;
+}
 
 CountPtr<Value> ValueVertex::getNeighbors(void)
 {

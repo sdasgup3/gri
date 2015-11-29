@@ -1,18 +1,19 @@
 define("NUM_VERTICES", "10"); // In one layer
-define("NEW", "0");
-define("CLOSED", "1");
+define("NOTVISITED", "0");
+define("VISITED", "1");
 
 // Recursive depth first search
 function dfs(v)
 {
-  if(v.state == CLOSED)
+  if(v.visit == VISITED)
     return;
 
   println("Closing vertex: " + v.num);
-  v.state = CLOSED;
+  v.visit = VISITED;
 
   foreach(neighbor; v.getNeighbors())
     dfs(neighbor);
+
 }
 
 // Generate testing graph and run DFS
@@ -46,9 +47,9 @@ function main(argv)
     g.generateEdge(v1, v2);
   }
 
-  // Initialize states
+  // Initialize visits
   foreach(v; g.getVertices())
-    v.state = NEW;
+    v.visit = NOTVISITED;
 
   // Run (any vertex first)
   dfs(first);

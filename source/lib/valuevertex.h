@@ -30,6 +30,7 @@ public:
 
   uint getDegree(void) const;
   CountPtr<Value> getNeighbors(void);
+  CountPtr<Value> getNeighborEdges(ValueVertex*, int);
 
   ValueGraph* getGraph(void) { return m_graph; }
   void setGraphToNULL(void) { m_graph = NULL; }

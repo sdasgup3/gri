@@ -69,13 +69,16 @@ extern int yydebug;
     LEX_OR_OP = 279,
     LEX_AND_OP = 280,
     LEX_REF_ASSIGN = 281,
-    LEX_NULL = 282,
-    LEX_TRUE = 283,
-    LEX_FALSE = 284,
-    LEX_INT = 285,
-    LEX_IDENTIFIER = 286,
-    LEX_FLOAT = 287,
-    LEX_STRING = 288
+    LEX_NGB_ACCESS_TYPE1 = 282,
+    LEX_NGB_ACCESS_TYPE2 = 283,
+    LEX_NGB_ACCESS_TYPE3 = 284,
+    LEX_NULL = 285,
+    LEX_TRUE = 286,
+    LEX_FALSE = 287,
+    LEX_INT = 288,
+    LEX_IDENTIFIER = 289,
+    LEX_FLOAT = 290,
+    LEX_STRING = 291
   };
 #endif
 
@@ -84,7 +87,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 68 "parser.y" /* yacc.c:1909  */
+#line 69 "parser.y" /* yacc.c:1909  */
 
 	int     int_val;
 	float   float_val;
@@ -93,7 +96,7 @@ union YYSTYPE
 	NodeBlock* nodeblock;
 	list<identifier>* list_ids;
 
-#line 97 "generated/parser.hpp" /* yacc.c:1909  */
+#line 100 "generated/parser.hpp" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

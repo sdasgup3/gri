@@ -349,6 +349,18 @@ QS  \"(\\.|[^\\"])*\"
                                           token_dump(yytext);
                                           return ':'; 
                                         }
+"->"                                    {
+                                          token_dump(yytext);
+                                          return LEX_NGB_ACCESS_TYPE1;
+                                        }
+"<-"                                    {
+                                          token_dump(yytext);
+                                          return LEX_NGB_ACCESS_TYPE2;
+                                        }
+"<->"                                   {
+                                          token_dump(yytext);
+                                          return LEX_NGB_ACCESS_TYPE3;
+                                        }
 {WS}					{ /* whitespace separates tokens */ }
 .					{ /* discard bad characters */ }
 
