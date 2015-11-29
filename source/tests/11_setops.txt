@@ -1,0 +1,60 @@
+function displayAdjacencyMatrix(matrix, vertices)
+{
+  print( "   ");
+  foreach(vertex; vertices.iterator()) {
+    print( "" + vertex.__id + " ");
+  }
+
+  println("");
+
+  it = vertices.iterator();
+
+  foreach(line; matrix.iterator())
+  {
+    if(it.hasNext())
+      vertex = it.next();
+
+    print("" + vertex.__id + " |");
+    foreach(item; line.iterator())
+      print("" + item + " ");
+
+    println("");
+  }
+}
+
+function main(argv)
+{
+  g = graph();
+
+  g.loadFromFile("graphs/setops_input.txt");
+  displayAdjacencyMatrix(g.getAdjacencyMatrix(), g.getVertices());
+
+  dpt_x_employee  = g.getVertexSetWithProperty("__DPT_x", 1.0);
+  mgr_employee    = g.getVertexSetWithProperty("__MGR", 1.0);
+
+  /* Set of __DPT_x employees who are __MGR as well */
+  dpt_x_AND_mgr = dpt_x_employee.intersection(mgr_employee);
+
+  foreach(employee; dpt_x_AND_mgr) {
+    println(" " + employee.__id + " ");
+  }
+
+  /* Set of __DPT_x employees who are NOT  __MGR */
+  dpt_x_MINUS_mgr = dpt_x_employee.difference(mgr_employee);
+
+  it = dpt_x_MINUS_mgr.iterator();
+  while(it.hasNext()) {
+    employee = it.next();
+    println(" " + employee.__id + " ");
+  }
+
+  // Email Exchanges from MGRs to non-MGR DPT_x employee 
+  emailExchanges = mgr_employee -> dpt_x_MINUS_mgr;
+
+  it = emailExchanges.iterator();
+  while(it.hasNext()) {
+    email = it.next();
+    println(" " + email.__EMAIL + " ");
+  }
+
+}
