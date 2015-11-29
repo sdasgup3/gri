@@ -41,6 +41,7 @@ public:
 	bool containsEdge(CountPtr<Value> edge) const;
 
 	CountPtr<Value> getVertices(void) const { return m_vertices.clone(); }
+	CountPtr<Value> getVertexSetWithProperty(const string& prop, const float val) const;
 	CountPtr<Value> getEdges(void) const { return m_edges.clone(); }
 	ValueSet* getVerticesPtr(void) { return &m_vertices; }
 	ValueSet* getEdgesPtr(void) { return &m_edges; }

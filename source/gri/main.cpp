@@ -36,6 +36,10 @@
 #include "generated/nodebuiltinpopback.h"
 #include "generated/nodebuiltinback.h"
 #include "generated/nodebuiltinfront.h"
+#include "generated/nodebuiltinintersection.h"
+#include "generated/nodebuiltindifference.h"
+#include "generated/nodebuiltinunion.h"
+#include "generated/nodebuiltingetvertexsetwithproperty.h"
 
 extern int 
 parseCode(char*);
@@ -127,6 +131,14 @@ addExternalFunctions(void) {
       new NodeBuiltinBack(STR2ID("back"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinFront(STR2ID("front"), new std::list<identifier>(p0,p1) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinIntersection(STR2ID("intersection"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinDifference(STR2ID("difference"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinUnion(STR2ID("union"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinGetVertexSetWithProperty(STR2ID("getVertexSetWithProperty"), new std::list<identifier>(p0,p3) ));
 
   delete fparameters;
 }

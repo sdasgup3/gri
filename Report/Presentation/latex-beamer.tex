@@ -60,8 +60,8 @@
   \usetheme{CambridgeUS}
   \usecolortheme{dolphin}
 
-  \title[Static Analysis Debugging with Symbolic Execution]{Static Analysis Debugging with Symbolic Execution}
-  \author[]{{\textbf{Theodoros Kasampalis, Sandeep Dasgupta}} }
+  \title[GRI]{GRI: \textbf{I}nterpreter of a dynamic language for \textbf{GR}aph algorithms}
+  \author[]{{\textbf{Sandeep Dasgupta}} }
   \begin{document}
 
   \begin{frame}
@@ -294,31 +294,51 @@
 \end{lstlisting}
 }
 
-\section{Static Analysis}
+\section{Motivation}
 \frame
 {
   \frametitle{\secname}
   \begin{itemize}[<+->]
-    \item Infer source code properties without execution
-    \vspace{1cm}
-    \item Examples:
+    \item Graphical models are applied to widely varying fields.
     \begin{itemize}
-      \item Pointer Analysis
-      \item Liveness Analysis
+      \item Biochemistry 
+        \cmt{genomics}
+      \item Electrical Engineering
+        \cmt{communication networks }
+      \item Computer Science
+        \cmt{Algorithms and computation}
+      \item Operations Research
+        \cmt{Scheduling}
+      \item Organizational Structures 
+        \cmt{social networking}
     \end{itemize} 
     \vspace{1cm}
-    \item Applications:
-    \begin{itemize}
-      \item Compilers
-      \item Security
-      \item Software Engineering
-    \end{itemize} 
+    \item Field experts often struggle to represent \& allow computations on  graphical models in \textbf{Convenient} and \textbf{Efficient} way.
+      \cmt{
+Convenience: is essential so that even for domain experts who are not coding experts
+can code and reason about their implementation. Ease of interface could be due to:
+– Expressive power of the language representing those models.
+– Intuitive extensibility of the language.
+– Ability of the language to provide exploratory programming, where the user may
+experiment with different ideas (without dwelling much into the language syntax)
+before coming to a conclusive one.
+
+Designed language need to be efficient in the following sense.
+– Underlying design decisions including data structures need to be carefully crafted to
+achieve expected run-time w.r.t the input size.
+– Implementation need to be scalable w.r.t the space/time requirements. This is im-
+portant because most of the graph algorithm typically work on huge input sizes.
+
+To meet all above goals and most importantly exploratory programming, we decided to work
+on a dynamically typed language to represent graphs and apply various computations on them.
+With a dynamically typed language the user do not have to worry much about declaring types
+and can focus mostly on his/her experiments.
+      }
     \vspace{1cm}
-    \item Inferred properties true for any execution
   \end{itemize} 
 }
 
-\section{Debugging a Static Analysis Implementation}
+\section{Language}
 \frame
 {
   \frametitle{\secname}

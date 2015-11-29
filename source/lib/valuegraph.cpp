@@ -445,6 +445,26 @@ ValueGraph::getShortestPath(const string& wt,
 }
 
 CountPtr<Value>
+ValueGraph::getVertexSetWithProperty(const string& prop, const float value) const
+{
+  ValueSet* ret = new ValueSet;
+  CountPtr<Value> retval(ret);
+
+  set_container::const_iterator it;
+  for(it = m_vertices.begin(); it != m_vertices.end(); 
+      ++it) {
+    ValueVertex* v  = (*it)->toValueVertex();
+    ValueFloat* val = v->getItem(STR2ID(prop))->toValueFloat();
+
+    if(val->getVal() == value) {
+      ret->insert(*it);
+    }
+  }
+
+  return retval;
+}
+
+CountPtr<Value>
 ValueGraph::getMST(const string& wt) const
 {
   int size = m_vertices.getSize();

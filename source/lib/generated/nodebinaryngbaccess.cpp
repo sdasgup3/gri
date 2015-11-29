@@ -32,25 +32,61 @@ CountPtr<Value> NodeBinaryNgbAccess::execute(void)
   CountPtr<Value> m_left_value = m_left->execute();
   CountPtr<Value> m_right_value = m_right->execute();
 
-  ValueVertex* start  = m_left_value->toValueVertex();
-  ValueVertex* end    = m_right_value->toValueVertex();
-  ValueArray* va      = m_right_value->toValueArray();
-  ValueSet* vs        = m_right_value->toValueSet();
+  ValueVertex* start_vv   = m_left_value->toValueVertex();
+  ValueSet* start_vs      = m_left_value->toValueSet();
+  
+
+  ValueVertex* end_vv     = m_right_value->toValueVertex();
+  ValueSet* end_vs        = m_right_value->toValueSet();
 
 
 
-  if(NULL == start || ( NULL  == end && NULL == va && NULL == vs) ) {
+  if((NULL == start_vv && NULL == start_vs) || ( NULL  == end_vv && NULL == end_vs) ) {
     assert( 0 && "Bad parameters type: getNeighbors(vertex) : set|null");
     return VALUENULL;
   }
 
-  if(end)
-    return start->getNeighborEdges(end, type);
-  if(vs)
-    return start->getNeighborEdges(vs, type);
-  if(va)
-    return start->getNeighborEdges(va, type);
-    
+
+
+  if(end_vv) {
+    if(start_vv) {
+      return start_vv->getNeighborEdges(end_vv, type);  
+    } else {
+      ValueSet* ret = new ValueSet;
+      CountPtr<Value> retval(ret);
+      for(set_container::iterator it = start_vs->begin();
+          it != start_vs->end(); it++) {
+        ValueVertex* v = (*it)->toValueVertex();
+        CountPtr<Value> edges = v->getNeighborEdges(end_vv, type);  
+        ValueSet* edges_vs  = edges->toValueSet();
+
+        for(set_container::iterator jt = edges_vs->begin();
+            jt != edges_vs->end(); jt++) {
+          ret->insert(*jt);
+        }
+      }
+      return retval;
+    }
+  } else if(end_vs){
+    if(start_vv) {
+      return start_vv->getNeighborEdges(end_vs, type);  
+    } else {
+      ValueSet* ret = new ValueSet;
+      CountPtr<Value> retval(ret);
+      for(set_container::iterator it = start_vs->begin();
+          it != start_vs->end(); it++) {
+        ValueVertex* v = (*it)->toValueVertex();
+        CountPtr<Value> edges = v->getNeighborEdges(end_vs, type);  
+        ValueSet* edges_vs  = edges->toValueSet();
+
+        for(set_container::iterator jt = edges_vs->begin();
+            jt != edges_vs->end(); jt++) {
+          ret->insert(*jt);
+        }
+      }
+      return retval;
+    }
+  }
 }
 
 void NodeBinaryNgbAccess::dump(ostream& os, uint indent) const
