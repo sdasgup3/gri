@@ -98,17 +98,17 @@ std::vector<int>
 mst(vector<vector<float>> graph) 
 {
   int V = graph.size();
-  std::vector<int> dist(V, INT_MAX);
+  std::vector<float> dist(V, INT_MAX);
   std::vector<int> parent(V, -1);
   std::vector<bool> visited(V, false);
 
 
-  dist[0] = 0;
+  dist[0] = 0.0;
   parent[0] = 0;
 
   for(int count = 0 ; count < V; count ++) {  
 
-    int min = INT_MAX;
+    float min = INT_MAX;
     int minI = -1;
     for(int i = 0 ; i < V; i++) {
       if(dist[i] < min && false == visited[i]) {
@@ -138,7 +138,7 @@ mst(vector<vector<float>> graph)
 
   //print
   for(int v = 0 ; v < V; v++) {
-    std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
+    std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << "\n";
   }
 
   return parent;
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
     std::vector<std::vector<float>> graph = 
           loadFromFile(filename);
 
-   displayADJMatrix(graph);
+   //displayADJMatrix(graph);
 
    std::vector<int > T = mst(graph);
    return 0;

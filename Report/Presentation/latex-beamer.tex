@@ -195,9 +195,62 @@ and can focus mostly on his/her experiments.
   \lstdfs
 }
 
-\section{Questions?}
-\subsection{Questions?}
+\subsection{Built-in Functions}
 \frame
-{}
+{
+  \frametitle{\subsecname}
+  \begin{itemize}
+    \item \tt{Graph::getAdjMatrix();}
+    \item \tt{Graph::getTransitiveClosure();}
+    \item \tt{Graph::getShortestPath(string wt, Vertex start, vertex end);}
+    \begin{itemize}
+      \item Returns the shortest distance of end from start. 
+      \item Returns parent of each vertex in the shortest path tree.
+      \item If \tt{end == NULL}, return the shortespath from start to all vertices.
+      \item If \tt{end != NULL}, return the shortespath from start to end.
+    \end{itemize} 
+    \item \tt{Graph::getMST(string wt);}
+    \begin{itemize}
+      \item Return the parent of each vertex in the minimum snapping tree.
+    \end{itemize} 
+  \end{itemize}
+}
+
+
+\section{Evaluation}
+\frame
+{
+  \begin{table}[]
+\centering
+\caption{Speedup of the our implementation with built-in functions w.r.t without using built-in functions. The graph used in all the cases consist of vertices = 125, edges = 1000}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|}
+\hline
+                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}With Built-ins\\ time (secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Fully Scripted\\ time(secs)\end{tabular}} & Speedup \\ \hline
+Transitive Closure (Floyd Warshall) & 0.54                                                                                      & 18.19                                                                                    & 33.6    \\ \hline
+Shortest Path (Dijkstra)            & 0.08                                                                                      & 0.51                                                                                     & 6.3     \\ \hline
+Minimum Spanning Tree (Prim)        & 0.05                                                                                      & 0.47                                                                                     & 9.4     \\ \hline
+\end{tabular}
+\end{table}
+}
+
+\section{Evaluation}
+\frame
+{
+  \begin{table}[]
+\centering
+\caption{Speedup of our implementation w.r.t C implementation. The graph used in all the cases consist of vertices = 500, edges = 1000}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|}
+\hline
+                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}GRI\\ Time(secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C\\ Time(secs)\end{tabular}} & Speedup \\ \hline
+Transitive Closure (Floyd Warshall) & 10.26                                                                         & 4.04                                                                        & 2.5     \\ \hline
+Shortest Path (Dijkstra)            & 0.09                                                                          & 0.02                                                                        & 4.5     \\ \hline
+Minimum Spanning Tree (Prim)        & 0.09                                                                          & 0.02                                                                        & 4.5     \\ \hline
+Graph Coloring (Chaitin Optimistic) &                                                                               & 15.39                                                                       &         \\ \hline
+\end{tabular}
+\end{table}
+
+}
 
 \end{document}

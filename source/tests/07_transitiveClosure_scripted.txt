@@ -1,7 +1,8 @@
 function displayAdjacencyMatrix(matrix, vertices)
 {
+  print("  ");
   foreach(vertex; vertices.iterator()) {
-    print(" " + vertex.__id + " ");
+    print("" + vertex.__id + " ");
   }
 
   println("");
@@ -11,7 +12,7 @@ function displayAdjacencyMatrix(matrix, vertices)
     if(it.hasNext())
       vertex = it.next();
 
-    print("" + vertex.__id + " |");
+    print("" + vertex.__id + "|");
         
     foreach(item; line.iterator()) {
       if(item == true) {
@@ -22,14 +23,15 @@ function displayAdjacencyMatrix(matrix, vertices)
     }
     println("");
   }
+    println("");
 }
 
 
 function main(argv) 
 {
   g = graph();
-  g.loadFromFile("graphs/02_graph_5_5_5.txt");
-  //g.loadFromFile(argv[0]);
+  //g.loadFromFile("graphs/02_graph_5_5_5.txt");
+  g.loadFromFile(argv[0]);
   matrix = g.getAdjacencyMatrix();
   displayAdjacencyMatrix(matrix, g.getVertices());
 

@@ -15,9 +15,9 @@
 
 class heapnode {
   public:
-    heapnode(int a, int b): id(a), dist(b) {}
+    heapnode(int a, float b): id(a), dist(b) {}
     int id;
-    int dist;
+    float dist;
 };
 
 bool
@@ -384,6 +384,7 @@ ValueGraph::getShortestPath(const string& wt,
     if(endV && v == endV) {
       end = pos;
     }
+    assert(v);
     trans_table[v] = pos;
     trans_table_r[pos] = v;
   }
@@ -432,9 +433,13 @@ ValueGraph::getShortestPath(const string& wt,
   ret->setItem(1, CountPtr<Value>(distarray));
 
   for(int i = 0; i < size; i++) {
-    ValueVertex* v = trans_table_r[parent[i]];
-    ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
-    parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    if(-1 == parent[i]) {
+      parentarray->setItem(i, CountPtr<Value>(new ValueInt(-1)));
+    } else {
+      ValueVertex* v = trans_table_r[parent[i]];
+      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+      parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    }
   }
 
   for(int i = 0; i < size; i++) {
@@ -525,9 +530,13 @@ ValueGraph::getMST(const string& wt) const
   ret->setItem(1, CountPtr<Value>(distarray));
 
   for(int i = 0; i < size; i++) {
-    ValueVertex* v = trans_table_r[parent[i]];
-    ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
-    parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    if(-1 == parent[i]) {
+      parentarray->setItem(i, CountPtr<Value>(new ValueInt(-1)));
+    } else {
+      ValueVertex* v = trans_table_r[parent[i]];
+      ValueInt* id = v->getItem(STR2ID("__id"))->toValueInt();
+      parentarray->setItem(i, CountPtr<Value>(new ValueInt(id->getVal())));
+    }
   }
 
   for(int i = 0; i < size; i++) {
@@ -583,9 +592,9 @@ ValueGraph::dijkstra(std::vector<std::vector<float>> &graph,
   std::priority_queue<heapnode> Q;
   std::vector<bool> visited(V, false);
 
-  Q.push(heapnode(0,0));
-  dist[start] = start;
-  parent[start] = start;
+  Q.push(heapnode(0,0.0));
+  dist[start] = 0.0;
+  parent[start] = 0;
 
   while(false == Q.empty()) {
 
@@ -593,6 +602,7 @@ ValueGraph::dijkstra(std::vector<std::vector<float>> &graph,
     Q.pop();
     int minI = minNode.id;
 
+    //std::cout << minNode.dist << " " << minI << "\n";
 
     visited[minI] = true;
     if(end == minI) {

@@ -1,6 +1,5 @@
 function displayAdjacencyMatrix(matrix, vertices)
 {
-  print("   ");
   foreach(vertex; vertices.iterator()) {
     print("" + vertex.__id + " ");
   }
@@ -49,7 +48,6 @@ function mst_helper(g)
   //displayAdjacencyMatrix(matrix, vertices);
 
   pathNdist = mst(matrix, numvertices);
-  println("");
 
   parent = pathNdist[0];
   dst = pathNdist[1];
@@ -124,9 +122,9 @@ function mst(graph, V)
 function main(argv) 
 {
   g = graph();
-  g.loadFromFile("graphs/simple_mst.txt");
+  //g.loadFromFile("graphs/simple_mst.txt");
   //g.loadFromFile("graphs/02_graph_5_5_5.txt");
-  //g.loadFromFile(argv[0]);
+  g.loadFromFile(argv[0]);
 
   vertices = g.getVertices();
 

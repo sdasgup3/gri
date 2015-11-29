@@ -112,97 +112,6 @@ displayADJMatrix(std::vector<std::vector<int>> &graph)
 }
 
 
-bool
-isColor(std::vector<std::vector<int>> graph, int k) 
-{
-  int V = graph.size();
-  vector<bool> deleted(V, false);
-  vector<int> stack;
-
-  while(stack.size() != V) {
-    //FInd the vextex to be deleted
-    bool normalD = false;
-    for(int i = 0 ; i < V; i++) {
-      if(deleted[i]) {
-        continue;
-      }
-
-      int count = 0;
-      for(int j = 0 ; j < V; j++) {
-        if(deleted[j]) {
-          continue;
-        }
-        if(1 == graph[i][j]) {
-          count++;
-        }
-      }
-      if(count < k) {
-        stack.push_back(i);
-        deleted[i] = true;
-        //cout<< "Normal: " << i << "\n";
-        normalD = true;
-        break;
-      }
-    }
-
-    if(false == normalD) {
-      //Cannot delete any because degree of all undeleted vertices >=k
-      //Delete any
-      for(int i = 0 ; i < V; i++) {
-        if(deleted[i]) {
-          continue;
-        }
-        //cout<< "Force: " << i << "\n";
-        stack.push_back(i);
-        deleted[i] = true;
-        break;
-      }
-    }
-  }
-
-  int numcolor =0;
-  vector<int> finalColor(V, -1);
-
-  while(0 != stack.size()) {
-    int vertexToColor = stack.back();
-    stack.pop_back();
-    deleted[vertexToColor] = false;
-
-    vector<bool> possibleColors(k, true);
-
-    //FInd the colors already occupied by ngbrs
-    for(int i = 0 ; i < V ; i++) {
-
-      if(deleted[i] || 0 == graph[vertexToColor][i] || -1 == finalColor[i]) {
-        continue;
-      }
-
-      //undeleted ngbr
-      int ngbrColor = finalColor[i];
-      possibleColors[ngbrColor] = false;
-    }
-
-    //Find free colors
-    for(int  i = 0;  i < k; i++) {
-      if(possibleColors[i]) {
-        finalColor[vertexToColor] = i;
-        break;
-      }
-    }
-
-    if(-1 == finalColor[vertexToColor]) {
-      return false;
-    }
-  }
-
-  //print coloring
-  //for(int i = 0 ; i < V; i++) {
-  //  cout << i << " :" << finalColor[i] << "\n"; 
- // }
-  return true;
-
-}
-
 int main(int argc, char** argv)
 {
 
@@ -210,16 +119,17 @@ int main(int argc, char** argv)
   std::vector<std::vector<int>> graph = 
     loadFromFile(filename);
 
-  //displayADJMatrix(graph);
+  displayADJMatrix(graph);
+  int size =  graph.size();
   
-  for(int k = graph.size(); k>=1 ; k--) {
-    if(isColor(graph, k)) {
-      std::cout <<  "colorable : "<< k << "\n";
-    } else {
-      std::cout <<  "non-colorable : "<< k  << "\n";
-      break;
+  for(int k = 0; k < size;  k++) {
+    for(int i = 0; i < size;  i++) {
+      for(int j = 0; j < size;  j++) {
+        graph[i][j] = graph[i][j] | (graph[i][k] & graph[k][j]);
+      }
     }
   }
+  displayADJMatrix(graph);
 
 }
 

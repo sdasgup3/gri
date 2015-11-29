@@ -128,12 +128,12 @@ function isColor(graph, k)
 function main(argv)
 {
   g  = graph();
-  //g.loadFromFile(argv[0]);
+  g.loadFromFile(argv[0]);
   //g.loadFromFile("graphs/02_graph_6_4_3.txt");
-  g.loadFromFile("graphs/simple_GC_1.txt");
+  //g.loadFromFile("graphs/simple_GC_1.txt");
   graph = g.getAdjacencyMatrix();
 
-  displayAdjacencyMatrix(graph, g.getVertices());
+  //displayAdjacencyMatrix(graph, g.getVertices());
   
   for(k = g.getNumVertices(); k>=1 ; k--) {
     if(isColor(graph, k)) {

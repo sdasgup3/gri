@@ -61,12 +61,11 @@ function shortestPath(g, startV, endV)
 
 function displaySTP(pathNdist, start, end, numvertices)
 {
-  println("");
 
   parent = pathNdist[0];
   dist = pathNdist[1];
 
-  println("Print distance / path");
+  //println("Print distance / path");
 
   if(-1 != end) {
     path = getPath(parent, start, end);
@@ -83,7 +82,7 @@ function displaySTP(pathNdist, start, end, numvertices)
       path = getPath(parent, start, end);
 
       print("" + end + " | " + dist[i] + " | ");
-      for(j = 0 ; j < path.size(); j++) {
+      for(j = 0 ; j < path.size() - 1; j++) {
         print("" + path[j] + " ");
       }
       println("");
@@ -172,24 +171,24 @@ function getPath(parent, start, end)
 function main(argv) 
 {
   g = graph();
-  g.loadFromFile("graphs/simple_shortestpath.txt");
+  //g.loadFromFile("graphs/simple_shortestpath.txt");
   //g.loadFromFile("graphs/02_graph_5_5_5.txt");
-  //g.loadFromFile(argv[0]);
+  g.loadFromFile(argv[0]);
 
   vertices = g.getVertices();
   it = vertices.iterator();
   start = it.next();
-  it.next();
-  it.next();
-  it.next();
-  end = it.next();
+  //it.next();
+  //it.next();
+  //it.next();
+  //end = it.next();
 
-  matrix = g.getAdjacencyMatrix();
-  displayAdjacencyMatrix(matrix, vertices);
+  //matrix = g.getAdjacencyMatrix();
+  //displayAdjacencyMatrix(matrix, vertices);
 
 
   shortestPath(g, start, NULL);
-  shortestPath(g, start, end);
+  //shortestPath(g, start, end);
   
 }
 

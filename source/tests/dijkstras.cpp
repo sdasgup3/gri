@@ -112,20 +112,20 @@ std::vector<int>
 dijkstra(vector<vector<float>> graph, int start) 
 {
   int V = graph.size();
-  std::vector<int> dist(V, INT_MAX);
+  std::vector<float> dist(V, INT_MAX);
   std::vector<int> parent(V, -1);
   //std::priority_queue<node> Q;
   std::vector<bool> visited(V, false);
 
 
   //Q.push(node(0,0));
-  dist[start] = 0;
+  dist[start] = 0.0;
   parent[0] = 0;
 
   //while(false == Q.empty()) {
   for(int count = 0 ; count < V; count ++) {  
 
-    int min = INT_MAX;
+    float min = INT_MAX;
     int minI = -1;
     for(int i = 0 ; i < V; i++) {
       if(dist[i] < min && false == visited[i]) {
@@ -137,6 +137,7 @@ dijkstra(vector<vector<float>> graph, int start)
     if(-1 == minI) {
       break;
     }
+    //std::cout << min << " " << minI << "\n";
 
     //node minNode = Q.top();
     //Q.pop();
@@ -159,16 +160,16 @@ dijkstra(vector<vector<float>> graph, int start)
   }
 
   //print
-  for(int v = 0 ; v < V; v++) {
-    std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
-  }
+  //for(int v = 0 ; v < V; v++) {
+  //  std::cout << v << " : " << dist[v] << " " << v << "--" << parent[v] << " \n";
+  ////}
 
   for(int v = 0 ; v < V; v++) {
-    vector<int> path = getPath(parent, start, v);
-    cout << "" << v << " | ";
-    for(int i  =  path.size() -1;  i >= 0; i--) {
-      cout << "" << path[i] << " " ;    
-    }
+    //vector<int> path = getPath(parent, start, v);
+    cout << "" << v << " | " << dist[v] << " | " << parent[v] ;
+    //for(int i  =  path.size() -1;  i >= 0; i--) {
+    //  cout << "" << path[i] << " " ;    
+    //}
     cout<<"\n";
   }
 
@@ -203,7 +204,7 @@ int main(int argc, char** argv)
     std::vector<std::vector<float>> graph = 
           loadFromFile(filename);
 
-   displayADJMatrix(graph);
+   //displayADJMatrix(graph);
 
    std::vector<int > T = dijkstra(graph, 0);
    return 0;
