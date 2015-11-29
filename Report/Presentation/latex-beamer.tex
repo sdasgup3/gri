@@ -1,0 +1,578 @@
+\documentclass[mathserif,10pt]{beamer}
+
+\usepackage{beamerthemesplit}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage{algorithm}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{framed}
+\usepackage{pstricks}
+\usepackage{pst-node,pst-tree}
+\usepackage{pst-rel-points}
+\usepackage{flexiprogram}
+\usepackage[UKenglish]{babel}
+\usepackage{hyperref}
+\usepackage{pst-coil}
+\usepackage{color}
+\usepackage{epsfig}
+%\usepackage{tikz}
+%\usepackage{multirow}
+
+\usefonttheme{serif}
+
+\newcommand{\cmt}[1]{}
+%\noindent
+
+\setcounter{tocdepth}{1}
+
+
+\usepackage{color}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    %backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    %numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    %numbers=left,                    
+    %numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle,frameround=fttt}
+
+
+\setbeamercovered{transparent=0}
+
+  \usetheme{CambridgeUS}
+  \usecolortheme{dolphin}
+
+  \title[Static Analysis Debugging with Symbolic Execution]{Static Analysis Debugging with Symbolic Execution}
+  \author[]{{\textbf{Theodoros Kasampalis, Sandeep Dasgupta}} }
+  \begin{document}
+
+  \begin{frame}
+  \titlepage
+  \end{frame}
+  \usebeamertemplate{mytheme}
+
+  \AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+  \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\defverbatim[colored]\lstBugI{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+  1. int v[100];
+
+  2. void f(int x) {
+  3.   if (x > 99)
+  4.     x = 99;
+
+  5.   v[x] = 0;
+  6. }
+
+  7. int main(int argc, char **argv) {
+  8.   int x = atoi(argv[1]);
+  9.   f(x);
+
+ 10.   return 0;
+ 11. }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstBugII{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+  1. int v[100];
+
+  2. void f(int x) {
+  3.   if (x > 99)
+  4.     x = 99;
+
+  5.   v[x] = 0;
+  6. }
+
+  7. int main(int argc, char **argv) {
+  8.   int x;
+  9.   klee_make_symbolic(&x, sizeof(x), "X");
+ 10.   f(x);
+
+ 11.   return 0;
+ 12. }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstBugIII{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+  1. int v[100];
+
+  2. void f(int x) {
+  3.   if (x > 99)
+  4.     x = 99;
+
+  5.   v[x] = 0;
+  6. }
+
+  7. int main(int argc, char **argv) {
+  8.   int x = 50;
+  9.   klee_make_symbolic(&x, sizeof(x), "X");
+ 10.   f(x);
+
+ 11.   return 0;
+ 12. }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstBugIV{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+  1. int v[100];
+
+  2. void f(int x) {
+  3.   if (x > 99)
+  4.     x = 99;
+
+  5.   v[x] = 0;
+  6. }
+
+  7. int main(int argc, char **argv) {
+  8.   int x = 100;
+  9.   klee_make_symbolic(&x, sizeof(x), "X");
+ 10.   f(x);
+
+ 11.   return 0;
+ 12. }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstI{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red},frame=trBL]
+  1.int main() 
+    {
+  2.  int x=1 , y=2;
+  3.  int*  p = (int *)malloc(sizeof(int));
+
+  4.  klee_make_symbolic(&x, sizeof(x), "x");
+  5.  klee_make_symbolic(&y, sizeof(y), "y");
+      /*
+      ** If we skip to make y symbolic, then we may miss the 
+      ** opportunity of catching a potential pointer analysis
+      ** bug. For ex. what if the pointer analysis infers that
+      ** (*p) and the heap object at line 7 mayNOT alias.
+      */
+
+      if(0 != x*y) {
+  6.    p = (int *)malloc(4);
+      } else {
+        if(y == 0) {
+  7.      p = (int *)malloc(4);
+        }
+      }
+  8.  return *p;
+    }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstII{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red},frame=trBL]
+  struct S {
+    int member; 
+  };
+  struct S data[] =
+  {
+    { 1,2 },
+    { 3,4 },
+  };
+  int main(int argc, char** argv) 
+  {
+    int x= 0 ;
+    struct S* z;
+  
+    klee_make_symbolic(&x, sizeof(x), "X");
+  
+    z   = &data[x];
+    ... = z->member ; 
+
+    return 0;
+  }
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstIITWO{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red},frame=trBL]
+  struct S {
+    int member; 
+  };
+  struct S data[] =
+  {
+    { 1,2 },
+    { 3,4 },
+  };
+  int main(int argc, char** argv) 
+  {
+    int x= 0 ;
+    struct S* z;
+  
+    klee_make_symbolic(&x, sizeof(x), "X");
+    klee_assume(x >= 0 &  x <= 1 );
+  
+    z   = &data[x];
+    ... = z->member ; 
+
+    return 0;
+  }
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstIII{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red},frame=trBL]
+  /* The bug shows up when there is a must alias check between 
+  ** x (at line 1) and the bitcast of x (at line 3).
+  ** Our debugger is able to detect the error at i = 1, terminate and produce the input as N = 2147483647  
+  */
+  int main(int argc, char **argv) 
+  {
+    int *A[5];
+    int N = 1;
+
+    klee_make_symbolic(&N, sizeof(N), "N");
+
+    for (int i = 0; i < 5; ++i) {
+      A[i] = (int*) malloc((i+1)*sizeof(int));
+    }
+ 
+    int *x, a;
+    char *y;
+        
+    for (int i = 0; i < N; ++i) {        
+   1. x = A[i];     
+   2. a = *x;      
+   3. y = (char *) x;
+    }
+    return 0;
+  }
+\end{lstlisting}
+}
+
+\defverbatim[colored]\algoCheckerIII{
+\begin{lstlisting}[language=C,basicstyle=\tiny,keywordstyle=\color{red},frame=trBL]
+  base_address  = `base address` of the loadI
+  pointerSet    = All the pointers in the same function scope as loadI
+  foreach( `pointer` in pointerSet) { 
+    result = MustAlias_OR_MayNOTAlias(`base_address`, `pointer`) // Querying the alias analysis.
+    if( result ==  must-alias) { 
+      if (`base_pointer` and 'pointer' DO NOT point to the same run-time memory object) {
+        error
+      }
+    }
+    if (result ==  mayNot-alias) { 
+      if (`base_pointer` and 'pointer' point to the same run-time memory object) {
+        error
+      }
+    }
+  }
+\end{lstlisting}
+}
+
+\section{Static Analysis}
+\frame
+{
+  \frametitle{\secname}
+  \begin{itemize}[<+->]
+    \item Infer source code properties without execution
+    \vspace{1cm}
+    \item Examples:
+    \begin{itemize}
+      \item Pointer Analysis
+      \item Liveness Analysis
+    \end{itemize} 
+    \vspace{1cm}
+    \item Applications:
+    \begin{itemize}
+      \item Compilers
+      \item Security
+      \item Software Engineering
+    \end{itemize} 
+    \vspace{1cm}
+    \item Inferred properties true for any execution
+  \end{itemize} 
+}
+
+\section{Debugging a Static Analysis Implementation}
+\frame
+{
+  \frametitle{\secname}
+  \begin{itemize} [<+->]
+    \item Semantic bugs
+    \begin{itemize}
+      \item no crash
+      \item erroneous results
+    \end{itemize} 
+    \vspace{1cm}
+    \item Effect visible in client code
+    \begin{itemize}
+      \item Hard to trace back
+      \item Not reliable
+    \end{itemize} 
+    \vspace{1cm}
+    \item Static analysis specific tests
+    \begin{itemize}
+      \item small regression tests
+    \end{itemize} 
+  \end{itemize} 
+}
+
+\section{Related Work}
+\frame
+{
+  \frametitle{\secname}
+  \begin{itemize} [<+->]
+    \item Compiler testing through miscompilation detection:
+    \begin{itemize}
+      \item Test suites (LLVM test suite)
+      \item Randomly generated tests (Csmith, PLDI 11)
+      \item Equivalence Modulo Inputs (Orion, PLDI 14)
+    \end{itemize} 
+    \vspace{1cm}
+    \item Dynamic alias analysis error detection (NeonGoby, FSE 13)
+
+    \vspace{1cm}
+    \item Symbolic execution (KLEE, OSDI 08) 
+    \item Concolic execution (zesti, ICSE 12 - SAGE, ICSE13)
+  \end{itemize} 
+}
+
+\section{Background}
+\subsection{Array Out of Bounds Bug}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstBugI
+}
+
+\subsection{Symbolic Execution with KLEE}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstBugII
+}
+
+\subsection{Concolic Execution with zesti}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstBugIII
+}
+
+\subsection{Concolic Execution with zesti}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstBugIV
+}
+
+\section{Our Idea}
+\frame
+{
+  \frametitle{\secname}
+  \begin{itemize} [<+->]
+    \item Check inferred properties during symbolic execution
+    \begin{itemize}
+      \item Apply analysis to an input program
+      \item Symbolically execute the input program
+      \item Check whether inferred properties hold
+    \end{itemize} 
+    \vspace{1cm}
+    \item Direct testing of static analysis code
+    \vspace{1cm}
+    \item Static analysis inferences checked thoroughly
+    \begin{itemize}
+      \item High path coverage of the input program
+      \item Big input program size
+    \end{itemize} 
+  \end{itemize} 
+}
+
+\section{System Status Overview}
+\frame
+{
+  \frametitle{\secname}
+  \begin{itemize} [<+->]
+    \cmt{
+      As it mentioned that we are trying to device a debugger for  static analysis. The static analysis 
+        that we are currently dealing with is pointer analysis
+    }
+    \item Implementation for checking an LLVM Alias Analysis (including tbaa, basicaa)
+    \vspace{1cm}
+    \item Checks incorporated within zesti
+    \vspace{1cm}
+    \item Checks on all loads
+    \vspace{1cm}
+    \item Pointer dereferences marked sensitive
+    \vspace{1cm}
+    \item Reachability analysis for inputs affecting pointer values [under implementation]
+    \vspace{1cm}
+    \item Testing with LLVM test suite programs
+  \end{itemize} 
+}
+
+\section{Implementation}
+\subsection{Symbolic Execution}
+\frame
+{
+  \frametitle{\subsecname}
+  \begin{itemize} 
+    \item Symbolic execution using klee  
+      \cmt{
+        The symbolic analysis engine that we first explored was KLEE which serves a major
+          benefits:
+          for any illegal dreference, assertion failure or an exit , it tries to find out if there exists any  input value that has caused that error.
+          klee does so by running the programs symbolically and while doing so generate the contraint that exactly describe the set of values
+          possible on a given path. When klee founds an error, klee solves the
+          path constraint and generate a set of input that will lead to the same error path.
+
+          But the problem with klee is that it tries to hit every line
+          of executable code in the program leading to huge runtime.  
+      }
+    \vspace{1cm} \item Migration from Klee to Zesti (a variant of klee) 
+      \cmt{
+        To mitigate the path explotion problem, we migrated to zesti.
+        ZESTI identifies sensitive instructions(memory accesses and divisions.)
+        dynamically while running the concrete input.  
+        While sym exec it tries to exercise sensitive instructions on slightly
+        different paths,  with the goal of triggering a bug if the respective
+        instructions contain one.
+
+      To mitigate the path explosion problem, ZESTI carefully chooses divergent
+        paths via two mechanisms: (1) it only diverges close to sensitive
+        instructions (memory accesses and divisions.), i.e instructions that
+        might contain a bug, and (2) it chooses the divergence points in order
+        of increasing distance from the sensitive instruction. 
+      } 
+
+    \end{itemize} 
+}
+
+\subsection{Debugger Logic for Pointer Analysis}
+\frame
+{
+  \frametitle{\subsecname}
+  \begin{itemize}
+    \item Following check is done after each pointer dereference (say loadI)
+  \end{itemize}
+  \algoCheckerIII
+    \cmt{
+      Our work is on devising a debugger for static analysis.
+      In our current implementation the static analysis that we are debugging is pointer analysis.
+      what I mean by PA bug
+    } 
+}
+
+\subsection{Implicitly adding klee\_assumes}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstII
+    \cmt{
+    Without the klee_assume, the dereference z->x may get resolved to many
+      spurious memory objects. But while dealing with pointer analysis results
+      we assume that the index of gptr is within bounds and as a result we are
+      getting false positives that (The set of allocation sites corresponding
+          to the memory object of the load address, z->x) is NOT a subset of
+      (Points to allocation sites for the load address z->x) 
+    }
+
+}
+
+\subsection{Implicitly adding klee\_assumes}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstIITWO
+    \cmt{
+    Without the klee_assume, the dereference z->x may get resolved to many
+      spurious memory objects. But while dealing with pointer analysis results
+      we assume that the index of gptr is within bounds and as a result we are
+      getting false positives that (The set of allocation sites corresponding
+          to the memory object of the load address, z->x) is NOT a subset of
+      (Points to allocation sites for the load address z->x) 
+    }
+
+}
+
+\subsection{Importance of choosing a variable as symbolic}
+\frame
+{
+  \frametitle{\subsecname}
+  \lstI
+
+}
+
+\subsection{Which variables to make symbolic}
+\frame
+{
+  \frametitle{\subsecname}
+  \begin{itemize}
+    \item Explicitly specifying which variables to make symbolic is difficult. 
+    \vspace{1cm}
+    \begin{itemize}
+      \item Instrumented the code by inserting klee\_make\_symbolic.
+      \item Rechability Analysis to figure out candidates to be made symbolic.
+    \end{itemize}
+  \end{itemize}
+  \cmt{
+    Rather that explicitly making the  inputs of the test program
+      symbolic, let klee instrument the code by inserting klee_make_symbolic
+      calls. The inputs that we are considering include command line arguments,
+      file inputs, globals and variables used to read inputs (for example using
+          scanf).
+  }
+}
+
+
+\subsection{Conclusion}
+\frame
+{
+  \frametitle{\subsecname}
+  \begin{itemize}
+    \item Directly debugging the pointer analysis.
+      \cmt{
+        Any failure is check is the direct evidence that the bug is in the static analysis, not anywhere else like in client code.
+      }
+    \item Provides more exhaustive way to test the static analysis.
+      \cmt{
+ the symbolic execution explores many possible execution paths of the test program
+      }
+    \item Test on large programs.
+      \cmt{
+         which are more likely to uncover new bugs
+      }
+  \end{itemize}
+}
+
+\section{Questions?}
+\subsection{Questions?}
+\frame
+{}
+
+\end{document}
