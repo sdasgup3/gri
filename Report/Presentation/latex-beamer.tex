@@ -83,16 +83,18 @@
   define("NOTVISITED", "0");
   define("VISITED", "1");
 
-  function dfs(v)
+  function dfs(v, dfsorder)
   {
       if(v.visit == VISITED)
         return;
 
-      println("Closing vertex: " + v.num);
+      println("vertex visited: " + v.num);
       v.visit = VISITED;
 
+      dfsorder.pushBack(v);
+
       foreach(neighbor; v.getNeighbors())
-        dfs(neighbor);
+        dfs(neighbor, dfsorder);
   }
 
   function main(argv)
@@ -100,8 +102,28 @@
     g = graph();
     g.loadFromFile(argv[0]);
 
-    dfs(first);
+    dfsorder = array(0);
+    dfs(first, dfsorder);
+
+    for(vertex: dfsorder ) {
+      println(" " + vertex.__id + " " );
+    }
   }
+
+\end{lstlisting}
+}
+
+\defverbatim[colored]\lstsyntax{
+\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+  //Supports arrays and array iterators
+  arr = array(2);
+  arr[0]  =  5;
+  arr[1]  = "ABC";
+
+  //Supports struct ans struct iterators
+  arr = struct();
+  arr.x  =  5;
+  arr.y  = "ABC";
 
 \end{lstlisting}
 }
@@ -110,7 +132,7 @@
 \frame
 {
   \frametitle{\secname}
-  \begin{itemize}[<+->]
+  \begin{itemize}%[<+->]
     \item Graphical models are applied to widely varying fields.
     \begin{itemize}
       \item Biochemistry 
@@ -150,7 +172,7 @@ and can focus mostly on his/her experiments.
   \end{itemize} 
 }
 
-\section{Language}
+\section{Language \& Implementation Details}
 \subsection{Syntax \& Semantics}
 \frame
 {
@@ -195,6 +217,33 @@ and can focus mostly on his/her experiments.
   \lstdfs
 }
 
+%\frame
+%{
+%  \frametitle{\subsecname}
+%  \lstsyntax
+%}
+
+\section{Evaluation}
+\subsection{Naive Implementation}
+\frame
+{
+  \frametitle{\subsecname}
+  \begin{table}[]
+\centering
+\caption{Slowdown of our implementation w.r.t C implementation. The graph used in all the cases consist of vertices = 500, edges = 1000. For Graph Coloring, we used the graph with vertices = 125, edges = 1000.}
+\label{my-label}
+\scalebox{.8} {
+\begin{tabular}{|l|l|l|l|}
+\hline
+   \multicolumn{1}{|c|}{Algorithm}                                 & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Fully Scripted\\ time (secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C implementation\\ time(secs)\end{tabular}} & Slowdown \\ \hline
+Transitive Closure (Floyd Warshall) & 1137.40            & 4.04                   & 281.5    \\ \hline
+Shortest Path (Dijkstra)            & 6.37             & 0.02                     & 318.5     \\ \hline
+Minimum Spanning Tree (Prim)        & 6.34             & 0.02                      & 317.0     \\ \hline
+Graph Coloring (Chaitin Optimistic) &   138.17  & 0.65                              & 212.6         \\ \hline
+\end{tabular}}
+\end{table}
+}
+
 \subsection{Built-in Functions}
 \frame
 {
@@ -217,9 +266,9 @@ and can focus mostly on his/her experiments.
 }
 
 
-\section{Evaluation}
 \frame
 {
+  \frametitle{\subsecname}
   \begin{table}[]
 \centering
 \caption{Speedup of the our implementation with built-in functions w.r.t without using built-in functions. The graph used in all the cases consist of vertices = 125, edges = 1000}
@@ -234,20 +283,21 @@ Minimum Spanning Tree (Prim)        & 0.05                                      
 \end{table}
 }
 
-\section{Evaluation}
+\subsection{Revised Implementation}
 \frame
 {
+  \frametitle{\subsecname}
   \begin{table}[]
 \centering
-\caption{Speedup of our implementation w.r.t C implementation. The graph used in all the cases consist of vertices = 500, edges = 1000}
+\caption{Slowdown of our implementation w.r.t C implementation. The graph used in all the cases consist of vertices = 500, edges = 1000. For Graph Coloring, we used the graph with vertices = 125, edges = 1000.}
 \label{my-label}
 \begin{tabular}{|l|l|l|l|}
 \hline
-                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}GRI\\ Time(secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C\\ Time(secs)\end{tabular}} & Speedup \\ \hline
-Transitive Closure (Floyd Warshall) & 10.26                                                                         & 4.04                                                                        & 2.5     \\ \hline
-Shortest Path (Dijkstra)            & 0.09                                                                          & 0.02                                                                        & 4.5     \\ \hline
-Minimum Spanning Tree (Prim)        & 0.09                                                                          & 0.02                                                                        & 4.5     \\ \hline
-Graph Coloring (Chaitin Optimistic) &                                                                               & 15.39                                                                       &         \\ \hline
+                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}GRI\\ Time(secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C\\ Time(secs)\end{tabular}} & Slowdown \\ \hline
+Transitive Closure (Floyd Warshall) & 10.26     & 4.04                               & 2.5     \\ \hline
+Shortest Path (Dijkstra)            & 0.09      & 0.02                               & 4.5     \\ \hline
+Minimum Spanning Tree (Prim)        & 0.09      & 0.02                               & 4.5     \\ \hline
+Graph Coloring (Chaitin Optimistic) &   138.17  & 0.65                              & 212.6         \\ \hline
 \end{tabular}
 \end{table}
 

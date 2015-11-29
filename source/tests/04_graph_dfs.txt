@@ -3,7 +3,7 @@ define("NOTVISITED", "0");
 define("VISITED", "1");
 
 // Recursive depth first search
-function dfs(v)
+function dfs(v, dfsorder)
 {
   if(v.visit == VISITED)
     return;
@@ -11,8 +11,10 @@ function dfs(v)
   println("Closing vertex: " + v.num);
   v.visit = VISITED;
 
+  dfsorder.pushBack(v);
+
   foreach(neighbor; v.getNeighbors())
-    dfs(neighbor);
+    dfs(neighbor, dfsorder);
 
 }
 
@@ -52,5 +54,10 @@ function main(argv)
     v.visit = NOTVISITED;
 
   // Run (any vertex first)
-  dfs(first);
+  dfsorder =  array(0);
+  dfs(first, dfsorder);
+
+  foreach(vertex; dfsorder) {
+    println(" " + vertex.num + " ");
+  }
 }

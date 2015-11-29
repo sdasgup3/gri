@@ -79,12 +79,12 @@ function displaySTP(pathNdist, start, end, numvertices)
   } else {
     for(i = 0 ; i < numvertices ; i++) {
       end = i;
-      path = getPath(parent, start, end);
+      //path = getPath(parent, start, end);
 
-      print("" + end + " | " + dist[i] + " | ");
-      for(j = 0 ; j < path.size() - 1; j++) {
-        print("" + path[j] + " ");
-      }
+      print("" + end + " | " + dist[i] + " | " + parent[i]);
+      //for(j = 0 ; j < path.size() - 1; j++) {
+      //  print("" + path[j] + " ");
+      //}
       println("");
     }
   }
