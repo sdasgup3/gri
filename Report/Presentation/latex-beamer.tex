@@ -78,7 +78,8 @@
 }
 
 \defverbatim[colored]\lstdfs{
-\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+%\begin{lstlisting}[language=C++,basicstyle=\tiny,keywordstyle=\color{red}]
+\begin{lstlisting}[language=C++,basicstyle=\tiny]
   define("NUM_VERTICES", "10");
   define("NOTVISITED", "0");
   define("VISITED", "1");
@@ -147,7 +148,7 @@
         \cmt{social networking}
     \end{itemize} 
     \vspace{1cm}
-    \item Field experts often struggle to represent \& allow computations on  graphical models in \textbf{Convenient} and \textbf{Efficient} way.
+    \item To represent \& allow computations on  graphical models in \textbf{Convenient} and \textbf{Efficient} way.
       \cmt{
 Convenience: is essential so that even for domain experts who are not coding experts
 can code and reason about their implementation. Ease of interface could be due to:
@@ -172,8 +173,8 @@ and can focus mostly on his/her experiments.
   \end{itemize} 
 }
 
-\section{Language \& Implementation Details}
-\subsection{Syntax \& Semantics}
+\section{Language}
+%\subsection{Syntax \& Semantics}
 \frame
 {
   \begin{figure}[h]
@@ -182,6 +183,11 @@ and can focus mostly on his/her experiments.
     \includegraphics{Figs/1.eps}
   }
   \end{figure}
+}
+\cmt{
+As “nodes” and “edges” are the backbone of any graph structure, we proposed to have
+them as first-class objects. Even though the user will not necessarily be accessing individual
+nodes/edges, but the option is available to them.
 }
 \frame
 {
@@ -222,6 +228,41 @@ and can focus mostly on his/her experiments.
 %  \frametitle{\subsecname}
 %  \lstsyntax
 %}
+
+\section{Interpreter Runtime}
+\frame
+{
+  \begin{itemize}
+    \item Interprets the AST.
+    \item AST structure.
+    \begin{itemize}
+      \item   AST : list of function definitions.
+      \item  Leafs could be \tt{identifier}, \tt{int}, \tt{float}, \tt{true}, \tt{false}, \tt{null}, \tt{string}, \tt{vertex}, \tt{edge} or \tt{graph}.  
+    \end{itemize}
+    \item How Runtime works.
+  \end{itemize}
+    \cmt{
+  Our AST is basically a list of function definitions. Each function definition object
+contains name of the function, a set of formal arguments and a list of body statements.
+These body statements could be an assignment, loop-statement, function call, etc. The
+leafs of the AST could be an identifier, int, float, true, false, null, string, vertex, edge or
+graph.
+
+The runtime starts with searching for function definition function main(argv) and then
+creates a function call out of it and execute it. While creating the function call it uses the
+command-line parameters as the actual parameters of the function call.
+• The execution of a function call involves finding the corresponding function definition,
+checking if the number of formal and actuals are equal and then pushing a call stack frame
+( which contains the mapping between the formal and actual values passed to them) in a
+global call stack. After that, the function is executed w.r.t the current context(i.e. the top
+of the call stack).
+• The execution of the function involves executing a list of statements. The statements may
+add further mappings in the current call stack frame. Whenever a name (identifier) is
+refereed, the mapping in the current context need to be consulted to get the actual value
+of it.
+    }
+
+}
 
 \section{Evaluation}
 \subsection{Naive Implementation}
@@ -303,4 +344,14 @@ Graph Coloring (Chaitin Optimistic) &   138.17  & 0.65                          
 
 }
 
+\section{Future Work}
+\frame
+{
+  \begin{itemize}
+  \item Comparison with an existing implementation.
+  \item To support saving of state and retrieving it back.
+  \item To add relevant built-in functions to build complex algorithms and improve efficiency.  
+  \end{itemize}
+
+}
 \end{document}

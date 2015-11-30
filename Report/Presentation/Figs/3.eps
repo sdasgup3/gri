@@ -1,7 +1,7 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%Title: /home/dsand/GRI/Report/Presentation/Figs/3.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5e
-%%CreationDate: Sun Nov 29 06:17:55 2015
+%%CreationDate: Sun Nov 29 17:56:48 2015
 %%BoundingBox: 0 0 483 206
 %Magnification: 1.0000
 %%EndComments
@@ -115,22 +115,22 @@ pageheader
 % here starts figure with depth 50
 % Ellipse
 7.500 slw
-n 7290 2745 242 242 0 360 DrawEllipse gs col0 s gr
-
-% Ellipse
-n 5895 2745 242 242 0 360 DrawEllipse gs col0 s gr
-
-% Ellipse
 n 8685 4770 242 242 0 360 DrawEllipse gs col0 s gr
 
 % Ellipse
 n 8630 2731 242 242 0 360 DrawEllipse gs col0 s gr
 
 % Ellipse
-n 5895 4770 242 242 0 360 DrawEllipse gs col1 s gr
+n 5895 4770 242 242 0 360 DrawEllipse gs col0 s gr
 
 % Ellipse
-n 7290 4770 242 242 0 360 DrawEllipse gs col1 s gr
+n 7290 4770 242 242 0 360 DrawEllipse gs col0 s gr
+
+% Ellipse
+n 5895 2745 242 242 0 360 DrawEllipse gs col1 s gr
+
+% Ellipse
+n 7290 2745 242 242 0 360 DrawEllipse gs col1 s gr
 
 % Polyline
 0 slj
@@ -252,12 +252,6 @@ gs 1 -1 sc (5) col0 sh gr
 1440 2565 m
 gs 1 -1 sc (  g = graph\(\);) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-1530 3015 m
-gs 1 -1 sc (matrix = g.getAdjMatrix\(\);) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-1530 3240 m
-gs 1 -1 sc (dpt_x_employee = g.getVertexWithProperty\("__DPT_x", 1.0\);) col0 sh gr
-/Times-Roman ff 127.00 scf sf
 1350 2385 m
 gs 1 -1 sc (function main\(argv\) {) col0 sh gr
 /Times-Roman ff 127.00 scf sf
@@ -270,14 +264,8 @@ gs 1 -1 sc (mgr_employee  =  g.getVertexWithProperty\("__MGR", 1.0\);) col0 sh g
 3870 3870 m
 gs 1 -1 sc (//Gives: {0, 1, 2}) col0 sh gr
 /Times-Roman ff 127.00 scf sf
-1530 4140 m
-gs 1 -1 sc (dpt_x_AND_mgr = dpt_x_employee.intersection\(mgr_employee\);) col0 sh gr
-/Times-Roman ff 127.00 scf sf
 4320 4320 m
 gs 1 -1 sc (//Gives: {0,1}) col0 sh gr
-/Times-Roman ff 127.00 scf sf
-1530 4815 m
-gs 1 -1 sc (foreach\(employee: dpt_x_AND_mgr\) {) col0 sh gr
 /Times-Roman ff 127.00 scf sf
 1530 4590 m
 gs 1 -1 sc (println\("Set of __DPT_x employee who are __MGR as well"\);) col0 sh gr
@@ -294,8 +282,20 @@ gs 1 -1 sc (}) col0 sh gr
 8550 5175 m
 gs 1 -1 sc (DPT_y) col0 sh gr
 /Times-Roman ff 127.00 scf sf
+1530 3240 m
+gs 1 -1 sc (dpt_x_employee = g.getVertexWithProperty\("__DPT_x", 1.0\);) col8 sh gr
+/Times-Roman ff 127.00 scf sf
+1530 4140 m
+gs 1 -1 sc (dpt_x_AND_mgr = dpt_x_employee.intersection\(mgr_employee\);) col8 sh gr
+/Times-Roman ff 127.00 scf sf
+1530 4815 m
+gs 1 -1 sc (foreach\(employee: dpt_x_AND_mgr\) {) col8 sh gr
+/Times-Roman ff 127.00 scf sf
+1530 3015 m
+gs 1 -1 sc (matrix = g.getAdjMatrix\(\);) col8 sh gr
+/Times-Roman ff 127.00 scf sf
 1440 2715 m
-gs 1 -1 sc (  g.loadFromFile\(argv[0]\);) col0 sh gr
+gs 1 -1 sc (  g.loadFromFile\(argv[0]\);) col8 sh gr
 % here ends figure;
 pagefooter
 showpage

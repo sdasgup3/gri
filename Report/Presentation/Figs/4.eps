@@ -1,7 +1,7 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%Title: /home/dsand/GRI/Report/Presentation/Figs/4.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5e
-%%CreationDate: Sun Nov 29 06:19:08 2015
+%%CreationDate: Sun Nov 29 16:41:39 2015
 %%BoundingBox: 0 0 458 328
 %Magnification: 1.0000
 %%EndComments
@@ -317,17 +317,8 @@ gs 1 -1 sc (mgr_employee  =  g.getVertexWithProperty\("__MGR", 1.0\);) col0 sh g
 1710 4005 m
 gs 1 -1 sc (/* Set of __DPT_x employees who are not __MGRs*/) col0 sh gr
 /Times-Roman-iso ff 127.00 scf sf
-1710 4185 m
-gs 1 -1 sc (dpt_x_MINUS_mgr = dpt_x_employee.difference\(mgr_employee\);) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
-1710 4635 m
-gs 1 -1 sc (it  = dpt_x_MINUS_mgr.iterator\(\);) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
 1710 4815 m
 gs 1 -1 sc (println\("Set of __DPT_x employee who are not __MGRs"\);) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
-1710 4995 m
-gs 1 -1 sc (while\(it.hasNext\(\)\) {) col0 sh gr
 /Times-Roman-iso ff 127.00 scf sf
 1800 5175 m
 gs 1 -1 sc (  employee = it.next\(\);) col0 sh gr
@@ -337,15 +328,6 @@ gs 1 -1 sc (}) col0 sh gr
 /Times-Roman-iso ff 127.00 scf sf
 1800 5355 m
 gs 1 -1 sc (  println\(" " + employee.__id + " "\);) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
-1755 5715 m
-gs 1 -1 sc (emailExchanges = mgr_employee -> dpt_x_MINUS_mgr;) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
-1755 6210 m
-gs 1 -1 sc (emailExchanges = mgr_employee <- dpt_x_MINUS_mgr;) col0 sh gr
-/Times-Roman-iso ff 127.00 scf sf
-1755 6705 m
-gs 1 -1 sc (emailExchanges = mgr_employee <-> dpt_x_MINUS_mgr;) col0 sh gr
 /Times-Roman-iso ff 127.00 scf sf
 3420 5895 m
 gs 1 -1 sc (//Gives: \(0, 4\), \(1,3\), \(2,4\)) col0 sh gr
@@ -361,6 +343,24 @@ gs 1 -1 sc (}) col0 sh gr
 /Times-Roman-iso ff 127.00 scf sf
 1710 2385 m
 gs 1 -1 sc (g.loadFromFIle\(argv[0]\);) col0 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1710 4185 m
+gs 1 -1 sc (dpt_x_MINUS_mgr = dpt_x_employee.difference\(mgr_employee\);) col8 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1710 4635 m
+gs 1 -1 sc (it  = dpt_x_MINUS_mgr.iterator\(\);) col8 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1710 4995 m
+gs 1 -1 sc (while\(it.hasNext\(\)\) {) col8 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1755 5715 m
+gs 1 -1 sc (emailExchanges = mgr_employee -> dpt_x_MINUS_mgr;) col8 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1755 6210 m
+gs 1 -1 sc (emailExchanges = mgr_employee <- dpt_x_MINUS_mgr;) col8 sh gr
+/Times-Roman-iso ff 127.00 scf sf
+1755 6705 m
+gs 1 -1 sc (emailExchanges = mgr_employee <-> dpt_x_MINUS_mgr;) col8 sh gr
 % here ends figure;
 pagefooter
 showpage
