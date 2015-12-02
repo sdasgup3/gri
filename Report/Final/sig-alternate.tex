@@ -1,0 +1,97 @@
+\documentclass[letterpaper]{sig-alternate}
+\special{papersize=8.5in,11in}
+\usepackage{url}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+%%%%%% Non re-Com packages
+\usepackage{pst-node}
+\usepackage{pst-rel-points}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% New Commands %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{GRI: Interpreter of a dynamic language for GRaph algorithms}
+
+\numberofauthors{1} 
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+%\alignauthor Sandeep Dasgupta\\
+\alignauthor Sandeep Dasgupta\\
+       \affaddr{University Of Illinois at Urbana Champaign.}\\
+       \email{sdasgup3@illinois.edu}
+}
+\date{}
+
+\maketitle
+\begin{abstract}
+we decided 
+     to work on a dynamically typed language to represent graphs
+     and apply various computations on them.
+     With a dynamically typed language the user do not have to worry much about declaring types and can
+     focus mostly on his/her experiments.
+
+\end{abstract}
+
+\keywords{Graph Algorithm, dynamically typed language, interpreter} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As graphical models are increasingly being used in various
+  fields like biochemistry (genomics), electrical engineering (communication
+      networks and coding theory), computer science (algorithms and
+        computation) and operations research (scheduling), organizational
+      structures, social networking, there is a need to represent and allow
+      computation on them in a convenient and efficient way. This involves (but not limited
+          to)
+
+    \begin{itemize}
+      \item Designing a language which provide an convenient interface to the programmer to program those models.
+        This is essential so that even for domain experts who are not coding experts can code and reason about
+        their implementation.
+        Ease of interface could be due to:
+        \begin{itemize}
+          \item Expressive power of the language representing those models.
+          \item Intuitive extensibility of the language.
+          \item Ability of the language to provide exploratory programming, where the user
+          may experiment with different ideas (without dwelling much into the language syntax) before coming to a conclusive one.
+        \end{itemize}
+     \item Designed language need to be efficient in the following sense.     
+        \begin{itemize}
+          \item Underlying design decisions including data structures need to be carefully crafted 
+            to achieve expected run-time w.r.t the input size.
+          \item Implementation need to be scalable w.r.t the space/time requirements. This is 
+          important because most of the graph algorithm typically work
+          on huge input sizes.
+        \end{itemize}
+   \end{itemize}       
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}\label{sec:bgrel}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A Motivating Example}\label{sec:motiv}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Definitions and Notations} \label{sec:Formal_Definitions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interprocedural Analysis}
+\label{Interprocedural_Analysis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\bibliographystyle{abbrv}
+%\bibliography{sigproc}  
+
+\end{document}
