@@ -23,6 +23,7 @@ public:
 	virtual string toString(void) const { return "#Graph"; }
 
 	bool loadFromFile(const string& filename);
+	bool saveToFile(const string& filename);
 
 	bool isDirected(void) const;
 	bool setDirected(bool directed);

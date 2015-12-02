@@ -1,0 +1,13 @@
+function main(argv)
+{
+  g = graph();
+
+  println("graphs/00_simple.txt");
+  g.loadFromFile("graphs/00_simple.txt");
+  g.saveToFile("graphs/00_simple_save.txt");
+
+  println("graphs/01_house.txt");
+  g.loadFromFile("graphs/01_house.txt");
+  g.saveToFile("graphs/01_house_save.txt");
+
+}

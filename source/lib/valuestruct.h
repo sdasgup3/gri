@@ -33,8 +33,10 @@ public:
 
 	virtual void dump(ostream& os, uint) const;
 	uint getSize(void) const { 	return m_val.size(); }
+        map<identifier, CountPtr<Value> >& getPtr() {return m_val;};
 
 	void setPropertyToAllStructItems(identifier name, CountPtr<Value> value);
+
 
 	virtual CountPtr<Value> add(const Value&      right) const; // +
 	virtual CountPtr<Value> sub(const Value&      right) const; // -

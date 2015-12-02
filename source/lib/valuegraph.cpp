@@ -46,6 +46,113 @@ ValueGraph::~ValueGraph(void)
 }
 
 bool 
+ValueGraph::saveToFile(const string& filename)
+{
+  ofstream os(filename.c_str());
+  //ofstream os = std::cout;
+
+  if(!os.is_open()) {
+    std::cerr  << filename.c_str();
+    assert(0 && "File was not found or is not writable: ");
+    return false;
+  }
+
+  uint num_vertices = m_vertices.getSize();
+  uint num_edges = m_edges.getSize();
+  vector<identifier> vertices_props;
+  vector<identifier> edges_props;
+
+
+  // Is directed flag, number of vertices, number of edges
+  os << m_directed ;
+  os << "\n\n";
+  os << num_vertices;
+  os << " ";
+  os << num_edges;
+  os << "\n\n";
+
+  //Vertex props
+  set_container::const_iterator vit = m_vertices.begin();
+  ValueVertex* v = (*vit)->toValueVertex();
+  ValueStruct* vst = v->toValueStruct();
+  map<identifier, CountPtr<Value>> &vm_val = vst->getPtr();
+  map<identifier, CountPtr<Value> >::iterator m_it;
+  for(m_it = vm_val.begin(); m_it != vm_val.end(); m_it++) {
+    vertices_props.push_back((*m_it).first);
+  }
+  os << vertices_props.size() -1 << "\t"; 
+  for(uint i = 0; i < vertices_props.size() -1 ; i++) {
+    os << ID2STR(vertices_props[i]) << " ";         
+  }
+  os << "\n\n";
+
+  //Edge props
+  set_container::const_iterator eit = m_edges.begin();
+  ValueEdge* e = (*eit)->toValueEdge();
+  ValueStruct* est = e->toValueStruct();
+  map<identifier, CountPtr<Value>> &em_val = est->getPtr();
+  for(m_it = em_val.begin(); m_it != em_val.end(); m_it++) {
+    edges_props.push_back((*m_it).first);
+  }
+  os << edges_props.size() << "\t"; 
+  for(uint i = 0; i < edges_props.size() ; i++) {
+    os << ID2STR(edges_props[i]) << " ";         
+  }
+  os << "\n\n";
+
+
+  //Vertex enumeration
+  vit = m_vertices.begin();
+  for(; vit != m_vertices.end(); vit++) {
+    ValueVertex* v = (*vit)->toValueVertex();
+    CountPtr<Value> item = v->getItem(STR2ID("__id"));
+    int id = (*item).toValueInt()->getVal();
+    os << id << " ";      
+
+    for(uint i = 0 ; i < vertices_props.size() -1 ; i++) {
+      item = v->getItem(vertices_props[i]);
+      ValueFloat* vf = (item)->toValueFloat();
+      assert(vf);
+      float f = vf->getVal();
+      os << f << " ";      
+    }
+    os << "\n";      
+  }
+  os << "\n";      
+
+  //Edge enumeration
+  vit = m_vertices.begin();
+  eit = m_edges.begin();
+  for(; eit != m_edges.end(); eit++) {
+    ValueEdge* e = (*eit)->toValueEdge();
+    ValueVertex* bv = e->getBeginVertexPtr();
+    ValueVertex* ev = e->getEndVertexPtr();
+    CountPtr<Value> bv_item = bv->getItem(STR2ID("__id"));
+    CountPtr<Value> ev_item = ev->getItem(STR2ID("__id"));
+    int bv_id = (*bv_item).toValueInt()->getVal();
+    int ev_id = (*ev_item).toValueInt()->getVal();
+    os << bv_id << " " << ev_id << " ";      
+
+    for(uint i = 0 ; i < edges_props.size() ; i++) {
+      CountPtr<Value> item = e->getItem(edges_props[i]);
+      float f = (*item).toValueFloat()->getVal();
+      os << f << " ";      
+    }
+    os << "\n";      
+  }
+
+  if(!os.good())
+  {
+    assert(0 && "An error occurred during the graph writing, stream state indicates problem");
+    os.close();
+    return false;
+  }
+
+  os.close();
+  return true;
+}
+
+bool 
 ValueGraph::loadFromFile(const string& filename)
 {
   ifstream is(filename.c_str());

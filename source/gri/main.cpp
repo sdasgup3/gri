@@ -26,6 +26,7 @@
 #include "generated/nodebuiltinnext.h"
 #include "generated/nodebuiltingetneighbors.h"
 #include "generated/nodebuiltinloadfromfile.h"
+#include "generated/nodebuiltinsavetofile.h"
 #include "generated/nodebuiltingetadjacencymatrix.h"
 #include "generated/nodebuiltingettransitiveclosure.h"
 #include "generated/nodebuiltingetshortestpath.h"
@@ -111,6 +112,8 @@ addExternalFunctions(void) {
       new NodeBuiltinGetNeighbors(STR2ID("getNeighbors"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
       new NodeBuiltinLoadFromFile(STR2ID("loadFromFile"), new std::list<identifier>(p0,p2) ));
+  CONTEXT->addFunction(
+      new NodeBuiltinSaveToFile(STR2ID("saveToFile"), new std::list<identifier>(p0,p2) ));
   CONTEXT->addFunction(
       new NodeBuiltinGetAdjacencyMatrix(STR2ID("getAdjacencyMatrix"), new std::list<identifier>(p0,p1) ));
   CONTEXT->addFunction(
