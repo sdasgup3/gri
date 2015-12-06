@@ -1,10 +1,50 @@
 \documentclass[letterpaper]{sig-alternate} \special{papersize=8.5in,11in}
-\usepackage{url} \newtheorem{example}{Example}
+\usepackage{url} 
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage{algorithm}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{pst-coil}
+\usepackage{color}
+
+\newtheorem{example}{Example}
 \newtheorem{definition}{Definition}
+\newcommand{\fig}[1]{\includegraphics[scale=.5]{#1}}
+\newcommand{\cmt}[1]{}
+
 %%%%%% Non re-Com packages
 \usepackage{pst-node} \usepackage{pst-rel-points}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%% New Commands %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    %backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    %numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    %numbers=left,                    
+    %numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle,frameround=fttt}
+
+
+
 
 \begin{document}
 
@@ -87,9 +127,189 @@ performance due the fact that those basic algorithms are now compiled.
 \section{A Motivating Example}\label{sec:motiv}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this section we will provide some insight of designed language
-using a motivating example.
-Lets consider the graph 
+using some motivating examples.
 
+\begin{figure*}
+\begin{center}
+\fig{Figs/1}
+\end{center}
+\end{figure*}
+
+\begin{figure}
+\begin{center}
+\fig{Figs/2}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          &function main(argv) main() \{ \\
+	  {\em \scriptsize S1:}& \quad g = graph(); \\
+	  {\em \scriptsize S2:}& \quad \ldots        \\
+          {\em \scriptsize S3:}& \quad g.setDirected(true); \\
+          {\em \scriptsize S4:}& \quad \ldots \\ 
+          {\em \scriptsize S5:}& \quad v0  = g.createVertex(); \\
+          {\em \scriptsize S6:}& \quad v0.\_\_id     = 0; \\
+          {\em \scriptsize S7:}& \quad v0.\_\_DPT\_x  = 1; \\
+          {\em \scriptsize S8:}& \quad v0.\_\_DPT\_y  = 0; \\
+          {\em \scriptsize S9:}& \quad v0.\_\_MGR    = 1; \\
+          {\em \scriptsize S10:}& \quad \ldots \\ 
+          {\em \scriptsize S11:}& \quad v3  = g.createVertex(); \\
+          {\em \scriptsize S12:}& \quad v3.\_\_id     = 3; \\
+          {\em \scriptsize S13:}& \quad v3.\_\_DPT\_x  = 1; \\
+          {\em \scriptsize S14:}& \quad v3.\_\_DPT\_y  = 0; \\
+          {\em \scriptsize S15:}& \quad v3.\_\_MGR    = 0; \\
+          {\em \scriptsize S16:}& \quad \ldots \\ 
+          {\em \scriptsize S17:}& \quad g.createEdge(v0,v3); \\
+	  &\}
+        \end{tabular}
+      }
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          &function main(argv) main() \{ \\
+          {\em \scriptsize S1:}&  \quad  g = graph();\\
+          {\em \scriptsize S2:}&  \quad  g.loadFromFile(argv[0]);\\
+          {\em \scriptsize S3:}&  \quad  displayAdjMatrix(g.getAdjacencyMatrix(), g.getVertices()); \\
+          {\em \scriptsize S4:}&  \quad  \ldots \\
+          {\em \scriptsize S5:}&  \quad  dpt\_x\_employee  = g.getVertexSetWithProperty("\_\_DPT\_x", 1.0); \\
+          {\em \scriptsize S6:}&  \quad  mgr\_employee    = g.getVertexSetWithProperty("\_\_MGR", 1.0); \\
+          {\em \scriptsize S7:}&  \quad  \ldots \\
+          {\em \scriptsize S8:}&  \quad /* Set of \_\_DPT\_x employees who are \_\_MGR as well */  \\
+          {\em \scriptsize S9:}&  \quad dpt\_x\_AND\_mgr = dpt\_x\_employee.intersection(mgr\_employee); \\
+          {\em \scriptsize S10:}&  \quad  \ldots \\
+          {\em \scriptsize S11:}&  \quad println("Set of \_\_DPT\_x employees who are \_\_MGR as well");  \\
+          {\em \scriptsize S12:}&  \quad foreach(employee; dpt\_x\_AND\_mgr) \{ \\
+          {\em \scriptsize S13:}&  \quad \quad println(" " + employee.\_\_id + " "); \\
+          {\em \scriptsize S14:}&  \quad \}   \\
+          {\em \scriptsize S15:}&  \quad  \ldots \\
+          {\em \scriptsize S16:}&  \quad /* Set of \_\_DPT\_x employees who are NOT  \_\_MGR */ \\
+          {\em \scriptsize S17:}&  \quad dpt\_x\_MINUS\_mgr = dpt\_x\_employee.difference(mgr\_employee); \\
+          {\em \scriptsize S18:}&  \quad    \ldots \\
+          {\em \scriptsize S19:}&  \quad it = dpt\_x\_MINUS\_mgr.iterator(); \\
+          {\em \scriptsize S20:}&  \quad    \ldots \\
+          {\em \scriptsize S21:}&  \quad println("Set of \_\_DPT\_x employees who are NOT  \_\_MGR"); \\
+          {\em \scriptsize S22:}&  \quad while(it.hasNext()) \{\\
+          {\em \scriptsize S23:}&  \quad \quad employee = it.next();\\
+          {\em \scriptsize S24:}&  \quad \quad println(" " + employee.\_\_id + " ");\\
+          {\em \scriptsize S25:}&  \quad \}  \\
+          {\em \scriptsize S26:}&  \quad  \ldots \\
+          {\em \scriptsize S27:}&  \quad // Email Exchanges from MGRs to non-MGR DPT\_x employee \\
+          {\em \scriptsize S28:}&  \quad emailExchanges = mgr\_employee -> dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S29:}&  \quad  \ldots \\
+          {\em \scriptsize S30:}&  \quad // Email Exchanges from non-MGR DPT\_x employee to MGRs*/\\
+          {\em \scriptsize S31:}&  \quad emailExchanges = mgr\_employee <- dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S32:}&  \quad  \ldots \\
+          {\em \scriptsize S33:}&  \quad // Email Exchanges between non-MGR DPT\_x employee and MGRs*/\\
+          {\em \scriptsize S34:}&  \quad emailExchanges = mgr\_employee <-> dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S35:}&  \quad  \ldots \\
+	  &\}
+        \end{tabular}
+      }
+\end{center}
+\end{figure}
+
+
+\begin{example}{\rm
+In the following figure we have a directed graph where the nodes represent the employees
+and the edges between them represents the mail conversation from one employee to 
+other. For example, {\tt Node 0} represemts an employye in {\tt DPT\_x} who is a 
+Manager as well (this is attributed by the {\tt MGR} tag). Similarly, {\tt Node 
+3} represents a {\tt DPT\_x} employee. The edge between {\tt Node 3} and {\tt 
+Node 0} represents the email conversation from employee {\tt Node 3} to 
+  employee node {\tt Node 0}.
+
+  Now lets first talk about the ways to represent this graph. One way is as 
+  shown in fig. At line {\tt S1}, a new graph variable is created. {\tt S3} sets that
+  the graph is directed. {\tt S5} create a node {\tt Node 0} of this graph. As nodes 
+  and edges are the basic building block of a graph we have made them the frst 
+  class objects which allows users to access them directly. Lines {\tt S6} - 
+  {\tt S9} sets various properties of the vertex. For example, it says that the 
+vertex has {\tt \_\_id = 0 }, it belongs to  {\tt \_\_DPT\_x}, does not belongs 
+  to {\tt \_\_DPT\_y} and its {\tt \_\_MGR} property is true. Similar properties 
+  are set for vertex node with {\tt \_\_id = 3}.
+  And finally a directed  edge between them is created at line {\tt S17}. 
+
+  One thing to note here is that the methods 
+  like {\tt graph}, {\tt setDirected}, {\tt createVertex} and {\tt createEdge} 
+are all built-in compiled functions. 
+
+  Figure shows another way to represent graph. It uses an input file to be fed to
+  the interpreted program. The format of the input file is shon in Figure.
+  Line {\tt S2} loads the input file using command line arguments. At {\\t S3}, we can 
+  see two built-in functions {\tt getAdjacencyMatrix} \& {\tt getVertices} on graph
+  which respectively gives an array of array representing the adjacency matrix representation of the 
+  graph and a set of vertices in the graph. {\tt displayAdjMatrix} is just a method call, the definition of 
+  which is not shown for brevity. Now lets try to solve certain queries from the graph at Fogure.
+  In case we want to get all the nodes in the graph who are {\tt \_\_DPT\_x} employees, then
+  the query to get all those nodes is at line {\tt S5}. Similarly, the query at line {\tt S6}, gives
+  the nodes for wehich the property {\tt \_\_MGR} is set to true. 
+  One thing to note here that the return value of both the queries are sets which are amenable tos et operations.
+
+  For example, in cse we want to get all the employees who are both depratment {\tt \_\_DPT\_x} empoyee and managers
+  , we can get that using the set intersection as shown at line {\tt S9}. Line {\tt S8}, shows the multilien 
+  comment we support. Line {\tt S9} shows a way to iterate over the set elements using foreach construct.
+
+  Again, if we want to get the  set of {\t \_\_DPT\_x} employees who are \textbf{NOT} {\tt \_\_MGR},
+  we can write a query like at line {\tt S17}. Line {\tt S19} shows another ways to get an iteration to itearte on 
+    composite data structures. 
+
+ Now once we have two sets of nodes each with a specific property, we can query for the edges between them.
+ For example, lines {\tt S28}, {\tt 31} and {\tt 34} gives the set of edges emanating from one set of nodes
+ to onother set of nodes. Note that operators $\leftarrow$ and $\rightarrow$ are applicable to undirected graphs
+ and the operator $\leftrightarrow$ is applicable to both directed and undirected graphs. For directed graphs,
+ it gives all the bidirectional edges between two node sets and for undirected graphs, it returns all the edges between
+   two node sets.
+    \hfill\psframebox{}}
+\end{example}
+
+\begin{example} {\rm
+
+  Let consider another example implementation
+    the depth first traversal on a graph.
+
+\begin{lstlisting}[language=C++,basicstyle=\tiny]
+  define("NUM_VERTICES", "10");
+  define("NOTVISITED", "0");
+  define("VISITED", "1");
+
+  function dfs(v, dfsorder)
+  {
+      if(v.visit == VISITED)
+        return;
+
+      println("vertex visited: " + v.num);
+      v.visit = VISITED;
+
+      dfsorder.pushBack(v);
+
+      foreach(neighbor; v.getNeighbors())
+        dfs(neighbor, dfsorder);
+  }
+
+  function main(argv)
+  {
+    g = graph();
+    g.loadFromFile(argv[0]);
+
+    dfsorder = array(0);
+    dfs(first, dfsorder);
+
+    for(vertex: dfsorder ) {
+      println(" " + vertex.__id + " " );
+    }
+  }
+
+\end{lstlisting}
+
+    \hfill\psframebox{}}
+\end{example}
 
 
 
@@ -108,3 +328,6 @@ Lets consider the graph
 %\bibliography{sigproc}  
 
 \end{document}
+
+\cmt{
+}
