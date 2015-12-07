@@ -19,12 +19,41 @@ convenient and efficient way. This involves (but not limited to)
     experiment with different ideas (without dwelling much into the language
         syntax) before coming to a conclusive one.  
       \end{itemize} 
+
+      For the above reasons we are proposing a dynamically typed language (where 
+      a variable can bound to a value of any type)
+      to represent the graphical models.
+        Following are some of the 
+        benefits of a dynamically typed language:
+        \begin{itemize}
+          \item It's more concise - A lot of extraneous boilerplate code 
+          (related to type declarations, type casting logic) can be 
+          removed.  Shorter code is marginally quicker to write, but more 
+          importantly it can be quicker to read and maintain 
+          (since we don't need to wade through many pages of code 
+           to get a grip on what is happening)
+          \item Dynamic typing is arguably more suitable for interactive, 
+          REPL-like programming for rapid prototyping, real-time debugging of running program instances.
+          \item Lack of compile time, meaning quicker turnaround.
+          \item Can pass variables/objects between routines/modules without 
+          having to know or declare their type.
+        \end{itemize}
+
     \item
+        As programs in our language is going to be interpreted, we will be loosing 
+        performance w.r.t the compiled version of those programs.
+        The reason we are making this trade off ( of designing an interpreter as 
+            opposed to a compiler) is 
+        because our priority is to provide convenience to the programmer.
+
+        Despite of the obvious reason of slowdown, we should strive not to loose 
+        much on the runtime performance.
     Designed language need to be efficient in the following sense.
       \begin{itemize} 
-        \item Underlying design decisions including data structures
-    need to be carefully crafted to achieve expected run-time w.r.t the input
-    size.  
+        \item 
+        Underlying design decisions including data structures
+    need to be carefully crafted so that we should not loose performance because 
+    of bad design choices.
         \item Implementation need to be scalable w.r.t the space/time
     requirements. This is important because most of the graph algorithm
     typically work on huge input sizes.  
