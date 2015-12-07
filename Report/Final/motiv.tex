@@ -1,0 +1,129 @@
+In this section we will provide some insight of designed language
+using some motivating examples.
+
+\begin{example}{\rm
+Figure\ref{fig:motiv_1}, shows a directed graph where the nodes represent the 
+  employees
+and the edges between them represents the email conversation from one employee 
+to other. For example, {\tt Node 0} represemts an employye in {\tt DPT\_x} who 
+is a Manager as well (this is attributed by the {\tt MGR} tag). Similarly, {\tt 
+  Node 3} represents a {\tt DPT\_x} employee. The edge between {\tt Node 3} and 
+  {\tt Node 0} represents the email conversation from employee {\tt Node 3} to 
+employee node {\tt Node 0}.
+
+\begin{figure}
+  \begin{center}
+    \fig{Figs/0}
+  \end{center}
+  \caption{An example graph}
+  \label{fig:motiv_1}
+\end{figure}
+
+  Now lets first talk about the ways to represent this graph. One way is as 
+    shown in ~\ref{fig:motiv_2}. 
+
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          &function main(argv) main() \{ \\
+          {\em \scriptsize S1:}& \quad g = graph(); \\
+          {\em \scriptsize S2:}& \quad \ldots        \\
+          {\em \scriptsize S3:}& \quad g.setDirected(true); \\
+          {\em \scriptsize S4:}& \quad \ldots \\ {\em \scriptsize S5:}& \quad v0  
+          = g.createVertex(); \\
+          {\em \scriptsize S6:}& \quad v0.\_\_id     = 0; \\
+          {\em \scriptsize S7:}& \quad v0.\_\_DPT\_x  = 1; \\
+          {\em \scriptsize S8:}& \quad v0.\_\_DPT\_y  = 0; \\
+          {\em \scriptsize S9:}& \quad v0.\_\_MGR    = 1; \\
+          {\em \scriptsize S10:}& \quad \ldots \\ {\em \scriptsize S11:}& \quad 
+          v3  = g.createVertex(); \\
+          {\em \scriptsize S12:}& \quad v3.\_\_id     = 3; \\
+          {\em \scriptsize S13:}& \quad v3.\_\_DPT\_x  = 1; \\
+          {\em \scriptsize S14:}& \quad v3.\_\_DPT\_y  = 0; \\
+          {\em \scriptsize S15:}& \quad v3.\_\_MGR    = 0; \\
+          {\em \scriptsize S16:}& \quad \ldots \\ {\em \scriptsize S17:}& \quad 
+          g.createEdge(v0,v3); \\
+          &\}
+        \end{tabular}
+      }
+\end{center}
+  \caption{Example code snippet to create a graph}
+  \label{fig:motiv_2}
+\end{figure}
+  
+  
+  
+  At line {\tt S1}, a new graph variable is created. {\tt S3} sets that
+  the graph is directed. {\tt S5} create a node {\tt Node 0} of this graph. As 
+  nodes and edges are the basic building block of a graph we have made them the 
+  frst class objects which allows users to access them directly. Lines {\tt S6} 
+  - {\tt S9} sets various properties of the vertex. For example, it says that 
+    the vertex has {\tt \_\_id = 0 }, it belongs to  {\tt \_\_DPT\_x}, does not 
+    belongs to {\tt \_\_DPT\_y} and its {\tt \_\_MGR} property is true. Similar 
+    properties are set for vertex node with {\tt \_\_id = 3}.
+  And finally a directed  edge between them is created at line {\tt S17}. 
+
+  One thing to note here is that the methods like {\tt graph}, {\tt 
+    setDirected}, {\tt createVertex} and {\tt createEdge} are all built-in 
+    compiled functions. 
+
+  \input{Figs/fig_motiv_3}
+  \input{Figs/fig_motiv_4}
+  Figure~\ref{fig:motiv_3} shows another way to represent graph.  
+  It uses an input file to be fed to
+  the interpreted program. The format of the input file is shown in 
+  Figure~\ref{fig:motiv_4}. Such an input file is read from the command line and 
+  used to create a graph as 
+  shown in line {\tt S2} of Figure~\ref{fig:motiv_3}. At {\\t S3}, 
+       we can see two built-in functions {\tt getAdjacencyMatrix} \& {\tt 
+         getVertices} on graph
+  which respectively gives an array of array representing the adjacency matrix 
+  representation of the graph and a set of vertices in the graph. {\tt 
+    displayAdjMatrix} is just a method call, the definition of which is not 
+    shown for brevity. Now lets try to solve certain queries from the graph at 
+    Fogure.
+  In case we want to get all the nodes in the graph who are {\tt \_\_DPT\_x} 
+  employees, then
+  the query to get all those nodes is at line {\tt S5}. Similarly, the query at 
+  line {\tt S6}, gives
+  the nodes for wehich the property {\tt \_\_MGR} is set to true.  One thing to 
+  note here that the return value of both the queries are sets which are 
+  amenable tos et operations.
+
+  For example, in cse we want to get all the employees who are both depratment 
+  {\tt \_\_DPT\_x} empoyee and managers
+  , we can get that using the set intersection as shown at line {\tt S9}. Line 
+  {\tt S8}, shows the multilien comment we support. Line {\tt S9} shows a way to 
+  iterate over the set elements using foreach construct.
+
+  Again, if we want to get the  set of {\t \_\_DPT\_x} employees who are 
+  \textbf{NOT} {\tt \_\_MGR},
+  we can write a query like at line {\tt S17}. Line {\tt S19} shows another ways 
+    to get an iteration to itearte on composite data structures. 
+
+ Now once we have two sets of nodes each with a specific property, we can query 
+ for the edges between them.
+ For example, lines {\tt S28}, {\tt 31} and {\tt 34} gives the set of edges 
+   emanating from one set of nodes
+ to onother set of nodes. Note that operators $\leftarrow$ and $\rightarrow$ are 
+ applicable to undirected graphs
+ and the operator $\leftrightarrow$ is applicable to both directed and 
+ undirected graphs. For directed graphs,
+ it gives all the bidirectional edges between two node sets and for undirected 
+   graphs, it returns all the edges between
+   two node sets.
+    \hfill\psframebox{}}
+\end{example}
+
+\begin{example} {\rm
+  Figure~\ref{fig:motiv_5} represents another example implementation
+    the depth first traversal on a graph. 
+    \input{Figs/fig_motiv_5}
+  In this example we are trying to store the dfs traversal order of the vertices 
+    as well. For that we declared an array at line {\tt S17} and used it to 
+    store the traversal order at line {\tt S10}. The method {\tt getNeighbors} 
+  at line {\tt S12} is again a built-in function and returns the neighbouting 
+    vertices of the receiver vertex. 
+    \hfill\psframebox{}}
+\end{example}

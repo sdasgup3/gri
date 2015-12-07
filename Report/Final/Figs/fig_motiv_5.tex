@@ -1,0 +1,38 @@
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          {\em \scriptsize S1:}&  define("NUM\_VERTICES", "10");\\
+          {\em \scriptsize S2:}&  define("NOTVISITED", "0");\\
+          {\em \scriptsize S3:}&  define("VISITED", "1"); \\
+          &function dfs(v, dfsorder) \{ \\
+          {\em \scriptsize S4:}&  \quad  if(v.visit == VISITED)\\
+          {\em \scriptsize S5:}&  \quad  \quad return;\\
+          {\em \scriptsize S6:}&  \quad   \\
+          {\em \scriptsize S7:}&  \quad  println("vertex visited: " + v.num);\\
+          {\em \scriptsize S8:}&  \quad  v.visit = VISITED;\\
+          {\em \scriptsize S9:}&  \quad   \\
+          {\em \scriptsize S10:}&  \quad  dfsorder.pushBack(v); \\
+          {\em \scriptsize S11:}&  \quad   \\
+          {\em \scriptsize S12:}&  \quad foreach(neighbor; v.getNeighbors())\\
+          {\em \scriptsize S13:}&  \quad \quad dfs(neighbor, dfsorder); \\
+          &\} \\
+          &   \\
+          &function main(argv) \{ \\
+          {\em \scriptsize S14:}&  \quad  g = graph(); \\
+          {\em \scriptsize S15:}&  \quad  g.loadFromFile(argv[0]);\\
+          {\em \scriptsize S16:}&  \quad   \\
+          {\em \scriptsize S17:}&  \quad  dfsorder = array(0);\\
+          {\em \scriptsize S18:}&  \quad  dfs(first, dfsorder);\\
+          {\em \scriptsize S19:}&  \quad   \\
+          {\em \scriptsize S20:}&  \quad  for(vertex: dfsorder ) \{ \\
+          {\em \scriptsize S21:}&  \quad \quad println(" " + vertex.\_\_id + " " 
+              ); \\
+          {\em \scriptsize S22:}& \quad \}\\
+          &\}
+        \end{tabular}
+      }
+\end{center}
+  \caption{Example code snippet for dfs traversal on a graph}
+  \label{fig:motiv_5}
+\end{figure}

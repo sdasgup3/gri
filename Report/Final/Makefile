@@ -1,5 +1,15 @@
 TGT=sig-alternate
-DEPS=   sigproc.bib
+DEPS=   sigproc.bib \
+        abstract.tex \
+        introduction.tex \
+        motiv.tex \
+        related.tex \
+        language.tex \
+        runtime.tex \
+        related.tex \
+        Figs/fig_motiv_3.tex \
+        Figs/fig_motiv_4.tex \
+        Figs/fig_motiv_5.tex
 
 LATEX=pslatex
 BIBTEX=bibtex
@@ -16,9 +26,9 @@ $(TGT).ps: $(TGT).dvi
 	dvips -o $(TGT).ps $(TGT)
 
 $(TGT).dvi: $(TGT).tex $(DEPS)
-	$(LATEX) $(TGT) && $(LATEX) $(TGT)
+	$(LATEX) $(TGT) && $(BIBTEX) $(TGT) && $(LATEX) $(TGT)
 #	$(BIBTEX) $(TGT)
-	$(LATEX) $(TGT) && $(LATEX) $(TGT)
+#	$(LATEX) $(TGT) && $(LATEX) $(TGT)
 
 .PHONY: clean clobber fresh
 clean: 

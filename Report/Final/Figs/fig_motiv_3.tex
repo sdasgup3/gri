@@ -1,0 +1,65 @@
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          &function main(argv) main() \{ \\
+          {\em \scriptsize S1:}&  \quad  g = graph();\\
+          {\em \scriptsize S2:}&  \quad  g.loadFromFile(argv[0]);\\
+          {\em \scriptsize S3:}&  \quad  
+          displayAdjMatrix(g.getAdjacencyMatrix(), g.getVertices()); \\
+          {\em \scriptsize S4:}&  \quad  \ldots \\
+          {\em \scriptsize S5:}&  \quad  dpt\_x\_employee  = 
+          g.getVertexSetWithProperty("\_\_DPT\_x", 1.0); \\
+          {\em \scriptsize S6:}&  \quad  mgr\_employee    = 
+          g.getVertexSetWithProperty("\_\_MGR", 1.0); \\
+          {\em \scriptsize S7:}&  \quad  \ldots \\
+          {\em \scriptsize S8:}&  \quad /* Set of \_\_DPT\_x employees who are 
+                                           \_\_MGR as well */  \\
+          {\em \scriptsize S9:}&  \quad dpt\_x\_AND\_mgr = 
+          dpt\_x\_employee.intersection(mgr\_employee); \\
+          {\em \scriptsize S10:}&  \quad  \ldots \\
+          {\em \scriptsize S11:}&  \quad println("Set of \_\_DPT\_x employees 
+          who are \_\_MGR as well");  \\
+          {\em \scriptsize S12:}&  \quad foreach(employee; dpt\_x\_AND\_mgr) \{ 
+          \\
+          {\em \scriptsize S13:}&  \quad \quad println(" " + employee.\_\_id + " 
+          "); \\
+          {\em \scriptsize S14:}&  \quad \}   \\
+          {\em \scriptsize S15:}&  \quad  \ldots \\
+          {\em \scriptsize S16:}&  \quad /* Set of \_\_DPT\_x employees who are 
+                                            NOT  \_\_MGR */ \\
+          {\em \scriptsize S17:}&  \quad dpt\_x\_MINUS\_mgr = 
+          dpt\_x\_employee.difference(mgr\_employee); \\
+          {\em \scriptsize S18:}&  \quad    \ldots \\
+          {\em \scriptsize S19:}&  \quad it = dpt\_x\_MINUS\_mgr.iterator(); \\
+          {\em \scriptsize S20:}&  \quad    \ldots \\
+          {\em \scriptsize S21:}&  \quad println("Set of \_\_DPT\_x employees 
+          who are NOT  \_\_MGR"); \\
+          {\em \scriptsize S22:}&  \quad while(it.hasNext()) \{\\
+          {\em \scriptsize S23:}&  \quad \quad employee = it.next();\\
+          {\em \scriptsize S24:}&  \quad \quad println(" " + employee.\_\_id + " 
+          ");\\
+          {\em \scriptsize S25:}&  \quad \}  \\
+          {\em \scriptsize S26:}&  \quad  \ldots \\
+          {\em \scriptsize S27:}&  \quad // Email Exchanges from MGRs to non-MGR 
+          DPT\_x employee \\
+          {\em \scriptsize S28:}&  \quad emailExchanges = mgr\_employee -> 
+          dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S29:}&  \quad  \ldots \\
+          {\em \scriptsize S30:}&  \quad // Email Exchanges from non-MGR DPT\_x 
+          employee to MGRs*/\\
+          {\em \scriptsize S31:}&  \quad emailExchanges = mgr\_employee <- 
+          dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S32:}&  \quad  \ldots \\
+          {\em \scriptsize S33:}&  \quad // Email Exchanges between non-MGR 
+          DPT\_x employee and MGRs*/\\
+          {\em \scriptsize S34:}&  \quad emailExchanges = mgr\_employee <-> 
+          dpt\_x\_MINUS\_mgr;\\
+          {\em \scriptsize S35:}&  \quad  \ldots \\
+          &\}
+        \end{tabular}
+      }
+\end{center}
+  \caption{Example code snippet to create a graph}
+  \label{fig:motiv_3}
+\end{figure}
