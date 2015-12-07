@@ -7,9 +7,11 @@ DEPS=   sigproc.bib \
         language.tex \
         runtime.tex \
         related.tex \
+        evaluation.tex \
         Figs/fig_motiv_3.tex \
         Figs/fig_motiv_4.tex \
-        Figs/fig_motiv_5.tex
+        Figs/fig_motiv_5.tex \
+        Figs/fig_language_1.tex \
 
 LATEX=pslatex
 BIBTEX=bibtex
@@ -28,7 +30,7 @@ $(TGT).ps: $(TGT).dvi
 $(TGT).dvi: $(TGT).tex $(DEPS)
 	$(LATEX) $(TGT) && $(BIBTEX) $(TGT) && $(LATEX) $(TGT)
 #	$(BIBTEX) $(TGT)
-#	$(LATEX) $(TGT) && $(LATEX) $(TGT)
+	$(LATEX) $(TGT) && $(LATEX) $(TGT)
 
 .PHONY: clean clobber fresh
 clean: 

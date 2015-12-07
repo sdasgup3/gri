@@ -1,0 +1,111 @@
+The following are the key features of the runtime:
+\begin{itemize}
+  \item The runtime starts with searching for function definition
+  {\tt function main(argv)} and then creates a function call out of it and 
+  execute it.  While creating the function call it uses the command-line 
+  parameters as the actual parameters of the function call.
+
+  \item The execution of a function call involves finding the corresponding 
+  function definition, checking if the number of formal and actuals are equal 
+  and then pushing a call stack frame ( which contains the mapping between the 
+      formal and actual values passed to them) in a global call stack. After 
+  that, the function
+  is executed w.r.t the current context(i.e. the top of the call stack).
+
+  \item The execution of the function involves executing a list of statements.
+  The statements may add further mappings in the current call stack frame.
+  Whenever a name (identifier) is refereed, the mapping in the current context 
+  need to be consulted to get the actual value of it. 
+
+  \item The semantics of {\tt break}, {\tt continue} or 
+{\tt return} is supported using the try-catch mechanism of C++.
+
+  For example, while interpreting a {\tt loop-body}, whenever a 
+{\tt break}is encountered, a corresponding {\tt break-object} is 
+thrown, which is caught in a place outside the entire loop execution in order to 
+implement the semantics of break. 
+
+  Similarly, while executing a {\tt loop-body}, whenever a 
+{\tt continue} is encountered, a {\tt continue-object} is thrown, 
+  which is caught outside
+  the {\tt loop-body} execution so as to skip the current iteration and 
+  continue with the {\tt loop-incr} execution (in case of for loop) and 
+{\tt loop-condition-expr} execution.
+
+  And finally, while executing a  {\tt function-body}, which is a list
+  of statements, when any one of those statements is a {\tt return}, a 
+{\tt return-object} is thrown, which is caught outside of the loop
+  which is going over that list and in this way the semantics of return is 
+  maintained.
+  
+  \item Occurrence of {\tt break} and {\tt continue} within non-loop
+    body triggers an error. While interpreting a node-block (which is a set 
+        statements within ``\{'' and ``\}''), whenever the runtime finds a 
+{\tt break} or  {\tt continue} it throws a object. Now if this 
+object is caught
+  inside a non-loop block then error is reported.
+
+  \item Division by zero and operations on incompatible types are runtime 
+  errors.  
+  
+  \end{itemize}
+
+  Also we are supporting a number of built-in functions~\ref{table:runtime_1}. The advantage of using 
+  is that we can save a lot of interpretation time.
+
+  % Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table*}[]
+\centering
+\caption{List of all the built-in functions provided.}
+\label{table:runtime_1}
+{\small \tt 
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{Category} & \multicolumn{1}{c|}{Name of the function}        & Synopsis          \\ \hline
+\multirow{2}{*}{Output}        & println        & \begin{tabular}[c]{@{}l@{}}Convert the object to a string representation and \\ send the result to the standard output and append\\ newline.\end{tabular} \\ \cline{2-3} 
+              & print          & \begin{tabular}[c]{@{}l@{}}Convert the object to a string representation and \\ send the result to the standard output.\end{tabular}     \\ \hline
+\multirow{13}{*}{Container}    & array(size)    & Create a new array of specified size.               \\ \cline{2-3} 
+              & struct()       & Return a new struct.               \\ \cline{2-3} 
+              & set()          & Return a new set  \\ \cline{2-3} 
+              & size(array|struct|set)          & Return the size of the argument container.          \\ \cline{2-3} 
+              & union(set, set)& Return union of two sets.          \\ \cline{2-3} 
+              & intersection   & Return intersection of two sets.   \\ \cline{2-3} 
+              & difference     & Return difference of two sets.     \\ \cline{2-3} 
+              & pushFront(array, elem)          & push an element elem to front of array              \\ \cline{2-3} 
+              & pushBack(array, elem)           & push an element elem to back of array               \\ \cline{2-3} 
+              & popFront(array)& Remove an elem from front of array \\ \cline{2-3} 
+              & popBack        & Remove an elem from back of array  \\ \cline{2-3} 
+              & front          & Get the front elemnt of an array.  \\ \cline{2-3} 
+              & back           & Get the back element of an array   \\ \hline
+\multirow{3}{*}{Iterator}      & iterator(object)                & \begin{tabular}[c]{@{}l@{}}Return a copy of a container and \\ set its inner iterator to the beginning.\end{tabular}    \\ \cline{2-3} 
+              & hasNext(Object)& Check if a container has a next item.               \\ \cline{2-3} 
+              & next(Object)   & Get the next item.\\ \hline
+\multirow{23}{*}{Graph}        & graph()        & Returns a newly created graph      \\ \cline{2-3} 
+              & loadFromFile(graph)             & Load a graph from a file           \\ \cline{2-3} 
+              & saveToFile(graph, filename)     & \begin{tabular}[c]{@{}l@{}}Save rhe current state of the graph\\ to a file.\end{tabular}               \\ \cline{2-3} 
+              & setDirected(graph, bool)        & Set the directed flag of the graph and return the previous value.    \\ \cline{2-3} 
+              & isDirected(graph)               & Check if a graph is directed.      \\ \cline{2-3} 
+              & generateVertex(graph)           & Create a new vertex in a graph.    \\ \cline{2-3} 
+              & generateEdge(graph, vertex, vertex)              & Create a new edge in a graph.      \\ \cline{2-3} 
+              & deleteVertex(graph, vertex)     & Delete a vertex from a graph.      \\ \cline{2-3} 
+              & deleteEdge(graph, edge)         & Delete an edge from a graph.       \\ \cline{2-3} 
+              & getNumVertices(graph)           & Get count of vertices in a graph.  \\ \cline{2-3} 
+              & getNumEdges(graph)              & Get count of edges in a graph.     \\ \cline{2-3} 
+              & getVertices(graph)              & Get graph's vertices as a set object.               \\ \cline{2-3} 
+              & getEdges(graph)& Get graph's edges as a set object. \\ \cline{2-3} 
+              & getNeighbors(vertex)            & Get all neighbors of a vertex as a set object.      \\ \cline{2-3} 
+              & getBeginVertex(edge)            & \begin{tabular}[c]{@{}l@{}}Get the begin vertex of an edge. \\ If the graph is not directed, one of the \\ edge's vertices will be returned.\end{tabular} \\ \cline{2-3} 
+              & getEndVertex(edge)              & \begin{tabular}[c]{@{}l@{}}Get the end vertex of an edge. \\ If the graph is not directed, one of the \\ edge's vertices will be returned.\end{tabular}   \\ \cline{2-3} 
+              & getAdjacencyMatrix(graph)       & \begin{tabular}[c]{@{}l@{}}Create adjacency matrix from a graph. \\ An array of  array will be returned.\end{tabular}   \\ \cline{2-3} 
+              & getTransitiveClosure(graph)     & \begin{tabular}[c]{@{}l@{}}Returns the transitive closure of the adjascent\\ matrix representation of the graph. Uses\\ the Floyd Warshall Algorithm.\end{tabular}         \\ \cline{2-3} 
+              & getShortestPath(graph, weight, start, end)       & \begin{tabular}[c]{@{}l@{}}Returns an array containing two elements.\\ First, the parent of each vertex in the shortest path tree.\\ Second, the distance of each vertex from start in that\\ shortest path tree.\\ \\ If end == null, the the algorithm will compute the shortest\\ distance of all the vertices from start. Else it stops when the\\ shortest distance of end vertex from start is computed.\\ \\ weight (a string) signifies which of the properties of the\\ edge need to be considered for computing min distance. \\ \\ Uses Dijkstras Algorithm with min heap.\end{tabular} \\ \cline{2-3} 
+              & getMST(graph, weight)           & \begin{tabular}[c]{@{}l@{}}Return the parent of each vertex in the minimum snapping tree.\\ \\ weight (a string) signifies which of the properties of the \\ edge need to be considered for computing min distance. \\ \\ Uses Prim's Algorithm.\end{tabular}   \\ \cline{2-3} 
+              & getVertexSetWithProperty(graph, property, value) & Get the set of vertices with property string equals the value.       \\ \cline{2-3} 
+              & getbfsOrdering(graph)           & Get the set of vertices in bfs traversal order.     \\ \cline{2-3} 
+              & getdfsOrdering(graph)           & Get the set of vertices in dfs traversal order.     \\ \hline
+\end{tabular}
+}
+\end{table*}
+
+

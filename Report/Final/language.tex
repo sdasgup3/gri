@@ -1,0 +1,63 @@
+ The syntax of the language is an oversimplified version  of C, but
+    without mention of any types. The operations on incompatible types
+    will be error-ed out while interpreting.
+
+    We have implemented the tokenizer and syntax analyzer using flex and 
+    bison. We are supporting syntax like \#include("filename") and 
+    \#define("PI", "3.14") while doing a single pass of parsing  (i.e.  
+        Preprocessing of these constructs are done while parsing). This is 
+    achieved by using flex's internal stack to manage multiple buffers.
+    The grammar rules are mostly borrowed from 
+    ~\cite{ANSI}. The rules are compiled 
+    by bison tool to generate the C parser. 
+    We are able to generate the AST corresponding to test-cases 
+    confirming to the grammar rules. Our AST is basically a list of function 
+    definitions. Each function definition object contains name of the function, 
+    a set of formal arguments and a list of body statements. These body 
+    statements could be an assignment, loop-statement, function call, etc.
+    The leafs of the AST could be an identifier, int, float, true, false, null, 
+    string, vertex, edge or graph.
+
+    Some of the key features of the parser is as follows:
+    \begin{itemize}
+      \item Support of C statements like  {\tt if then}, {\tt if then 
+        else}, {\tt while}, {\tt for}, {\tt foreach}. 
+
+      \item Support of {\tt break}, {\tt continue} within loop-body 
+      and {\tt return} in function-body.
+      As we are representing both loop-body and function-body as compound 
+      statements (i.e. anything between ``\{'' \& ``\}''), so we do not have to
+      distinguish these two cases. But we will error-out if break is used inside 
+      non-loop body. The detailed semantics of executing a {\tt break},   
+{\tt continue} and {\tt return} will be discussed in the interpreter 
+runtime section.
+
+      \item Supporting graph as first class object {\tt graphnode}.
+      The syntax to declare a graph is {\tt g = graph();} which will be 
+      represented in AST as an assignment-node with left-node containing an 
+      identifier and right
+      node as a function call. Now this function call corresponds to a built in 
+      function that returns a {\tt graphnode} (which is of one the leaf 
+          nodes of AST) on execution.
+
+      \item Supporting vertices and edges as first class objects which contains 
+      a map to add properties. This feature is useful in various graph 
+      algorithms like in dfs traversal~\ref{fig:motiv_5}, we uses a vertex property ``visited'' 
+      to keep track of vertices already explored.
+
+      \item We are supporting composite data-structures like array, struct and 
+      set and iterators on them. Figure~\ref{fig:language_1} represents a code 
+      snippet representing some of the operation on these data-structures.
+
+      \item The language semantics will be same as that of C as we are using a subset of it.`
+
+      \item All variables are defined as local and are valid only it the scope of the current function (function not block).
+
+      \item The language specify no constructs for variable declaration and type 
+      specification. The interpreter uses some inner data types (like {\tt 
+          null, Bool, int, float, string, array, struct, set, graph, vertex, 
+          edge})  which can be dynamically changed with assign command.
+
+    \end{itemize}
+    \input{Figs/fig_language_1.tex}
+  

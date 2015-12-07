@@ -1,0 +1,55 @@
+\begin{figure}
+\begin{center}
+      {\small \tt
+        \begin{tabular}[b]{rl}
+          &function main(argv) main() \{ \\
+	  {\em \scriptsize S1:}&  \quad  arr = array(5);\\
+	  {\em \scriptsize S2:}&  \quad  i = 0;\\
+	  {\em \scriptsize S3:}&  \quad  \ldots\\
+	  {\em \scriptsize S4:}&  \quad  foreach(var ; arr)\\
+	  {\em \scriptsize S5:}&  \quad \quad 	var = i++;\\
+	  {\em \scriptsize S6:}&  \quad  \ldots\\
+	  {\em \scriptsize S7:}&  \quad  println("--- array items ---");\\
+	  {\em \scriptsize S8:}&  \quad  foreach(var ; arr)\\
+	  {\em \scriptsize S9:}&  \quad \quad  	println(var);\\
+	  {\em \scriptsize S10:}&  \quad  \ldots\\
+	  {\em \scriptsize S11:}&  \quad  st = struct();\\
+	  {\em \scriptsize S12:}&  \quad  st.number = 42;\\
+	  {\em \scriptsize S13:}&  \quad  st.pi = 3.14;\\
+	  {\em \scriptsize S14:}&  \quad  st.str = "bagr";\\
+	  {\em \scriptsize S15:}&  \quad  \ldots\\
+	  {\em \scriptsize S16:}&  \quad  println("--- struct items ---");\\
+	  {\em \scriptsize S17:}&  \quad  foreach(var ; st)\\
+	  {\em \scriptsize S18:}&  \quad \quad  	println(var);\\
+	  {\em \scriptsize S19:}&  \quad  println("--- struct items using iterator ---");\\
+	  {\em \scriptsize S20:}&  \quad  it = st.iterator();\\
+	  {\em \scriptsize S21:}&  \quad  while(it.hasNext())\\
+	  {\em \scriptsize S22:}&  \quad  \quad`	println(it.next());\\
+	  {\em \scriptsize S23:}&  \quad  \ldots\\
+	  {\em \scriptsize S24:}&  \quad  g = graph();\\
+	  {\em \scriptsize S25:}&  \quad  v1 = g.generateVertex();\\
+	  {\em \scriptsize S26:}&  \quad  v2 = g.generateVertex();\\
+	  {\em \scriptsize S27:}&  \quad  v3 = g.generateVertex();\\
+	  {\em \scriptsize S28:}&  \quad  e1 = g.generateEdge(v1, v2);\\
+	  {\em \scriptsize S29:}&  \quad  e2 = g.generateEdge(v2, v3);\\
+	  {\em \scriptsize S30:}&  \quad  \ldots\\
+	  {\em \scriptsize S31:}&  \quad  v1.color = "red";\\
+	  {\em \scriptsize S32:}&  \quad  v2.color = "green";\\
+	  {\em \scriptsize S33:}&  \quad  v3.color = "blue";\\
+	  {\em \scriptsize S34:}&  \quad  e1.value = 0.5;\\
+	  {\em \scriptsize S35:}&  \quad  e2.value = 0.4;\\
+	  {\em \scriptsize S36:}&  \quad  \ldots\\
+	  {\em \scriptsize S37:}&  \quad  println("--- vertex set ---");\\
+	  {\em \scriptsize S38:}&  \quad  foreach(var ; g.getVertices())\\
+	  {\em \scriptsize S39:}&  \quad  \quad	println("" + var + ": " + var.color);\\
+	  {\em \scriptsize S40:}&  \quad  \ldots\\
+	  {\em \scriptsize S41:}&  \quad  println("--- edge set ---");\\
+	  {\em \scriptsize S42:}&  \quad  foreach(var ; g.getEdges())\\
+	  {\em \scriptsize S43:}&  \quad  \quad	println("" + var + ": " + var.value);\\
+          &\}
+        \end{tabular}
+      }
+\end{center}
+  \caption{Example code snippet to show operatons on array, set and struct}
+  \label{fig:language_1}
+\end{figure}

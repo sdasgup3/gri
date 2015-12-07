@@ -1,0 +1,26 @@
+The baseline of our evaluation will be the open source Graphal~\cite{Graphal} 
+system.  Graphal~\cite{Graphal} is an interpreter of a programming language that 
+is mainly oriented to graph algorithms. There is a command line interpreter and 
+a graphical integrated development environment. The IDE contains text editor for 
+programmers, compilation and script output, advanced debugger and visualization 
+window. The evaluation will be between command line version of Graphal with our
+implementation.
+  The evaluation will
+  cover the following two aspects of our implementation:
+  \begin{itemize}
+    \item The convenience and intuitive extensibility provided by our 
+    programming model.
+    \begin{itemize}
+      \item We will be implementing a couple of well know graph algorithms in 
+      both baseline and our implementation
+        and use number of dynamic instructions interpreted as a measure to show 
+        the conciseness of our
+        representation.
+    \end{itemize}
+    \item Performance
+    \begin{itemize}
+      \item As we are planning to keep the compiled version of frequently used 
+      graph routines (like dfs\_iterators(vertex), bfs\_iterators(vertex)), we 
+      are expecting to achieve better performance in terms of runtime.  
+      \end{itemize}
+  \end{itemize}
