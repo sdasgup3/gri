@@ -3,30 +3,16 @@ of well known graph related algorithms in our language and run the proposed inte
 them. The baseline of our evaluation will the the same algorithms implemented in 
 C,  compiled by the C compiler and executing the compiled binary.
 
-We are planning to compare both the convenience of representation in our 
-language w.r.t C language as well as the runtime performance of the interpreter 
-w.r.t the compiled version of the code.
-
-We will be using the number of lines of code as a metric to compare the 
-convenience that our language is providing w.r.t C. 
-
-As we are aware of the fact that this metric is not that useful if we are 
-conparing two languages having different conventions for how much we should put on a line. 
-But as our language is a subset of C, so  this metric makes sense, but 
-to yield 
-meaningful results we need to  be carefull about the following aspects.
+We are planning to compare the following.
 \begin{itemize}
-  \item Both the code implementations should produce the same output.
-  \item In both the code implementation, the backward slice of the output instructions should cover the entire 
-  code. In other words, there should not be any redundant code which is not 
-  contributing to the generated output. 
-  \item Both the code implementation should follow similar coding 
-  guidelines~\cite{GNU}.
-  \item Both the programs need to be equally readable in terms of identation, 
-  newlines, spaces and comments.
+  \item Runtime performance of the interpreter 
+w.r.t the compiled version of the code.
+  \item Convenience of representation in our 
+language w.r.t C language.
 \end{itemize}
 
-\subsection{Runtime Performance Comparision}
+
+\subsection{Runtime Performance Comparison}
 
 We have implemented a couple of algorithms in both our language and C. The 
 algorithms are Transitive Closure of a graph using Floyd Warshall's algorithm, 
@@ -34,7 +20,7 @@ algorithms are Transitive Closure of a graph using Floyd Warshall's algorithm,
            Prim's algorithm and Chaitin's Optimistic graph coloring algorithm.
 The input graph used in all the cases is a randomly generated graph consisting  of vertices = 500, edges = 1000. 
 For Graph Coloring, we used the input graph with vertices = 125, edges = 1000. This is 
-because it takes a lot of time for our interpreter exection to complete.
+because it takes a lot of time for our interpreter execution to complete.
 In Table~\ref{table:eval_1}, we compared the runtime of our interpreter 
 (henceforth called GRI) with 
 execution time of compiled binary obtained by compiling the C implementation.
@@ -69,8 +55,8 @@ with following built-in functions.
       \item Returns the shortest distance from vertex start to each vertex in the 
       shortest path tree.
       \item Returns parent of each vertex in the shortest path tree.
-      \item If {\tt end == NULL}, return the shortespath from start to all vertices.
-      \item If {\tt end != NULL}, return the shortespath from start to end vertex.
+      \item If {\tt end == NULL}, return the shortest path from start to all vertices.
+      \item If {\tt end != NULL}, return the shortest path from start to end vertex.
       \item Weight ``wt'' (a string) signifies which of the properties of the
 edge need to be considered for computing min distance.
     \end{itemize} 
@@ -119,15 +105,34 @@ Graph Coloring  &   138.17  & 0.65                              & 212.6         
 \end{tabular}
 \end{table}
 
-\subsection{Comparision w.r.t Representation Convenience }
+\subsection{Comparison w.r.t Representation Convenience }
+We will be using the number of lines of code as a metric to compare the 
+convenience that our language is providing w.r.t C. 
+
+As we are aware of the fact that this metric is not that useful if we are 
+comparing two languages having different conventions for how much we should put on a line. 
+But as our language is a subset of C, so  this metric makes sense, but 
+to yield 
+meaningful results we need to  be careful about the following aspects.
+\begin{itemize}
+  \item Both the code implementations should produce the same output.
+  \item In both the code implementation, the backward slice of the output instructions should cover the entire 
+  code. In other words, there should not be any redundant code which is not 
+  contributing to the generated output. 
+  \item Both the code implementation should follow similar coding 
+  guidelines~\cite{GNU}.
+  \item Both the programs need to be equally readable in terms of indentation, 
+  newlines, spaces and comments.
+\end{itemize}
+
  We compared the number of lines of static code written in our language with 
  that written in C.  Table~\ref{table:eval_4} represents the results of this 
- comaprision, which clearly shows that we need fewer lines of code to implement 
+ comparison, which clearly shows that we need fewer lines of code to implement 
  the same algorithm.
 
  \begin{table}[h]
 \centering
-\caption{Comparision of Number of lines of code in our implementation w.r.t C implementation.}
+\caption{Comparison of Number of lines of code in our implementation w.r.t C implementation.}
 \label{table:eval_4}
 \begin{tabular}{|l|c|c|}
 \hline
