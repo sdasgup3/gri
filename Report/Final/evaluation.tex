@@ -1,26 +1,113 @@
-The baseline of our evaluation will be the open source Graphal~\cite{Graphal} 
-system.  Graphal~\cite{Graphal} is an interpreter of a programming language that 
-is mainly oriented to graph algorithms. There is a command line interpreter and 
-a graphical integrated development environment. The IDE contains text editor for 
-programmers, compilation and script output, advanced debugger and visualization 
-window. The evaluation will be between command line version of Graphal with our
-implementation.
-  The evaluation will
-  cover the following two aspects of our implementation:
+In order to evaluate the performance of our design, we will be coding a number 
+of well known graph related algorithms in our language and run the proposed interpreter on 
+them. The baseline of our evaluation will the the same algorithms implemented in 
+C,  compiled by the C compiler and executing the compiled binary.
+
+We are planning to compare both the convenience of representation in our 
+language w.r.t C language as well as the runtime performance of the interpreter 
+w.r.t the compiled version of the code.
+
+We will be using the number of lines of code as a metric to compare the 
+convenience that our language is providing w.r.t C. This comparision can yield 
+meaningful results if we are carefull about the following aspects.
+\begin{itemize}
+  \item Both the code implementations should produce the same output.
+  \item In both the code implementation, the backward slice of the output instructions should cover the entire 
+  code. In other words, there should not be any redundant code which is not 
+  contributing to the generated output. 
+  \item Both the code implementation should follow similar coding 
+  guidelines~\cite{GNU}.
+\end{itemize}
+
+\subsection{Runtime Performance Comparision}
+
+We have implemented a couple of algorithms in both our language and C. The 
+algorithms are Transitive Closure of a graph using Floyd Warshall's algorithm, 
+           Shortest Path using Dijkstra's algorithm, Minimum Spanning Tree using 
+           Prim's algorithm and Chaitin's Optimistic graph coloring algorithm.
+The input graph used in all the cases is a randomly generated graph consisting  of vertices = 500, edges = 1000. 
+For Graph Coloring, we used the input graph with vertices = 125, edges = 1000. This is 
+because it takes a lot of time for our interpreter exection to complete.
+In Table~\ref{table:eval_1}, we compared the runtime of our interpreter 
+(henceforth called GRI) with 
+execution time of compiled binary obtained by compiling the C implementation.
+
+Note that, while implementing the algorithms, we used the basic syntax provided 
+by our implementation and \textbf{NOT} used any of the  built-in 
+functions like {\tt getTransitiveClosure(), getShortestPath() or getMST()}. 
+We call such implementations as fully scripted.
+
+  \begin{table}[]
+\centering
+\caption{Slowdown of GRI w.r.t C implementation.}
+\label{table:eval_1}
+\scalebox{.8} {
+\begin{tabular}{|l|l|l|l|}
+\hline
+   \multicolumn{1}{|c|}{Algorithm}                                 & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Fully Scripted\\ time (secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C implementation\\ time(secs)\end{tabular}} & Slowdown \\ \hline
+Transitive Closure  & 1137.40            & 4.04                   & 281.5    \\ \hline
+Shortest Path          & 6.37             & 0.02                     & 318.5     \\ \hline
+Minimum Spanning Tree        & 6.34             & 0.02                      & 317.0     \\ \hline
+Graph Coloring  &   138.17  & 0.65                              & 212.6         \\ \hline
+\end{tabular}}
+\end{table}
+
+As we can see that the slowdown are huge. To counter that, we planned to come up 
+with following built-in functions.
   \begin{itemize}
-    \item The convenience and intuitive extensibility provided by our 
-    programming model.
+    \item \tt{Graph::getAdjMatrix();}
+    \item \tt{Graph::getTransitiveClosure();}
+    \item \tt{Graph::getShortestPath(string wt, Vertex start, vertex end);}
     \begin{itemize}
-      \item We will be implementing a couple of well know graph algorithms in 
-      both baseline and our implementation
-        and use number of dynamic instructions interpreted as a measure to show 
-        the conciseness of our
-        representation.
-    \end{itemize}
-    \item Performance
+      \item Returns the shortest distance from start to each vertex in the 
+      shortest path tree.
+      \item Returns parent of each vertex in the shortest path tree.
+      \item If \tt{end == NULL}, return the shortespath from start to all vertices.
+      \item If \tt{end != NULL}, return the shortespath from start to end.
+    \end{itemize} 
+    \item \tt{Graph::getMST(string wt);}
     \begin{itemize}
-      \item As we are planning to keep the compiled version of frequently used 
-      graph routines (like dfs\_iterators(vertex), bfs\_iterators(vertex)), we 
-      are expecting to achieve better performance in terms of runtime.  
-      \end{itemize}
+      \item Return the parent of each vertex in the minimum snapping tree.
+    \end{itemize} 
   \end{itemize}
+
+
+  Table~\ref{table:eval_2} shows the speedup of our implementation \textbf{with} built-in 
+  functions w.r.t  \textbf{without} using built-in functions (i.e. fully 
+      Scripted). The graph used in 
+  all the cases consist of vertices = 125, edges = 1000.
+
+\begin{table}[]
+\centering
+\caption{Speedup with built-in functions w.r.t without 
+  using built-in functions.}
+\label{table:eval_2}
+\begin{tabular}{|l|l|l|l|}
+\hline
+                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}With Built-ins\\ time (secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Fully Scripted\\ time(secs)\end{tabular}} & Speedup \\ \hline
+Transitive Closure & 0.54                                                                                      & 18.19                                                                                    & 33.6    \\ \hline
+Shortest Path             & 0.08                                                                                      & 0.51                                                                                     & 6.3     \\ \hline
+Minimum Spanning Tree        & 0.05                                                                                      & 0.47                                                                                     & 9.4     \\ \hline
+\end{tabular}
+\end{table}
+
+Finally, we implemented the above mentioned algorithms using built-in functions 
+and compared with C (Figure ~\ref{table:eval_3}). The graph used in all the cases consist of vertices = 500, edges = 1000. For Graph Coloring, we used the graph with vertices = 125, edges = 1000.
+
+  \begin{table}[]
+\centering
+\caption{Slowdown of our implementation w.r.t C implementation.}
+\label{table:eval_3}
+\begin{tabular}{|l|l|l|l|}
+\hline
+                                    & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}GRI\\ Time(secs)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}C\\ Time(secs)\end{tabular}} & Slowdown \\ \hline
+Transitive Closure (Floyd Warshall) & 10.26     & 4.04                               & 2.5     \\ \hline
+Shortest Path (Dijkstra)            & 0.09      & 0.02                               & 4.5     \\ \hline
+Minimum Spanning Tree (Prim)        & 0.09      & 0.02                               & 4.5     \\ \hline
+Graph Coloring (Chaitin Optimistic) &   138.17  & 0.65                              & 212.6         \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Comparision w.r.t Representation Convenience }
+
+
