@@ -52,19 +52,24 @@ with following built-in functions.
     \item {\tt Graph::getTransitiveClosure();}
     \item {\tt Graph::getShortestPath(wt, start, end);}
     \begin{itemize}
-      \item Returns the shortest distance from vertex start to each vertex in the 
-      shortest path tree.
-      \item Returns parent of each vertex in the shortest path tree.
-      \item If {\tt end == NULL}, return the shortest path from start to all vertices.
-      \item If {\tt end != NULL}, return the shortest path from start to end vertex.
+      \item Returns an array of 2 elements. 
+      \begin{itemize}
+        \item First is an array representing the parent of each vertex in the 
+        shortest path tree. 
+        \item Second is another array representing the shortest distance from 
+        vertex start to each vertex in the shortest path tree.
+      \end{itemize}
+      \item If {\tt end == NULL}, the the algorithm will compute the shortest
+distance of all the vertices from start. Else it stops when the
+shortest distance of end vertex from start is computed.
       \item Weight ``wt'' (a string) signifies which of the properties of the
-edge need to be considered for computing min distance.
+edge need to be considered as distance in the shortest path algorithm.
     \end{itemize} 
     \item {\tt Graph::getMST(wt);}
     \begin{itemize}
-      \item Return the parent of each vertex in the minimum snapping tree.
+      \item Return the parent of each vertex in the minimum spanning tree.
       \item Weight ``wt'' (a string) signifies which of the properties of the
-edge need to be considered for computing min distance.
+edge need to be considered as distance in the minimum spanning tree algorithm.
     \end{itemize} 
   \end{itemize}
 
@@ -88,8 +93,10 @@ Minimum Spanning Tree        & 0.05                                             
 \end{tabular}
 \end{table}
 
-Finally, we implemented the above mentioned algorithms using built-in functions 
-and compared with C (Figure ~\ref{table:eval_3}). The graph used in all the cases consist of vertices = 500, edges = 1000. For Graph Coloring, we used the graph with vertices = 125, edges = 1000.
+Finally, we replaced the fully scripted version of the algorithms with built-in 
+function calls and compared that with C (Figure ~\ref{table:eval_3}). 
+The graph used in all the cases consist of vertices = 500, edges = 1000. 
+For Graph Coloring, we used the graph with vertices = 125, edges = 1000.
 
   \begin{table}[]
 \centering
@@ -104,6 +111,10 @@ Minimum Spanning Tree        & 0.09      & 0.02                               & 
 Graph Coloring  &   138.17  & 0.65                              & 212.6         \\ \hline
 \end{tabular}
 \end{table}
+
+In Graph Coloring algorithm, we are still loosing a lot on performance due to 
+the fact that the implementation is fully scripted and its interpretation 
+is very slow as compared to binary execution.
 
 \subsection{Comparison w.r.t Representation Convenience }
 We will be using the number of lines of code as a metric to compare the 

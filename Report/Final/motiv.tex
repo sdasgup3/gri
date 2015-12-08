@@ -74,16 +74,17 @@ employee {\tt Node 0}.
   \input{Figs/fig_motiv_4}
   Figure~\ref{fig:motiv_3} shows another way to represent graph.  
   It uses an input file to be fed to
-  the interpreted program. The format of the input file is shown in 
+  the interpreted program. The format of the input file to represent the graph 
+  at Figure~\ref{fig:motiv_1} is shown in 
   Figure~\ref{fig:motiv_4}. Such an input file is read from the command line 
   arguments and 
-  used to create a graph as 
+  used to populate a graph variable as 
   shown in line {\tt S2} of Figure~\ref{fig:motiv_3}. At {\tt S3}, 
        we can see two built-in functions {\tt getAdjacencyMatrix} \& {\tt 
          getVertices} on graph
   which respectively gives an array of array representing the adjacency matrix 
-  representation of the graph and a set of vertices in the graph. {\tt 
-    displayAdjMatrix} is just a method call, the definition of which is not 
+  representation of the graph and a set of vertices in the graph. At the same 
+  line, we have a method call {\tt displayAdjMatrix}, the definition of which is not 
     shown for brevity. Now lets try to solve certain queries using the graph at 
     Figure~\ref{fig:motiv_1}.
 

@@ -5,7 +5,7 @@
     We have implemented the tokenizer and syntax analyzer using flex and 
     bison. We are supporting syntax like \#include("filename") and 
     \#define("PI", "3.14") while doing a single pass of parsing  (i.e.  
-        Preprocessing of these constructs are done while parsing). This is 
+        preprocessing of these constructs are done while parsing). This is 
     achieved by using flex's internal stack to manage multiple buffers.
     The grammar rules are mostly borrowed from 
     ~\cite{ANSI}. The rules are compiled 
@@ -42,12 +42,12 @@ runtime section.
 
       \item Supporting vertices and edges as first class objects which contains 
       a map to add properties. This feature is useful in various graph 
-      algorithms like in dfs traversal~\ref{fig:motiv_5}, we uses a vertex property ``visited'' 
+      algorithms like in dfs traversal~\ref{fig:motiv_5}, we uses a vertex property ``visit'' 
       to keep track of vertices already explored.
 
       \item We are supporting composite data-structures like array, struct and 
-      set and iterators on them. Figure~\ref{fig:language_1} represents a code 
-      snippet representing some of the operation on these data-structures.
+      set and iterators on them. \cmt{Figure~\ref{fig:language_1} represents a code 
+      snippet representing some of the operation on these data-structures.}
 
       \item The language semantics will be same as that of C as we are using a subset of it.`
 
@@ -59,5 +59,5 @@ runtime section.
           edge})  which can be dynamically changed with assign command.
 
     \end{itemize}
-    \input{Figs/fig_language_1.tex}
+%    \input{Figs/fig_language_1.tex}
   
